@@ -6,6 +6,7 @@ import { useCurrency } from '../hooks/useCurrency'
 import type { Currency } from '../hooks/useCurrency'
 import { getImageForProduct } from '../utils/imageMatching'
 import { ViewRecipeButton } from './ViewRecipeButton'
+import { RecipeModal } from './RecipeModal'
 
 export interface CategoryTheme {
   bgGradient: string
@@ -200,8 +201,7 @@ function PriceStickyNote({ price, lbpPrice, currency }: { price: string; lbpPric
 }
 
 // ─── Individual drink card ────────────────────────────────────────────────────
-function DrinkCard({ drink, sub, index, currency }: { drink: SubcategoryDrink; sub: Subcategory; theme?: CategoryTheme; index: number; currency: Currency }) {
-  const [open, setOpen] = useState(false)
+function DrinkCard({ drink, sub, index, currency, onRecipeOpen }: { drink: SubcategoryDrink; sub: Subcategory; theme?: CategoryTheme; index: number; currency: Currency; onRecipeOpen: (drink: SubcategoryDrink, sub: Subcategory) => void }) {
   const displayImage = getImageForProduct(drink.name, drink.image ?? undefined)
 
   return (
@@ -212,10 +212,10 @@ function DrinkCard({ drink, sub, index, currency }: { drink: SubcategoryDrink; s
       style={{
         display: 'flex', flexDirection: 'column',
         background: '#f8f8f8',
-        border: `1px solid ${open ? sub.accentColor + '60' : 'rgba(0,0,0,0.07)'}`,
+        border: '1px solid rgba(0,0,0,0.07)',
         borderRadius: 20,
         overflow: 'hidden',
-        boxShadow: open ? `0 6px 24px ${sub.accentColor}22` : '0 4px 16px rgba(0,0,0,0.07)',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.07)',
         transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
       }}
     >
@@ -260,58 +260,11 @@ function DrinkCard({ drink, sub, index, currency }: { drink: SubcategoryDrink; s
 
       {/* View Recipe button — only shown when recipe exists */}
       {drink.recipe && (
-        <div style={{ padding: '0 clamp(14px,2vh,20px) clamp(14px,2vh,20px)' }}>
+        <div style={{ padding: '0 clamp(14px,2vh,20px) clamp(14px,2vh,20px) clamp(14px,2vh,20px)' }}>
           <ViewRecipeButton
-            isExpanded={open}
-            onClick={() => setOpen(prev => !prev)}
-            themeColor={sub.accentColor}
+            isExpanded={false}
+            onClick={() => onRecipeOpen(drink, sub)}
           />
-
-          {/* Smooth animated recipe panel */}
-          <AnimatePresence initial={false}>
-            {open && (
-              <motion.div
-                key="recipe"
-                initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                animate={{ opacity: 1, height: 'auto', marginTop: 10 }}
-                exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
-                style={{ overflow: 'hidden' }}
-              >
-                <div style={{
-                  padding: '16px 18px',
-                  background: `linear-gradient(135deg, ${sub.accentColor}12, ${sub.accentColor}06)`,
-                  border: `1px solid ${sub.accentColor}30`,
-                  borderRadius: 12,
-                }}>
-                  <p style={{
-                    margin: '0 0 8px',
-                    fontSize: 10, fontWeight: 800,
-                    letterSpacing: '0.25em', textTransform: 'uppercase',
-                    color: sub.accentColor,
-                    opacity: 0.85,
-                  }}>Ingredients</p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 10px' }}>
-                    {drink.recipe.split(' · ').map((item, i) => (
-                      <span key={i} style={{
-                        display: 'inline-flex', alignItems: 'center', gap: 5,
-                        padding: '5px 12px',
-                        background: '#fff',
-                        border: `1px solid ${sub.accentColor}30`,
-                        borderRadius: 999,
-                        fontSize: 'clamp(12px,1.3vw,14px)',
-                        fontWeight: 600,
-                        color: '#333',
-                      }}>
-                        <span style={{ width: 5, height: 5, borderRadius: '50%', background: sub.accentColor, flexShrink: 0 }} />
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       )}
     </motion.div>
@@ -333,12 +286,29 @@ export default function CategoryListPage({
   const { currency, toggle } = useCurrency('USD')
   const subcategoryRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+  const [selectedDrink, setSelectedDrink] = useState<SubcategoryDrink | null>(null)
+  const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory | null>(null)
+  const [recipeModalOpen, setRecipeModalOpen] = useState(false)
 
   const scrollToSubcategory = (subcategoryId: string) => {
     const element = subcategoryRefs.current[subcategoryId]
     if (element && scrollContainerRef.current) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
+  }
+
+  const handleRecipeOpen = (drink: SubcategoryDrink, subcategory: Subcategory) => {
+    setSelectedDrink(drink)
+    setSelectedSubcategory(subcategory)
+    setRecipeModalOpen(true)
+  }
+
+  const handleRecipeClose = () => {
+    setRecipeModalOpen(false)
+    setTimeout(() => {
+      setSelectedDrink(null)
+      setSelectedSubcategory(null)
+    }, 200)
   }
 
   return (
@@ -561,6 +531,7 @@ export default function CategoryListPage({
                     sub={sub}
                     index={index}
                     currency={currency}
+                    onRecipeOpen={handleRecipeOpen}
                   />
                 ))}
               </div>
@@ -579,6 +550,14 @@ export default function CategoryListPage({
         .subcat-nav::-webkit-scrollbar-thumb { background: rgba(89,107,61,0.15); border-radius: 2px; }
         .subcat-nav { scrollbar-width: thin; scrollbar-color: rgba(89,107,61,0.15) transparent; }
       `}</style>
+
+      {/* Recipe Modal */}
+      <RecipeModal
+        isOpen={recipeModalOpen}
+        drink={selectedDrink}
+        subcategory={selectedSubcategory}
+        onClose={handleRecipeClose}
+      />
     </div>
   )
 }

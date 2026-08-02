@@ -40,12 +40,12 @@ export const coldDrinksSubcategories: Subcategory[] = [
     accentColor: '#fcd34d',
     image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Replace_cub_with_milkshakes_202607240432-DyeXQYjJj3Qg2lXxkb8gT9y7V0T2mz.jpeg',
     drinks: [
-      { name: 'Cookies & Cream', description: 'Crushed cookies blended into silky cream.', price: '$4.50', lbpPrice: '400,000 LBP', image: '/cookies-cream-milkshake.png', recipe: 'Vanilla ice cream · Cold whole milk · Crushed Oreo cookies · Chocolate sauce' },
-      { name: 'Strawberry Whip', description: 'Fresh strawberries with whipped cream.', price: '$4', lbpPrice: '350,000 LBP', image: '/images/products/StrawberryWhip.jpg', recipe: 'Vanilla ice cream · Cold whole milk · Strawberry purée · Whipped cream' },
-      { name: 'Choco-Nut Milkshake', description: 'Chocolate and nut blend, rich and creamy.', price: '$4', lbpPrice: '350,000 LBP', image: '/images/products/ChocoNutMilkshake.jpg', recipe: 'Vanilla ice cream · Cold whole milk · Chocolate · Hazelnut flavor' },
-      { name: 'Vanilla Milkshake', description: 'Classic vanilla bean milkshake.', price: '$4', lbpPrice: '350,000 LBP', image: '/images/products/VanillaMilkshake.jpg', recipe: 'Vanilla ice cream · Cold whole milk · Vanilla flavor' },
-      { name: 'Lotus Milkshake', description: 'Lotus biscuit blended into creamy indulgence.', price: '$4.50', lbpPrice: '400,000 LBP', image: '/images/products/LotusMilkshake.jpg', recipe: 'Vanilla ice cream · Cold whole milk · Lotus Biscoff spread · Crushed Lotus biscuits' },
-      { name: 'Oliva Milkshake', description: 'Our secret house-special signature shake.', price: '$5', lbpPrice: '450,000 LBP', image: '/images/products/OlivaMilkshake.jpg', recipe: '????? try it and find out' },
+      { name: 'Cookies & Cream', description: 'Crushed cookies blended into silky cream.', price: '$4.50', lbpPrice: '400,000 LBP', image: '/cookies-cream-milkshake.png', recipe: 'Milk · Ice · Oreo cookies' },
+      { name: 'Strawberry Whip', description: 'Fresh strawberries with whipped cream.', price: '$4', lbpPrice: '350,000 LBP', image: '/images/products/StrawberryWhip.jpg', recipe: 'Milk · Ice · Strawberry' },
+      { name: 'Choco-Nut Milkshake', description: 'Chocolate and nut blend, rich and creamy.', price: '$4', lbpPrice: '350,000 LBP', image: '/images/products/ChocoNutMilkshake.jpg', recipe: 'Milk · Ice · Chocolate · Hazelnut' },
+      { name: 'Vanilla Milkshake', description: 'Classic vanilla bean milkshake.', price: '$4', lbpPrice: '350,000 LBP', image: '/images/products/VanillaMilkshake.jpg', recipe: 'Milk · Ice · Vanilla' },
+      { name: 'Lotus Milkshake', description: 'Lotus biscuit blended into creamy indulgence.', price: '$4.50', lbpPrice: '400,000 LBP', image: '/images/products/LotusMilkshake.jpg', recipe: 'Milk · Ice · Lotus' },
+      { name: 'Oliva Milkshake', description: 'Our secret house-special signature shake.', price: '$5', lbpPrice: '450,000 LBP', image: '/images/products/OlivaMilkshake.jpg', recipe: 'Milk · Ice · Oliva special mix' },
     ],
   },
   {
