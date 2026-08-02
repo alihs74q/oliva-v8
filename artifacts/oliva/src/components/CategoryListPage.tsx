@@ -310,34 +310,58 @@ function DrinkCard({ drink, sub, index, currency }: { drink: SubcategoryDrink; s
                   </div>
 
                   {/* Optional Extras */}
-                  <p style={{
-                    margin: '8px 0 8px',
-                    fontSize: 11, fontWeight: 700,
-                    letterSpacing: '0.15em', textTransform: 'uppercase',
-                    color: '#596B3D',
-                    opacity: 0.9,
-                  }}>Optional Extras</p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {[
-                      { name: 'Cream', price: '+50,000 LBP' },
-                      { name: 'Ice Cream', price: '+50,000 LBP' },
-                      { name: 'Flavor', price: '+50,000 LBP' },
-                    ].map((extra, i) => (
-                      <div key={i} style={{
-                        display: 'inline-flex', alignItems: 'center', gap: 4,
-                        padding: '5px 10px',
-                        background: '#fff',
-                        border: '1px solid #596B3D50',
-                        borderRadius: 12,
-                        fontSize: 'clamp(10px,1.1vw,12px)',
-                        color: '#596B3D',
-                        fontWeight: 500,
-                      }}>
-                        <span style={{ fontSize: 14, fontWeight: 700 }}>+</span>
-                        <span>{extra.name}</span>
-                      </div>
-                    ))}
-                  </div>
+                  {(() => {
+                    // Determine which extras to show based on subcategory
+                    const drinksWithExtras = ['smoothies', 'milk-shake', 'coffee-frappe', 'iced-latte', 'refreshers']
+                    const dessertsWithExtras = ['cakes', 'cheesecakes', 'pastries']
+                    const noExtras = ['sandwiches-main', 'greek', 'flavors', 'padel-packages']
+                    
+                    let extras: { name: string; price: string }[] = []
+                    
+                    if (drinksWithExtras.includes(sub.id)) {
+                      extras = [
+                        { name: 'Cream', price: '+50,000 LBP' },
+                        { name: 'Ice Cream', price: '+50,000 LBP' },
+                        { name: 'Flavor', price: '+50,000 LBP' },
+                      ]
+                    } else if (dessertsWithExtras.includes(sub.id)) {
+                      extras = [
+                        { name: 'Ice Cream', price: '+50,000 LBP' },
+                      ]
+                    }
+                    
+                    // Show extras section only if there are extras to display
+                    if (extras.length === 0) return null
+                    
+                    return (
+                      <>
+                        <p style={{
+                          margin: '8px 0 8px',
+                          fontSize: 11, fontWeight: 700,
+                          letterSpacing: '0.15em', textTransform: 'uppercase',
+                          color: '#596B3D',
+                          opacity: 0.9,
+                        }}>Optional Extras</p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                          {extras.map((extra, i) => (
+                            <div key={i} style={{
+                              display: 'inline-flex', alignItems: 'center', gap: 4,
+                              padding: '5px 10px',
+                              background: '#fff',
+                              border: '1px solid #596B3D50',
+                              borderRadius: 12,
+                              fontSize: 'clamp(10px,1.1vw,12px)',
+                              color: '#596B3D',
+                              fontWeight: 500,
+                            }}>
+                              <span style={{ fontSize: 14, fontWeight: 700 }}>+</span>
+                              <span>{extra.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )
+                  })()}
                 </div>
               </motion.div>
             )}
