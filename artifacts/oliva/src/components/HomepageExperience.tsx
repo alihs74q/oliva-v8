@@ -56,11 +56,11 @@ export default function HomepageExperience({
         style={{ marginBottom: 'clamp(16px,3vh,28px)' }}
       >
         <img
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/oliva-logo-7vdw2NsA2Wofs4TtAyO49iJkZo8nn1.jpg"
+          src="/oliva-logo.png"
           alt="Oliva"
           style={{
             width: 'clamp(72px,12vw,100px)', height: 'clamp(72px,12vw,100px)',
-            borderRadius: '50%', objectFit: 'cover',
+            borderRadius: '50%', objectFit: 'contain',
             border: '3px solid rgba(134,239,172,0.4)',
             boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
           }}

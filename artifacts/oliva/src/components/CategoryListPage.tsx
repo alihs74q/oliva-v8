@@ -462,7 +462,7 @@ export default function CategoryListPage({
                 flexShrink: 0,
               }}>
                 <img
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled%20design%20%284%29-XnkqrdTFPK1XQiDPMZmAUqfH4w4IPy.png"
+                  src="/oliva-logo.png"
                   alt="Oliva"
                   className="logo-3d"
                   style={{

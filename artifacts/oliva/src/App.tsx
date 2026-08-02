@@ -280,7 +280,7 @@ export default function App() {
           boxShadow: '0 8px 40px rgba(89,107,61,0.45)',
         }}>
           <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled%20design%20%284%29-XnkqrdTFPK1XQiDPMZmAUqfH4w4IPy.png"
+            src="/oliva-logo.png"
             alt="Oliva"
             style={{ width: '78%', height: '78%', objectFit: 'contain', display: 'block' }}
           />
