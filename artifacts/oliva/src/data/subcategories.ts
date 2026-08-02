@@ -202,7 +202,7 @@ export const yogurtSubcategories: Subcategory[] = [
     drinks: [
       { name: 'Greek Yogurt', description: 'Smooth and creamy Greek yogurt.', price: '$3', lbpPrice: '300,000 LBP', image: '/images/products/GreekYogurt.jpg', recipe: 'Full-fat Greek yogurt · Honey drizzle · Optional: granola, walnuts, or fresh berries' },
       { name: 'Mango Greek Yogurt', description: 'Greek yogurt with fresh mango flavor.', price: '$3', lbpPrice: '300,000 LBP', image: '/images/products/MangoGreekYogurt.jpg', recipe: 'Full-fat Greek yogurt · Fresh mango purée · Honey · Dried mango pieces · Optional coconut flakes' },
-      { name: 'Toppings', description: 'Granola, nuts, and fruit toppings.', price: '$1', lbpPrice: '100,000 LBP', image: null, recipe: 'Homemade granola · Mixed nuts · Seasonal fresh fruit · Honey · Chia seeds' },
+      { name: 'Toppings', description: 'Granola, nuts, and fruit toppings.', price: '$1', lbpPrice: '100,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Oliva_Caf%C3%A9_toppings_product_card_202608020503-djFbXaz7xfnDVatZITOK4HARa6imMy.jpeg', recipe: 'Homemade granola · Mixed nuts · Seasonal fresh fruit · Honey · Chia seeds' },
     ],
   },
 ]

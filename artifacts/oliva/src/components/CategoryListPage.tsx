@@ -384,7 +384,7 @@ export default function CategoryListPage({
   onBack: () => void
   heroImages?: string[]
 }) {
-  const { currency, toggle } = useCurrency('USD')
+  const { currency, toggle } = useCurrency('LBP')
   const subcategoryRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 

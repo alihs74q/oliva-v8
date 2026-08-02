@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 
 export type Currency = 'USD' | 'LBP'
 
-export function useCurrency(initial: Currency = 'USD') {
+export function useCurrency(initial: Currency = 'LBP') {
   const [currency, setCurrency] = useState<Currency>(initial)
 
   const toggle = useCallback(() => {
