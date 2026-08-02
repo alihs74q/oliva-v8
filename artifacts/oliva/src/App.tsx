@@ -146,8 +146,7 @@ export default function App() {
   if (route.name === 'menu') {
     return (
       <>
-        <div className="relative min-h-screen">
-          <Navbar navigate={(to) => { if (to === 'home') navigateHome(); else navigateMenu(); }} route={'menu'} />
+        <div style={{ background: '#faf9f4' }}>
           <main className="relative z-10">
             <Menu
               onBack={navigateHome}
