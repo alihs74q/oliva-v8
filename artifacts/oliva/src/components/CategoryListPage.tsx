@@ -6,7 +6,6 @@ import { useCurrency } from '../hooks/useCurrency'
 import type { Currency } from '../hooks/useCurrency'
 import { getImageForProduct } from '../utils/imageMatching'
 import { ViewRecipeButton } from './ViewRecipeButton'
-import { RecipeModal } from './RecipeModal'
 
 export interface CategoryTheme {
   bgGradient: string
@@ -201,7 +200,8 @@ function PriceStickyNote({ price, lbpPrice, currency }: { price: string; lbpPric
 }
 
 // ─── Individual drink card ────────────────────────────────────────────────────
-function DrinkCard({ drink, sub, index, currency, onRecipeOpen }: { drink: SubcategoryDrink; sub: Subcategory; theme?: CategoryTheme; index: number; currency: Currency; onRecipeOpen: (drink: SubcategoryDrink, sub: Subcategory) => void }) {
+function DrinkCard({ drink, sub, index, currency }: { drink: SubcategoryDrink; sub: Subcategory; theme?: CategoryTheme; index: number; currency: Currency }) {
+  const [open, setOpen] = useState(false)
   const displayImage = getImageForProduct(drink.name, drink.image ?? undefined)
 
   return (
@@ -212,10 +212,10 @@ function DrinkCard({ drink, sub, index, currency, onRecipeOpen }: { drink: Subca
       style={{
         display: 'flex', flexDirection: 'column',
         background: '#f8f8f8',
-        border: '1px solid rgba(0,0,0,0.07)',
+        border: `1px solid ${open ? '#596B3D40' : 'rgba(0,0,0,0.07)'}`,
         borderRadius: 20,
         overflow: 'hidden',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.07)',
+        boxShadow: open ? '0 6px 20px rgba(89,107,61,0.15)' : '0 4px 16px rgba(0,0,0,0.07)',
         transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
       }}
     >
@@ -260,11 +260,88 @@ function DrinkCard({ drink, sub, index, currency, onRecipeOpen }: { drink: Subca
 
       {/* View Recipe button — only shown when recipe exists */}
       {drink.recipe && (
-        <div style={{ padding: '0 clamp(14px,2vh,20px) clamp(14px,2vh,20px) clamp(14px,2vh,20px)' }}>
+        <div style={{ padding: '0 clamp(14px,2vh,20px) clamp(14px,2vh,20px)' }}>
           <ViewRecipeButton
-            isExpanded={false}
-            onClick={() => onRecipeOpen(drink, sub)}
+            isExpanded={open}
+            onClick={() => setOpen(prev => !prev)}
           />
+
+          {/* Smooth animated recipe panel */}
+          <AnimatePresence initial={false}>
+            {open && (
+              <motion.div
+                key="recipe"
+                initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+                exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+                style={{ overflow: 'hidden' }}
+              >
+                <div style={{
+                  padding: 'clamp(12px,1.5vh,16px)',
+                  background: '#F5F1E8',
+                  border: '1px solid #596B3D60',
+                  borderRadius: 12,
+                }}>
+                  {/* Ingredients */}
+                  <p style={{
+                    margin: '0 0 8px',
+                    fontSize: 11, fontWeight: 700,
+                    letterSpacing: '0.15em', textTransform: 'uppercase',
+                    color: '#596B3D',
+                    opacity: 0.9,
+                  }}>Ingredients</p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 10px', marginBottom: 12 }}>
+                    {drink.recipe.split(' · ').map((item, i) => (
+                      <span key={i} style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 5,
+                        padding: '4px 10px',
+                        background: '#fff',
+                        border: '1px solid #596B3D40',
+                        borderRadius: 12,
+                        fontSize: 'clamp(11px,1.2vw,13px)',
+                        fontWeight: 500,
+                        color: '#333',
+                      }}>
+                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#596B3D', flexShrink: 0 }} />
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Optional Extras */}
+                  <p style={{
+                    margin: '8px 0 8px',
+                    fontSize: 11, fontWeight: 700,
+                    letterSpacing: '0.15em', textTransform: 'uppercase',
+                    color: '#596B3D',
+                    opacity: 0.9,
+                  }}>Optional Extras</p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {[
+                      { name: 'Cream', price: '+50,000 LBP' },
+                      { name: 'Ice Cream', price: '+50,000 LBP' },
+                      { name: 'Flavor', price: '+50,000 LBP' },
+                    ].map((extra, i) => (
+                      <div key={i} style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 4,
+                        padding: '5px 10px',
+                        background: '#fff',
+                        border: '1px solid #596B3D50',
+                        borderRadius: 12,
+                        fontSize: 'clamp(10px,1.1vw,12px)',
+                        color: '#596B3D',
+                        fontWeight: 500,
+                      }}>
+                        <span style={{ fontSize: 14, fontWeight: 700 }}>+</span>
+                        <span>{extra.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
     </motion.div>
@@ -286,29 +363,12 @@ export default function CategoryListPage({
   const { currency, toggle } = useCurrency('USD')
   const subcategoryRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
-  const [selectedDrink, setSelectedDrink] = useState<SubcategoryDrink | null>(null)
-  const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory | null>(null)
-  const [recipeModalOpen, setRecipeModalOpen] = useState(false)
 
   const scrollToSubcategory = (subcategoryId: string) => {
     const element = subcategoryRefs.current[subcategoryId]
     if (element && scrollContainerRef.current) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-  }
-
-  const handleRecipeOpen = (drink: SubcategoryDrink, subcategory: Subcategory) => {
-    setSelectedDrink(drink)
-    setSelectedSubcategory(subcategory)
-    setRecipeModalOpen(true)
-  }
-
-  const handleRecipeClose = () => {
-    setRecipeModalOpen(false)
-    setTimeout(() => {
-      setSelectedDrink(null)
-      setSelectedSubcategory(null)
-    }, 200)
   }
 
   return (
@@ -531,7 +591,6 @@ export default function CategoryListPage({
                     sub={sub}
                     index={index}
                     currency={currency}
-                    onRecipeOpen={handleRecipeOpen}
                   />
                 ))}
               </div>
@@ -550,14 +609,6 @@ export default function CategoryListPage({
         .subcat-nav::-webkit-scrollbar-thumb { background: rgba(89,107,61,0.15); border-radius: 2px; }
         .subcat-nav { scrollbar-width: thin; scrollbar-color: rgba(89,107,61,0.15) transparent; }
       `}</style>
-
-      {/* Recipe Modal */}
-      <RecipeModal
-        isOpen={recipeModalOpen}
-        drink={selectedDrink}
-        subcategory={selectedSubcategory}
-        onClose={handleRecipeClose}
-      />
     </div>
   )
 }
