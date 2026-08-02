@@ -1,11 +1,14 @@
 // ─────────────────────────────────────────────
-//  OLIVA SERVICE WORKER  –  v4
+//  OLIVA SERVICE WORKER  –  v5
 //  Bump this version string every deployment so
 //  users always get the latest design/code.
+//  When hashed images change, they get new URLs
+//  and the old cache is automatically cleaned up.
 // ─────────────────────────────────────────────
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const APP_CACHE    = `oliva-app-${CACHE_VERSION}`;
 const IMAGE_CACHE  = `oliva-images-${CACHE_VERSION}`;
+const CACHE_PREFIX = 'oliva-';
 
 // App shell — cached on install
 const SHELL_URLS = ['/', '/index.html'];
@@ -146,23 +149,29 @@ self.addEventListener('install', (event) => {
 // ─── ACTIVATE ───────────────────────────────
 // 1. Delete ALL caches whose name contains "oliva" but doesn't match
 //    the current version → users always see the new design.
-// 2. Claim all open tabs right away.
+//    This ensures old cached images (with old hashes) are purged
+//    and new hashed images are downloaded.
+// 2. Claim all open tabs without a reload.
 // 3. Start image pre-caching in the background (non-blocking).
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then(async (names) => {
-      await Promise.all(
-        names
-          .filter(
-            (n) =>
-              n.startsWith('oliva-') &&
-              n !== APP_CACHE &&
-              n !== IMAGE_CACHE
-          )
-          .map((n) => caches.delete(n))
+      // Delete all old Oliva caches not matching current version
+      const oldCaches = names.filter(
+        (n) =>
+          n.startsWith(CACHE_PREFIX) &&
+          n !== APP_CACHE &&
+          n !== IMAGE_CACHE
       );
-      // Claim all existing tabs without a reload
+      
+      await Promise.all(oldCaches.map((n) => {
+        console.log(`[SW] Deleting old cache: ${n}`);
+        return caches.delete(n);
+      }));
+      
+      // Claim all existing tabs immediately so the new SW takes over
       await self.clients.claim();
+      
       // Download images in the background — does NOT block activation
       precacheImages();
     })

@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react'
+import { imageAssets } from '../utils/imageAssets'
 
 interface Props {
   hero: ReactNode
@@ -163,7 +164,7 @@ export default function HeroToGalleryTransition({ hero }: Props) {
           }}
         >
           <img
-            src="/oliva-logo.png"
+            src={imageAssets.logo}
             alt="Oliva logo"
             className="w-full h-full object-cover"
             draggable={false}

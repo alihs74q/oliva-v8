@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { imageAssets } from '../utils/imageAssets';
 
 // Only preload hero + menu category card images for faster loading
 const IMAGES_TO_PRELOAD = [
@@ -118,7 +119,7 @@ export default function LoadingIntro({ onComplete }: LoadingIntroProps) {
         }}
       >
         <img
-          src="/oliva-logo.png"
+          src={imageAssets.logo}
           alt="Oliva"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />

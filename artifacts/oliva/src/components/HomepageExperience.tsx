@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { imageAssets } from '../utils/imageAssets'
 
 const EASE = [0.25, 0.46, 0.45, 0.94] as const
 
@@ -56,7 +57,7 @@ export default function HomepageExperience({
         style={{ marginBottom: 'clamp(16px,3vh,28px)' }}
       >
         <img
-          src="/oliva-logo.png"
+          src={imageAssets.logo}
           alt="Oliva"
           style={{
             width: 'clamp(72px,12vw,100px)', height: 'clamp(72px,12vw,100px)',

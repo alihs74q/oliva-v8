@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
+import { imageAssets } from '../utils/imageAssets';
 
 type Route = 'home' | 'menu';
-
-const LOGO_IMAGE = '/oliva-logo.png';
 
 export default function Navbar({ navigate, route }: { navigate: (to: Route) => void; route: Route }) {
   const [scrolled, setScrolled] = useState(false);
@@ -75,7 +74,7 @@ export default function Navbar({ navigate, route }: { navigate: (to: Route) => v
           }}
         >
           <img
-            src={LOGO_IMAGE}
+            src={imageAssets.logo}
             alt="Oliva — From Court to Cup"
             className="h-full w-auto object-contain logo-3d"
             style={{

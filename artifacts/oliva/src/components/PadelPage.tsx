@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import type { CategoryTheme } from './CategoryListPage'
 import CurrencyToggle from './CurrencyToggle'
 import { useCurrency } from '../hooks/useCurrency'
+import { imageAssets } from '../utils/imageAssets'
 
 const EASE = [0.25, 0.46, 0.45, 0.94] as const
 
@@ -134,7 +135,7 @@ export default function PadelPage({
             flexShrink: 0,
           }}>
             <img
-              src="/oliva-logo.png"
+              src={imageAssets.logo}
               alt="Oliva"
               className="logo-3d"
               style={{

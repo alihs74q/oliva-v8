@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { imageAssets } from './utils/imageAssets';
 import hotDrinksMenuBoard from './assets/hot-drinks/hot-drinks-menu-board.jpeg';
 import greenTeaPromo from './assets/hot-drinks/green-tea-promo.jpeg';
 import classicTeaPromo from './assets/hot-drinks/classic-tea-promo.jpeg';
@@ -280,7 +281,7 @@ export default function App() {
           boxShadow: '0 8px 40px rgba(89,107,61,0.45)',
         }}>
           <img
-            src="/oliva-logo.png"
+            src={imageAssets.logo}
             alt="Oliva"
             style={{ width: '78%', height: '78%', objectFit: 'contain', display: 'block' }}
           />

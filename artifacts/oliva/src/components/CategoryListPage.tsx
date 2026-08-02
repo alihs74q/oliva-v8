@@ -5,6 +5,7 @@ import CurrencyToggle from './CurrencyToggle'
 import { useCurrency } from '../hooks/useCurrency'
 import type { Currency } from '../hooks/useCurrency'
 import { getImageForProduct } from '../utils/imageMatching'
+import { imageAssets } from '../utils/imageAssets'
 import { ViewRecipeButton } from './ViewRecipeButton'
 
 export interface CategoryTheme {
@@ -462,7 +463,7 @@ export default function CategoryListPage({
                 flexShrink: 0,
               }}>
                 <img
-                  src="/oliva-logo.png"
+                  src={imageAssets.logo}
                   alt="Oliva"
                   className="logo-3d"
                   style={{
