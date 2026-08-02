@@ -1,0 +1,296 @@
+## MILKSHAKES
+
+### Cookies & Cream
+
+* Vanilla ice cream
+* Cold whole milk
+* Crushed Oreo cookies
+* Chocolate sauce
+
+### Strawberry Whip
+
+* Vanilla ice cream
+* Cold whole milk
+* Strawberry purée
+* Whipped cream
+
+### Choco-Nut Milkshake
+
+* Vanilla ice cream
+* Cold whole milk
+* Chocolate
+* Hazelnut flavor
+
+### Vanilla Milkshake
+
+* Vanilla ice cream
+* Cold whole milk
+* Vanilla flavor
+
+### Lotus Milkshake
+
+* Vanilla ice cream
+* Cold whole milk
+* Lotus Biscoff spread
+* Crushed Lotus biscuits
+
+### Oliva Milkshake
+
+* Vanilla ice cream
+* Cold whole milk
+* Oliva signature flavor
+* Signature topping
+
+## SMOOTHIES
+
+### Floral Fusion
+
+* Mixed fruits
+* Fruit juice
+* Floral flavor
+* Ice
+
+### Mango
+
+* Mango
+* Fruit juice
+* Ice
+
+### Strawberry
+
+* Strawberries
+* Fruit juice
+* Ice
+
+### Passion Fruit
+
+* Passion fruit
+* Fruit juice
+* Ice
+
+## REFRESHERS
+
+### Razzlychee Iced Tea
+
+* Black tea
+* Raspberry flavor
+* Lychee flavor
+* Ice
+
+### Tropical Iced Tea
+
+* Black tea
+* Tropical fruit flavors
+* Fruit syrup
+* Ice
+
+### Peach Iced Tea
+
+* Black tea
+* Peach flavor
+* Light sweetener
+* Ice
+
+### Kiwi Mojito
+
+* Kiwi
+* Fresh lime
+* Fresh mint
+* Sparkling water
+* Ice
+
+### Passion Crush
+
+* Passion fruit
+* Fresh lime
+* Sparkling water
+* Crushed ice
+
+### Summer Mix
+
+* Mixed summer fruits
+* Citrus juice
+* Sparkling water
+* Ice
+
+## COFFEE FRAPPES
+
+### Mocha Frappe
+
+* Double espresso
+* Cold whole milk
+* Chocolate sauce
+* Ice
+* Blended until smooth
+
+### Caramel Frappe
+
+* Double espresso
+* Cold whole milk
+* Caramel syrup
+* Ice
+* Blended until smooth
+
+### Vanilla Frappe
+
+* Double espresso
+* Cold whole milk
+* Vanilla syrup
+* Ice
+* Blended until smooth
+
+### Toffee Nut Frappe
+
+* Double espresso
+* Cold whole milk
+* Toffee-nut syrup
+* Ice
+* Blended until smooth
+
+### Oliva Frappe
+
+* Double espresso
+* Cold whole milk
+* Oliva signature flavor
+* Ice
+* Blended until smooth
+
+## ICED LATTES
+
+### Iced Spanish Latte
+
+* Double espresso
+* Cold whole milk
+* Sweetened condensed milk
+* Ice
+
+### Iced Mocha Latte
+
+* Double espresso
+* Cold whole milk
+* Chocolate sauce
+* Ice
+
+### Iced Vanilla Latte
+
+* Double espresso
+* Cold whole milk
+* Vanilla syrup
+* Ice
+
+### Iced Hazelnut Latte
+
+* Double espresso
+* Cold whole milk
+* Hazelnut syrup
+* Ice
+
+### Iced Salted Caramel Latte
+
+* Double espresso
+* Cold whole milk
+* Salted-caramel syrup
+* Ice
+
+### Irish Cream Latte
+
+* Double espresso
+* Cold whole milk
+* Non-alcoholic Irish-cream syrup
+* Ice
+
+### Caramel Macchiato
+
+* Double espresso
+* Cold whole milk
+* Vanilla syrup
+* Caramel drizzle
+* Ice
+
+### Iced Matcha Latte
+
+* Matcha green tea
+* Cold whole milk
+* Light sweetener
+* Ice
+
+## HOT DRINKS
+
+### Café Latte
+
+* Double espresso
+* Steamed whole milk
+* Thin velvety microfoam
+* More milk than foam
+
+### Vanilla Café Latte
+
+* Double espresso
+* Steamed whole milk
+* Vanilla syrup
+* Thin velvety microfoam
+
+### Hazelnut Café Latte
+
+* Double espresso
+* Steamed whole milk
+* Hazelnut syrup
+* Thin velvety microfoam
+
+### Cappuccino
+
+* Double espresso
+* Steamed whole milk
+* Thick velvety microfoam
+* Equal parts espresso, milk and foam
+
+### Espresso
+
+* Freshly ground coffee
+* Hot water under pressure
+* Concentrated coffee shot
+* Natural crema
+
+### Hot Chocolate
+
+* Chocolate or cocoa
+* Steamed whole milk
+* Light milk foam
+* Whipped cream
+
+### Black Tea
+
+* Black tea leaves
+* Hot water
+* Sugar optional
+* Lemon optional
+
+### Ginger and Honey
+
+* Fresh ginger
+* Hot water
+* Honey
+* Lemon optional
+
+### Chamomile
+
+* Chamomile flowers
+* Hot water
+* Honey optional
+
+### Green Tea
+
+* Green tea leaves
+* Hot water
+* Honey optional
+
+## COLD BEVERAGES
+
+### Water
+
+* Natural drinking water
+
+### Sparkling Water
+
+* Carbonated water
+* Natural bubbles

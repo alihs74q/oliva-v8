@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Oliva — Padel & Café"
+version = "1.0.0"
+id = "artifacts/oliva"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25654
+
+[services.development]
+run = "pnpm --filter @workspace/oliva run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/oliva", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/oliva/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25654"
+BASE_PATH = "/"

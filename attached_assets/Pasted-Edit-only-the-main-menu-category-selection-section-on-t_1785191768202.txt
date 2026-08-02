@@ -1,0 +1,66 @@
+Edit only the main menu category selection section on the homepage.
+
+Do not change, remove, recreate, or replace any existing category, image, button, route, link, animation, layout, spacing, shadow, or functionality.
+
+Do not edit the real menu pages where the products, prices, descriptions, subcategories, and menu items are displayed. Those sections must remain completely unchanged.
+
+Only update the visual theme of the main category selection section.
+
+Required changes:
+
+* Change the full background behind the category buttons to a clean creamy-white color.
+* Keep every category button/card at exactly its current size, shape, position, and layout.
+* Keep all existing category images completely unchanged, including their size, cropping, quality, and position.
+* Keep the existing shadows exactly as they are.
+* Use a soft olive-white background for all category buttons/cards.
+* Add a clean 1.5px olive-green border around every category button/card.
+* Keep the current corner radius and overall shape. Do not make the buttons larger, smaller, pill-shaped, or structurally different.
+* Keep the existing Oliva design style.
+* Center the category text more cleanly and make it approximately 3px larger than its current size, without changing the card dimensions or causing layout shifts.
+* Make the spacing around the category text feel slightly more balanced and creative, but do not move or resize the category cards.
+
+Use a different text accent color for each category:
+
+* Cold Drinks: ice blue
+* Hot Drinks: light orange
+* Shisha: elegant gold
+* Desserts: soft pink
+* Sandwiches: warm yellow
+* Yogurt: soft purple
+* Padel: clean blue
+
+The text colors should be soft, premium, readable, and not overly bright or neon.
+
+Add a smooth hover and press interaction:
+
+* On hover or tap, smoothly change the card background to olive green.
+* Keep the existing image unchanged.
+* Change the category text to creamy white during the hover state.
+* Use a smooth transition with no sudden movement, flickering, or layout shift.
+* Keep the existing animation and only add the color transition.
+* The transition should feel refined and lightweight, around 250–350ms.
+
+Use only these main theme colors across the section:
+
+* Creamy white
+* Olive white
+* Olive green
+
+The category-specific colors should be used only for the category text.
+
+Important restrictions:
+
+* Do not redesign the section.
+* Do not create new cards.
+* Do not replace the current category buttons.
+* Do not change any category name.
+* Do not change the order of categories.
+* Do not modify any image.
+* Do not modify any product page.
+* Do not modify prices or menu data.
+* Do not change the header, hero, footer, gallery, WhatsApp section, or any other part of the website.
+* Do not install unnecessary packages.
+* Reuse the existing components and CSS.
+* Make the smallest possible code changes.
+
+Before editing, locate the exact homepage category-selection component and apply these styling changes only to that component.

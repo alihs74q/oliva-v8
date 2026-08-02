@@ -1,0 +1,152 @@
+Update only the internal category-selection pages of the menu.
+
+These are the pages that open after selecting a main category such as:
+
+* Cold Drinks
+* Hot Drinks
+* Desserts
+* Shisha
+* Sandwiches
+* Yogurt
+* Padel
+
+Inside these pages, there are subcategory buttons such as Milkshakes, Smoothies, Coffee Frappe, Classic Hot Drinks, and similar options.
+
+Do not edit the actual product sections that display product names, images, descriptions, prices, sliders, or product details.
+
+Do not remove, recreate, rename, reorder, or replace any category or subcategory.
+
+Keep all existing:
+
+* Images
+* Text and information
+* Button sizes
+* Card sizes
+* Layout
+* Positions
+* Spacing
+* Shadows
+* Border radius
+* Animations
+* Routes
+* Links
+* Functionality
+
+Only update the color theme of each internal category page and its subcategory buttons.
+
+## Main base colors
+
+Use these three base colors throughout all internal category pages:
+
+* Creamy white: `#F7F3E8`
+* Olive white: `#EEF0E4`
+* Oliva green: `#596B3D`
+
+Use creamy white as the main page background.
+
+Use olive white for neutral surfaces, cards, and secondary areas.
+
+Use Oliva green only for small brand details, borders, back buttons, icons, and supporting accents.
+
+## Category accent colors
+
+Each internal category page must use its own specific accent color:
+
+* Cold Drinks — Ice blue: `#8ECFE8`
+* Hot Drinks — Light orange: `#E7A05A`
+* Shisha — Elegant gold: `#C5A342`
+* Desserts — Soft pink: `#E5A4B7`
+* Sandwiches — Warm yellow: `#D8B84E`
+* Yogurt — Soft purple: `#A78AC4`
+* Padel — Clean blue: `#4F82C5`
+
+Do not select different colors. Use these exact colors consistently.
+
+## Subcategory buttons
+
+For subcategory buttons such as Milkshakes, Smoothies, Coffee Frappe, Classic Hot Drinks, and other existing subcategories:
+
+* Keep their exact current size and shape.
+* Keep their existing images completely unchanged.
+* Keep their positions and layout unchanged.
+* Add a clean `1.5px` border using the current category accent color.
+* Use creamy white or olive-white as the default button background.
+* Use the category accent color for the button title.
+* Keep the current corner radius.
+* Do not make the buttons pill-shaped.
+* Do not resize or recreate the buttons.
+
+Examples:
+
+* Milkshakes inside Cold Drinks must use the ice-blue theme.
+* Smoothies inside Cold Drinks must also use the same ice-blue theme.
+* All subcategories inside Hot Drinks must use the light-orange theme.
+* All subcategories inside Desserts must use the soft-pink theme.
+* All subcategories inside Shisha must use the gold theme.
+
+Every subcategory inside the same main category must follow the same accent color.
+
+## Selected and hover states
+
+Add a smooth and lightweight interaction:
+
+* On hover or tap, smoothly change the subcategory button background to its category accent color.
+* Change the button text to creamy white.
+* Keep the image unchanged.
+* Do not move, resize, rotate, or crop the image.
+* Do not create layout shifts.
+* Keep all existing animations and add only the color transition.
+* Use a smooth transition between `250ms` and `350ms`.
+* The selected or active subcategory may remain filled with the category accent color.
+* Non-selected buttons should return to the creamy-white or olive-white background.
+
+## Internal page theme
+
+The full page should remain mainly creamy white.
+
+Use the category accent color carefully for:
+
+* Subcategory titles
+* Thin borders
+* Active buttons
+* Small icons
+* Underlines
+* Selected states
+* Small decorative details already present in the design
+
+Do not fill the entire page with the category accent color.
+
+Keep the result clean, premium, modern, light, and consistent with the main Oliva menu category section.
+
+## Critical restrictions
+
+Do not modify:
+
+* Product names
+* Product prices
+* Product descriptions
+* Product images
+* Product cards
+* Product sliders
+* Product databases
+* Supabase data
+* Category names
+* Subcategory names
+* Existing routes
+* Existing links
+* Navigation functionality
+* Header
+* Footer
+* Main homepage
+* Main menu category section
+* WhatsApp booking
+* Gallery
+* Any section outside the internal menu category-selection pages
+
+Do not install new libraries.
+
+Do not rebuild any component.
+
+Locate the existing internal menu-category components and make the smallest possible CSS or styling changes.
+
+Before finishing, verify that every product, price, image, route, button, and menu item still works exactly as before.

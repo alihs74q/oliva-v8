@@ -1,0 +1,4 @@
+{
+  "buildCommand": "pnpm --filter @workspace/oliva build",
+  "outputDirectory": "artifacts/oliva/dist/public"
+}
