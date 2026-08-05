@@ -110,6 +110,20 @@ function useReducedMotion() {
   return rm;
 }
 
+// ─── Mobile check (<768 px) ───────────────────────────────────────────────────
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < 768,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const h = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', h);
+    return () => mq.removeEventListener('change', h);
+  }, []);
+  return isMobile;
+}
+
 // ─── Winding-path builder ─────────────────────────────────────────────────────
 /** Generates the SVG d-string for the decorative winding line. */
 function buildPath(W: number, H: number): string {
@@ -149,10 +163,12 @@ function WindingLine({
   containerRef,
   scrollYProgress,
   rm,
+  isMobile,
 }: {
   containerRef: RefObject<HTMLDivElement | null>;
   scrollYProgress: MotionValue<number>;
   rm: boolean;
+  isMobile: boolean;
 }) {
   const pathRef = useRef<SVGPathElement>(null);
   const svgRef  = useRef<SVGSVGElement>(null);
@@ -202,17 +218,17 @@ function WindingLine({
         overflow: 'visible',
       }}
     >
-      {/* Soft glow duplicate */}
+      {/* Soft glow duplicate — blur disabled on mobile for perf */}
       <path
         d={pathD}
         fill="none"
         stroke={GOLD_DIM}
-        strokeWidth="6"
+        strokeWidth={isMobile ? 3 : 6}
         strokeLinecap="round"
         strokeLinejoin="round"
-        filter="url(#lineBlur)"
+        filter={isMobile ? undefined : 'url(#lineBlur)'}
         strokeDasharray={len}
-        style={{ opacity: 0.4 }}
+        style={{ opacity: isMobile ? 0.2 : 0.4 }}
       />
       {/* Main line */}
       <motion.path
@@ -359,7 +375,9 @@ function CharacterStroke({
         x={x}
         y={0}
         dominantBaseline="auto"
-        fontFamily='"Caveat Brush", cursive'
+        fontFamily='"Cormorant Garamond", "Playfair Display", serif'
+        fontWeight={600}
+        letterSpacing="0.04em"
         fontSize={fontSize}
         fill="none"
         stroke={GOLD}
@@ -371,6 +389,7 @@ function CharacterStroke({
           strokeDashoffset: dashOff,
           opacity: strokeOp,
           paintOrder: 'stroke fill',
+          textTransform: 'uppercase',
         }}
       >
         {char}
@@ -380,11 +399,13 @@ function CharacterStroke({
         x={x}
         y={0}
         dominantBaseline="auto"
-        fontFamily='"Caveat Brush", cursive'
+        fontFamily='"Cormorant Garamond", "Playfair Display", serif'
+        fontWeight={600}
+        letterSpacing="0.04em"
         fontSize={fontSize}
         fill={CREAM}
         stroke="none"
-        style={{ opacity: fillOp }}
+        style={{ opacity: fillOp, textTransform: 'uppercase' }}
       >
         {char}
       </motion.text>
@@ -404,6 +425,10 @@ function CinematicImage({
   initX,
   initY,
   rm,
+  isMobile = false,
+  loading = 'eager',
+  objectFit = 'cover',
+  objectPosition = 'center',
   style: extraStyle = {},
 }: {
   src: string;
@@ -416,6 +441,10 @@ function CinematicImage({
   initX: number;  // px
   initY: number;  // px
   rm: boolean;
+  isMobile?: boolean;
+  loading?: 'eager' | 'lazy';
+  objectFit?: React.CSSProperties['objectFit'];
+  objectPosition?: string;
   style?: React.CSSProperties;
 }) {
   const rotate = useTransform(
@@ -455,8 +484,10 @@ function CinematicImage({
         opacity,
         borderRadius: 12,
         overflow: 'hidden',
-        boxShadow:
-          '0 24px 80px rgba(0,0,0,0.7), 0 4px 16px rgba(0,0,0,0.4)',
+        // Reduce heavy shadow blur on mobile to avoid paint cost
+        boxShadow: isMobile
+          ? '0 8px 24px rgba(0,0,0,0.55)'
+          : '0 24px 80px rgba(0,0,0,0.7), 0 4px 16px rgba(0,0,0,0.4)',
         willChange: 'transform, opacity',
         ...extraStyle,
       }}
@@ -464,11 +495,13 @@ function CinematicImage({
       <img
         src={src}
         alt={alt}
-        loading="eager"
+        loading={loading}
+        decoding={loading === 'lazy' ? 'async' : 'auto'}
         style={{
           width: '100%',
           height: '100%',
-          objectFit: 'cover',
+          objectFit,
+          objectPosition,
           display: 'block',
         }}
       />
@@ -479,30 +512,54 @@ function CinematicImage({
 // ─── Section content ──────────────────────────────────────────────────────────
 function SectionContent({
   section,
+  sectionIndex,
   pageHeightPx,
   scrollYProgress,
   rm,
+  isMobile,
 }: {
   section: SectionDef;
+  sectionIndex: number;
   pageHeightPx: number;
   scrollYProgress: MotionValue<number>;
   rm: boolean;
+  isMobile: boolean;
 }) {
   const yPx    = pageHeightPx * section.yFrac;
   const isLeft = section.side === 'left';
 
-  // Scroll ranges — entry window spans ~18% of total scroll travel
-  const imgEntry   = Math.max(0, section.yFrac - 0.14);
-  const imgSettled = Math.min(1, section.yFrac + 0.05);
-  const titleStart = Math.max(0, section.yFrac - 0.01);
-  const titleEnd   = Math.min(1, section.yFrac + 0.13);
+  // ── Synchronized scroll ranges ─────────────────────────────────────────────
+  // Order enforced: images enter → images settle → title writes → description
+  // visible → hold → next scene enters.
+  //
+  // With PAGE_VH = 550 and yFrac gaps ≈ 0.23–0.25:
+  //   imgEntry  = yFrac - 0.09  → images start entering
+  //   imgSettled= yFrac - 0.01  → main image settled BEFORE title starts
+  //   titleStart= yFrac         → title begins writing after images settled
+  //   titleEnd  = yFrac + 0.09  → title fully written
+  //   next imgEntry = nextYFrac - 0.09 ≥ yFrac + 0.14 → ~27 vh hold after each title
+  const imgEntry   = Math.max(0, section.yFrac - 0.09);
+  const imgSettled = Math.min(1, section.yFrac - 0.01);
+  const titleStart = section.yFrac;
+  const titleEnd   = Math.min(1, section.yFrac + 0.09);
 
-  // Subtitle fades in after title starts drawing
+  // Description becomes fully visible immediately after ~70% of title is written
+  const subFadeStart = titleStart + (titleEnd - titleStart) * 0.70;
+  const subFadeEnd   = Math.min(1, titleStart + (titleEnd - titleStart) * 0.90);
   const subOp = useTransform(
     scrollYProgress,
-    [titleStart + 0.07, titleEnd],
+    [subFadeStart, subFadeEnd],
     rm ? [1, 1] : [0, 1],
   );
+
+  // Only the first scene loads eagerly; all others load lazily
+  const imgLoading: 'eager' | 'lazy' = sectionIndex === 0 ? 'eager' : 'lazy';
+
+  // PNG files are poster-style product renders — use contain so subject stays visible
+  const mainFit: React.CSSProperties['objectFit'] =
+    section.mainImg.endsWith('.png') ? 'contain' : 'cover';
+  const secFit: React.CSSProperties['objectFit'] =
+    section.secImg.endsWith('.png') ? 'contain' : 'cover';
 
   // Frame is 100vh tall, centred on yPx
   // Children use vh-relative positioning inside this frame
@@ -531,6 +588,10 @@ function SectionContent({
         initX={isLeft ? -100 : 100}
         initY={60}
         rm={rm}
+        isMobile={isMobile}
+        loading={imgLoading}
+        objectFit={mainFit}
+        objectPosition="center"
         style={{
           position: 'absolute',
           [isLeft ? 'left' : 'right']: 'clamp(-50px, -4vw, -20px)',
@@ -553,13 +614,16 @@ function SectionContent({
         initX={isLeft ? 70 : -70}
         initY={-55}
         rm={rm}
+        isMobile={isMobile}
+        loading={imgLoading}
+        objectFit={secFit}
+        objectPosition="center"
         style={{
           position: 'absolute',
           [isLeft ? 'right' : 'left']: 'clamp(8px, 5vw, 64px)',
           top: '8%',
           width: 'clamp(190px, 27vw, 380px)',
           height: 'clamp(240px, 38vh, 490px)',
-          objectFit: 'cover',
           zIndex: 2,
         }}
       />
@@ -587,13 +651,14 @@ function SectionContent({
           style={{
             opacity:    subOp,
             marginTop:  16,
-            fontSize:   'clamp(13px, 1.4vw, 16px)',
-            fontFamily: '"Manrope", system-ui, sans-serif',
-            fontWeight: 400,
-            letterSpacing: '0.06em',
-            lineHeight: 1.75,
-            color:      CREAM_DIM,
+            fontSize:   'clamp(16px, 1.5vw, 19px)',
+            fontFamily: '"Cormorant Garamond", serif',
+            fontStyle:  'italic',
+            fontWeight: 600,
+            lineHeight: 1.55,
+            color:      'rgba(245, 242, 232, 0.88)',
             whiteSpace: 'pre-line',
+            textShadow: '0 1px 4px rgba(0,0,0,0.45)',
           }}
         >
           {section.subtitle}
@@ -607,8 +672,11 @@ function SectionContent({
 export default function OurPlace({ onBack }: { onBack: () => void }) {
   const trackRef      = useRef<HTMLDivElement>(null);
   const rm            = useReducedMotion();
+  const isMobile      = useIsMobile();
   const [pageH, setPageH] = useState(0);
   const [activeIdx, setActiveIdx] = useState(0);
+  // Ref used to gate setState so we never trigger a re-render on every scroll frame
+  const activeIdxRef  = useRef(0);
 
   const { scrollYProgress } = useScroll({
     target:  trackRef,
@@ -618,7 +686,7 @@ export default function OurPlace({ onBack }: { onBack: () => void }) {
   // Scroll hint fades out after first 6% of scroll
   const scrollHintOpacity = useTransform(scrollYProgress, [0, 0.06], [1, 0]);
 
-  // Update active section for nav dots
+  // Update active section for nav dots — only fires setState when section changes
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     const fracs = SECTIONS.map(s => s.yFrac);
     let best = 0;
@@ -627,7 +695,10 @@ export default function OurPlace({ onBack }: { onBack: () => void }) {
       const d = Math.abs(v - f);
       if (d < bestDist) { bestDist = d; best = i; }
     });
-    setActiveIdx(best);
+    if (best !== activeIdxRef.current) {
+      activeIdxRef.current = best;
+      setActiveIdx(best);
+    }
   });
 
   // Measure actual page height after mount / resize
@@ -678,16 +749,19 @@ export default function OurPlace({ onBack }: { onBack: () => void }) {
         containerRef={trackRef}
         scrollYProgress={scrollYProgress}
         rm={rm}
+        isMobile={isMobile}
       />
 
       {/* ── Section image + title blocks ── */}
-      {pageH > 0 && SECTIONS.map((s) => (
+      {pageH > 0 && SECTIONS.map((s, i) => (
         <SectionContent
           key={s.id}
           section={s}
+          sectionIndex={i}
           pageHeightPx={pageH}
           scrollYProgress={scrollYProgress}
           rm={rm}
+          isMobile={isMobile}
         />
       ))}
 

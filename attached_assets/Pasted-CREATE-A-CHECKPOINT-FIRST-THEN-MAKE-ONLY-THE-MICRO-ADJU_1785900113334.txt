@@ -1,0 +1,121 @@
+CREATE A CHECKPOINT FIRST, THEN MAKE ONLY THE MICRO-ADJUSTMENTS BELOW.
+
+This is NOT a redesign or rebuild. Preserve the restored `/our-place` page exactly.
+
+Do not change:
+
+* Page structure or components
+* Image sizes or overall composition
+* Image files or text content
+* SVG line shape/path
+* Background, colors, shadows, borders, or navigation
+* Homepage, hero, routes, menu, or any other page
+* Existing handwriting implementation
+* Dependencies or project architecture
+
+Only adjust existing timing values, minor image positioning, mobile performance styles, description visibility, and fonts.
+
+## 1. SYNCHRONIZE THE SCROLL TIMING
+
+Use the current animation system. Do not replace or refactor it.
+
+For every scene, enforce this order:
+
+1. Current images begin entering.
+2. Images become clearly visible and settle.
+3. The connecting line reaches the title.
+4. The title writes completely.
+5. The description becomes fully visible.
+6. Hold the completed scene briefly.
+7. Only then may the next scene enter.
+
+Critical rules:
+
+* “THE CAFÉ” must finish writing before any Padel image enters.
+* “PADEL” must finish before Kids Area enters.
+* “KIDS AREA” must finish before Your Moments enters.
+* Never show two unfinished titles simultaneously.
+* Keep each completed title visible for approximately 20–25vh of scrolling.
+* Scrolling backward must reverse the same sequence smoothly.
+
+Change only the existing animation start/end values. Do not change the visual animation style.
+
+## 2. MAKE IMAGES EASIER TO SEE
+
+Keep the current image sizes and creative placement.
+
+Only make small positioning/cropping corrections so that:
+
+* The important subject remains visible while its title is writing.
+* Images do not disappear above or below the viewport too early.
+* The main image reaches its settled position before the title begins.
+* Add individual `objectPosition` values where necessary.
+* Use `object-fit: contain` only for poster-style promotional images that are currently cropped.
+* Keep photography using `cover`.
+* Do not create a new layout or resize everything.
+
+## 3. MAKE DESCRIPTIONS MUCH MORE VISIBLE
+
+Keep every description and its current position.
+
+Change only its typography and visibility:
+
+* Color: `rgba(245, 242, 232, 0.88)`
+* Final opacity: `1`
+* Font size: `clamp(16px, 1.5vw, 19px)`
+* Weight: `600`
+* Line height: `1.55`
+* Add only a very subtle dark text shadow if necessary.
+* Description must become fully visible immediately after approximately 70% of the title has been written.
+
+Give descriptions a soft, playful, elegant personality using the existing secondary brand font. Prefer:
+
+`"Cormorant Garamond", serif`
+
+Use italic styling if it remains readable. Do not use a childish or cartoon font.
+
+## 4. MATCH TITLES TO THE OLIVA LOGO THEME
+
+Replace the current playful marker-style title font only.
+
+Use the exact premium serif font already used by Oliva’s branding/headings. If there is no exact reusable font, use:
+
+`"Cormorant Garamond", "Playfair Display", serif`
+
+Title styling:
+
+* Weight: `600`
+* Uppercase
+* Letter spacing: `0.04em`
+* Cream final fill
+* Existing gold writing stroke
+* Preserve the current pen-writing animation
+
+Do not change the title wording, sizes, positions, or animation method.
+
+## 5. SMOOTHER PHONE SCROLLING
+
+Do not redesign the phone layout. Optimize the existing animation only under `768px`:
+
+* Animate only transform, opacity, and SVG dash offset.
+* Disable the SVG blur filter on mobile only.
+* Reduce oversized glow and shadow blur on mobile only.
+* Do not animate CSS `filter`, blur, shadow, width, height, top, or left.
+* Use `translate3d()` for image movement.
+* Keep one shared scroll-progress value.
+* Avoid React state updates during every scroll frame.
+* Load only the first scene images eagerly; lazy-load the others with `decoding="async"`.
+* Preserve native touch scrolling.
+* Do not add scroll snapping or scroll hijacking.
+
+Test at 360×800, 390×844, and desktop.
+
+Before finishing, confirm:
+
+* Every title completes before the following scene starts.
+* Images remain visible during their scene.
+* Descriptions are clearly readable.
+* Phone scrolling is smooth.
+* The restored design has not visually changed.
+
+Run the existing build/typecheck, report only the exact values/files changed, and stop. Do not make additional improvements.
