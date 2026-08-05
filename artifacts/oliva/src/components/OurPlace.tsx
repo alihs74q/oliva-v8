@@ -541,7 +541,7 @@ function SectionContent({
   const imgEntry   = Math.max(0, section.yFrac - 0.09);
   const imgSettled = Math.min(1, section.yFrac - 0.01);
   const titleStart = section.yFrac;
-  const titleEnd   = Math.min(1, section.yFrac + 0.05);
+  const titleEnd   = Math.min(1, section.yFrac + 0.07);
 
   // Description becomes fully visible immediately after ~70% of title is written
   const subFadeStart = titleStart + (titleEnd - titleStart) * 0.70;
