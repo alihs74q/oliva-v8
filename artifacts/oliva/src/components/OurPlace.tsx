@@ -538,10 +538,12 @@ function SectionContent({
   //   titleStart= yFrac         → title begins writing after images settled
   //   titleEnd  = yFrac + 0.09  → title fully written
   //   next imgEntry = nextYFrac - 0.09 ≥ yFrac + 0.14 → ~27 vh hold after each title
-  const imgEntry   = Math.max(0, section.yFrac - 0.09);
-  const imgSettled = Math.min(1, section.yFrac - 0.01);
-  const titleStart = section.yFrac;
-  const titleEnd   = Math.min(1, section.yFrac + 0.07);
+  // Shift everything earlier so the title writes while the section is
+  // centred in the viewport, not after it has scrolled to the top.
+  const imgEntry   = Math.max(0, section.yFrac - 0.15);
+  const imgSettled = Math.min(1, section.yFrac - 0.08);
+  const titleStart = section.yFrac - 0.07;
+  const titleEnd   = Math.min(1, section.yFrac);
 
   // Description becomes fully visible immediately after ~70% of title is written
   const subFadeStart = titleStart + (titleEnd - titleStart) * 0.70;
