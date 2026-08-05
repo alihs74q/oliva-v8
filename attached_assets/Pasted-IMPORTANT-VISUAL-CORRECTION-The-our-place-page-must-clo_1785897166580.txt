@@ -1,0 +1,78 @@
+IMPORTANT VISUAL CORRECTION:
+
+The `/our-place` page must closely reproduce the scale, composition, and scroll animation of the Le Mugs “La Carte” section.
+
+## OVERSIZED IMAGES
+
+The images are currently too small. Make them large, bold, and cinematic:
+
+* Do not use small cards, grids, or boxed photos.
+* Each main image should occupy approximately 55–75% of the desktop viewport width.
+* Some images may partially extend beyond the screen edges like an editorial canvas.
+* Alternate images between the left and right sides.
+* Mobile images should occupy approximately 88–95% of the screen width.
+* Use layered depth, soft realistic shadows, slight rotation, and subtle parallax.
+* Images must feel like the main visual focus—not decorations.
+* Keep them sharp, modern, premium, and properly optimized.
+
+## EXACT SCROLL STORY
+
+The page should feel like one continuous illustrated canvas:
+
+1. The main line begins drawing.
+2. It travels toward the first large image.
+3. The image enters with rotation, scale, and movement.
+4. When the line reaches its section, the title is handwritten.
+5. The line continues toward the next image.
+6. Repeat this connected sequence through the entire page.
+
+Everything must be controlled by the user’s scroll position. Scrolling backward must reverse the animation smoothly.
+
+## REAL PEN-WRITING EFFECT
+
+The connecting line and titles must look like they are being physically drawn by an invisible pen.
+
+Do not fake this using:
+
+* Simple opacity fades
+* Typewriter text
+* Left-to-right rectangular wipes
+* Underline animations
+* Pre-recorded videos
+
+Implement a genuine SVG draw-on animation:
+
+* Build the long curved route as one continuous SVG path.
+* Use `getTotalLength()`, `stroke-dasharray`, and `stroke-dashoffset`.
+* Connect `stroke-dashoffset` directly to scroll progress.
+* Use rounded line caps and joins.
+* Use Oliva cream or soft gold for the stroke.
+* The line should curve, loop, and travel naturally around the large images.
+
+The titles must also draw letter-by-letter like handwriting:
+
+* Use SVG path-based lettering or an SVG handwriting mask.
+* Animate the letter strokes in their correct writing order.
+* Start each title only when the main line reaches that story point.
+* After the title stroke completes, softly reveal its final filled appearance.
+* Do not animate all letters simultaneously.
+* The result must look like a pen genuinely writing each word.
+
+Handwritten titles:
+
+* “THE CAFÉ”
+* “PADEL”
+* “KIDS AREA”
+* “YOUR MOMENTS”
+
+## MOTION QUALITY
+
+* Images should begin slightly rotated, scaled down, and outside their final position.
+* Scrub them smoothly into place with the scroll.
+* Use different subtle movement speeds to create depth.
+* Avoid sudden entrances, excessive bouncing, or generic fade-up animations.
+* Maintain smooth performance and no horizontal overflow.
+* Reduce animation strength on mobile while preserving the line and handwriting effect.
+* Respect `prefers-reduced-motion`.
+
+This oversized imagery and real scroll-controlled pen drawing are the main features of the page. Do not consider the task complete if the line or titles merely fade, wipe, or appear as normal text.
