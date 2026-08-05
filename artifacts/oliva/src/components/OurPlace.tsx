@@ -218,35 +218,56 @@ function WindingLine({
         overflow: 'visible',
       }}
     >
-      {/* Soft glow duplicate — blur disabled on mobile for perf */}
+      <defs>
+        {/* Wide soft glow */}
+        <filter id="lineGlow" x="-80%" y="-5%" width="260%" height="110%">
+          <feGaussianBlur stdDeviation="10" result="blur1" />
+          <feComposite in="blur1" in2="SourceGraphic" operator="over" />
+        </filter>
+        {/* Tight halo */}
+        <filter id="lineHalo" x="-30%" y="-5%" width="160%" height="110%">
+          <feGaussianBlur stdDeviation="3" />
+        </filter>
+      </defs>
+
+      {/* Wide outer glow — disabled on mobile */}
+      {!isMobile && (
+        <path
+          d={pathD}
+          fill="none"
+          stroke="rgba(255,255,255,0.12)"
+          strokeWidth={20}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          filter="url(#lineGlow)"
+          strokeDasharray={len}
+        />
+      )}
+
+      {/* Tight inner halo */}
       <path
         d={pathD}
         fill="none"
-        stroke={GOLD_DIM}
-        strokeWidth={isMobile ? 3 : 6}
+        stroke="rgba(255,255,255,0.22)"
+        strokeWidth={isMobile ? 4 : 6}
         strokeLinecap="round"
         strokeLinejoin="round"
-        filter={isMobile ? undefined : 'url(#lineBlur)'}
+        filter={isMobile ? undefined : 'url(#lineHalo)'}
         strokeDasharray={len}
-        style={{ opacity: isMobile ? 0.2 : 0.4 }}
       />
-      {/* Main line */}
+
+      {/* Main hair line */}
       <motion.path
         ref={pathRef}
         d={pathD}
         fill="none"
-        stroke={GOLD}
-        strokeWidth="2"
+        stroke="rgba(255,255,255,0.90)"
+        strokeWidth="1.2"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeDasharray={len}
         style={{ strokeDashoffset: dashOffset }}
       />
-      <defs>
-        <filter id="lineBlur" x="-50%" y="-5%" width="200%" height="110%">
-          <feGaussianBlur stdDeviation="4" />
-        </filter>
-      </defs>
     </svg>
   );
 }
@@ -540,10 +561,10 @@ function SectionContent({
   //   next imgEntry = nextYFrac - 0.09 ≥ yFrac + 0.14 → ~27 vh hold after each title
   // Shift everything earlier so the title writes while the section is
   // centred in the viewport, not after it has scrolled to the top.
-  const imgEntry   = Math.max(0, section.yFrac - 0.15);
-  const imgSettled = Math.min(1, section.yFrac - 0.08);
-  const titleStart = section.yFrac - 0.07;
-  const titleEnd   = Math.min(1, section.yFrac);
+  const imgEntry   = Math.max(0, section.yFrac - 0.18);
+  const imgSettled = Math.max(0, section.yFrac - 0.08);
+  const titleStart = Math.max(0, section.yFrac - 0.08);
+  const titleEnd   = Math.min(1, section.yFrac + 0.07);
 
   // Description becomes fully visible immediately after ~70% of title is written
   const subFadeStart = titleStart + (titleEnd - titleStart) * 0.70;
