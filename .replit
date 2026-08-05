@@ -11,6 +11,23 @@ env = { "CI" = "true" }
 [workflows]
 runButton = "Project"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "artifacts/oliva: web"
+
+[[workflows.workflow]]
+name = "artifacts/oliva: web"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=25654 BASE_PATH=/ pnpm --filter @workspace/oliva run dev"
+
 [agent]
 stack = "PNPM_WORKSPACE"
 expertMode = true

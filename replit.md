@@ -1,36 +1,45 @@
-# [Project name]
+# Oliva — Padel & Café
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A cinematic web app for Oliva, a padel café that combines padel courts with a full café menu. Users can browse the menu (cold drinks, hot drinks, desserts, shisha, sandwiches, yogurt), view the gallery, explore the padel courts, and make WhatsApp bookings.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
+- `pnpm install` — install all workspace dependencies
+- `pnpm run dev` — start the Oliva web app dev server (forwards to `@workspace/oliva`)
 - `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- `pnpm run typecheck` — full typecheck across all packages
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- pnpm workspaces, Node.js 20+, TypeScript 5.9
+- Frontend: React 19 + Vite 7 + Tailwind CSS v4 + Framer Motion
+- Routing: custom hash-based router in `App.tsx`
+- PWA: vite-plugin-pwa with custom service worker
+- Fonts: Playfair Display, Cormorant Garamond, Manrope (Google Fonts)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/oliva/` — the main web app package (`@workspace/oliva`)
+- `artifacts/oliva/src/App.tsx` — root component + hash router
+- `artifacts/oliva/src/components/` — all page and UI components
+- `artifacts/oliva/src/data/` — static menu/subcategory data
+- `artifacts/oliva/src/assets/` — imported image assets (Vite-hashed)
+- `artifacts/oliva/public/` — static public assets (logo, product images)
+- `artifacts/oliva/vite.config.ts` — Vite config (PORT defaults to 5173 if unset, BASE_PATH defaults to /)
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Hash-based routing (`window.location.hash`) — no server-side routing needed, works as a static SPA
+- Images in `src/assets/` get Vite content-hash filenames for cache busting; `public/` images are served at root URL and referenced by path string
+- PORT and BASE_PATH are optional in vite.config.ts — defaults allow `pnpm run build` and `pnpm run dev` to work without env vars set
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Browse café menu by category (cold drinks, hot drinks, desserts, shisha, sandwiches, yogurt)
+- View the photo gallery with cinematic scroll transitions
+- Explore "Our Place" — the venue story with pinned scroll animations
+- Padel court info + WhatsApp booking flow
+- PWA-capable with custom service worker
 
 ## User preferences
 
@@ -38,7 +47,9 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- `pnpm run dev` at workspace root forwards to `@workspace/oliva` — there is no workspace-root dev server
+- Workflow injects `PORT=25654 BASE_PATH=/` — vite.config.ts falls back to port 5173 and path `/` when those are absent (safe for CI/build)
+- Public-dir asset warnings in Vite logs are non-breaking — those files are served via URL strings, not ES module imports
 
 ## Pointers
 
