@@ -1,0 +1,139 @@
+EDIT THE CURRENT IMPLEMENTATION DIRECTLY. DO NOT REBUILD OR REDESIGN THE PAGE.
+
+The existing `/our-place` design, colors, content, navigation, background, images, and composition are already approved. Change only:
+
+1. Image visibility and positioning
+2. Scroll-animation timing
+3. Pen-writing quality and visibility
+4. Mobile smoothness
+5. Section-title font
+
+## 1. FIX THE IMAGE PRESENTATION
+
+Keep the images large, but make sure they are fully presented during their scene.
+
+Currently, images enter partially outside the viewport and become heavily cropped before the user can properly see them.
+
+Fix this:
+
+* Keep the main images cinematic and approximately 60–70vw on desktop.
+* At the scene’s main focal moment, the complete important subject must be visible.
+* The image must settle inside the viewport while its title is being written.
+* Do not allow it to exit until the title is fully written and visible.
+* Add editable `objectFit` and `objectPosition` values for every image.
+* Use `cover` for photographic backgrounds only when the subject remains visible.
+* Use `contain` for promotional/square images that must not be cropped.
+* Keep the existing images; do not replace them.
+* Maintain the current rotations, shadows, layered layout, and premium scale.
+
+Mobile:
+
+* Main image: approximately 90–94vw.
+* Maximum height: approximately 52–58svh.
+* Secondary image: approximately 38–44vw.
+* Keep both images away from the sticky header, section dots, and title.
+* No horizontal overflow or clipped subjects.
+
+## 2. FIX THE SCROLL SEQUENCE
+
+The current title animation begins too late. For example, “THE CAFÉ” is still incomplete when the Padel scene starts.
+
+Each scene must follow this exact sequence:
+
+1. The gold line reaches the scene.
+2. The main and secondary images enter and settle.
+3. The title starts writing immediately.
+4. The complete title becomes clearly visible.
+5. The description appears.
+6. Hold the completed scene for approximately 25–35vh of scrolling.
+7. Only then may the next scene begin.
+
+The next scene’s images must never enter before the current title is 100% complete.
+
+The current timing resembles:
+
+* `revealStart = yFrac - 0.01`
+* `revealEnd = yFrac + 0.13`
+
+This writing window is too late and too long. Replace it with a shorter earlier window, approximately:
+
+* `titleStart = yFrac - 0.055`
+* `titleEnd = yFrac + 0.035`
+* `subtitleStart = titleEnd - 0.01`
+* `nextSceneEntryStart >= titleEnd + 0.025`
+
+Adjust responsively if necessary, but preserve the sequence above. Scrolling backward must reverse everything smoothly.
+
+## 3. REPAIR THE PEN-WRITING EFFECT
+
+The current implementation uses SVG `<text>` with `getComputedTextLength()` as the dash length. This produces broken and incomplete letter fragments because text width is not the real stroke-path length.
+
+Do not continue using that method.
+
+Instead:
+
+* Keep the final title in the approved brand font.
+* Reveal the title through an SVG mask made from animated pen strokes, or use real SVG letter paths.
+* If using paths, calculate every path with `getTotalLength()`.
+* Animate letters in their correct order.
+* The invisible pen must move naturally from one letter to the next.
+* Every title must become completely readable.
+* Do not use a typewriter, fade-only, or rectangular wipe effect.
+* Add a small glowing pen-tip point at the leading edge of the drawing.
+
+Improve visibility:
+
+* Main connecting line: 3–3.5px solid gold/cream.
+* Title-writing stroke: approximately 3px.
+* Use rounded caps and joins.
+* Increase contrast and use a restrained soft glow.
+* Remove the overly faint appearance currently visible against the dark green background.
+
+## 4. MATCH THE OLIVA LOGO TYPOGRAPHY
+
+Remove `Caveat Brush`, `Permanent Marker`, and other playful handwritten fonts from the section titles.
+
+Use the exact Oliva brand/wordmark font if it already exists in the project.
+
+If the exact font is unavailable, use:
+
+`"Cormorant Garamond", "Playfair Display", serif`
+
+Recommended styling:
+
+* Weight: 600
+* Uppercase
+* Elegant letter spacing around `0.05em`
+* Final fill: creamy white
+* Pen stroke: Oliva gold
+
+The handwriting animation should reveal this elegant serif typography through the SVG mask. Do not change body text, buttons, or navigation fonts.
+
+## 5. MAKE PHONE SCROLLING SMOOTH
+
+Create a dedicated mobile implementation under `768px`. Do not keep the full desktop geometry unchanged on phones.
+
+Performance requirements:
+
+* Animate only `transform`, `opacity`, and SVG dash offset.
+* Do not animate blur, filter, large box shadows, or backdrop-filter during scrolling.
+* Disable SVG `feGaussianBlur` on mobile.
+* Reduce shadow blur and glow strength on mobile.
+* Use one shared scroll progress value and requestAnimationFrame/Framer Motion values.
+* Do not trigger React state updates on every scroll frame.
+* Keep `will-change` only on the currently active scene.
+* Load only the first scene images eagerly.
+* Lazy-load the remaining images with `decoding="async"`.
+* Use optimized WebP/AVIF sizes and responsive `srcSet`.
+* Preserve native touch scrolling; do not hijack the wheel or touch gestures.
+
+Test at:
+
+* 360×800
+* 390×844
+* 430×932
+* Desktop
+
+At every size, verify that each image is visible, each title finishes writing before the next scene, the line is clear, and scrolling stays smooth.
+
+Do not change any approved design, text, image, color, route, button, homepage element, menu, or other page. Run the existing build/typecheck and fix only errors caused by these corrections.
