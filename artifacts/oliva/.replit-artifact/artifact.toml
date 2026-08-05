@@ -1,6 +1,7 @@
 kind = "web"
 previewPath = "/"
 title = "Oliva — Padel & Café"
+description = "Oliva is a padel café web app for a lounge that combines padel courts with a full café menu (cold drinks, hot drinks, desserts, shisha, sandwiches). Users can browse the menu, view the gallery, make WhatsApp bookings, and explore padel court info. The app features cinematic animations, a custom hash-based router, and PWA support."
 version = "1.0.0"
 id = "artifacts/oliva"
 router = "path"

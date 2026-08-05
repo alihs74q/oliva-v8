@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { imageAssets } from './utils/imageAssets';
+import OurPlace from './components/OurPlace';
 import hotDrinksMenuBoard from './assets/hot-drinks/hot-drinks-menu-board.jpeg';
 import greenTeaPromo from './assets/hot-drinks/green-tea-promo.jpeg';
 import classicTeaPromo from './assets/hot-drinks/classic-tea-promo.jpeg';
@@ -31,6 +32,7 @@ type ParsedRoute =
   | { name: 'home' }
   | { name: 'menu' }
   | { name: 'gallery' }
+  | { name: 'our-place' }
   | { name: 'list'; category: Category }
   | { name: 'detail'; category: Category; slug: string };
 
@@ -43,6 +45,7 @@ function parseRoute(): ParsedRoute {
   if (detailMatch) return { name: 'detail', category: detailMatch[1] as Category, slug: detailMatch[2] };
   if (hash === '/menu') return { name: 'menu' };
   if (hash === '/gallery') return { name: 'gallery' };
+  if (hash === '/our-place') return { name: 'our-place' };
   return { name: 'home' };
 }
 
@@ -53,7 +56,7 @@ const COLD_THEME: CategoryTheme = {
   glowColor: '#D4A843',
   text: '#f1f5f9',
   subtext: '#94a3b8',
-  accent: '#D4A843', // Warm golden cream
+  accent: '#D4A843',
 };
 
 const HOT_THEME: CategoryTheme = {
@@ -61,7 +64,7 @@ const HOT_THEME: CategoryTheme = {
   glowColor: '#E7A05A',
   text: '#fdf6e3',
   subtext: '#c9a57b',
-  accent: '#E7A05A', // Light orange
+  accent: '#E7A05A',
 };
 
 const DESSERT_THEME: CategoryTheme = {
@@ -69,7 +72,7 @@ const DESSERT_THEME: CategoryTheme = {
   glowColor: '#E5A4B7',
   text: '#fdf2f8',
   subtext: '#d4a5b8',
-  accent: '#E5A4B7', // Soft pink
+  accent: '#E5A4B7',
 };
 
 const SHISHA_THEME: CategoryTheme = {
@@ -77,7 +80,7 @@ const SHISHA_THEME: CategoryTheme = {
   glowColor: '#C5A342',
   text: '#f5f5f4',
   subtext: '#a8a29e',
-  accent: '#C5A342', // Elegant gold
+  accent: '#C5A342',
 };
 
 const SANDWICHES_THEME: CategoryTheme = {
@@ -85,7 +88,7 @@ const SANDWICHES_THEME: CategoryTheme = {
   glowColor: '#D8B84E',
   text: '#fdf6e3',
   subtext: '#c9a57b',
-  accent: '#D8B84E', // Warm yellow
+  accent: '#D8B84E',
 };
 
 const YOGURT_THEME: CategoryTheme = {
@@ -93,7 +96,7 @@ const YOGURT_THEME: CategoryTheme = {
   glowColor: '#A78AC4',
   text: '#fdf2f8',
   subtext: '#d4a5d8',
-  accent: '#A78AC4', // Soft purple
+  accent: '#A78AC4',
 };
 
 const PADEL_THEME: CategoryTheme = {
@@ -101,7 +104,7 @@ const PADEL_THEME: CategoryTheme = {
   glowColor: '#4F82C5',
   text: '#f0f9fa',
   subtext: '#7dd3fc',
-  accent: '#4F82C5', // Clean blue
+  accent: '#4F82C5',
 };
 
 const CATEGORY_DATA: Record<Category, { title: string; subtitle: string; theme: CategoryTheme; listHash: string }> = {
@@ -116,10 +119,13 @@ const CATEGORY_DATA: Record<Category, { title: string; subtitle: string; theme: 
 
 export default function App() {
   const [route, setRoute] = useState<ParsedRoute>(parseRoute);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const offlineStatus = useOfflineSupport();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const imagePreloader = useImagePreloader();
-  
+
   // Preload category images when navigating to list
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isReady: categoryReady } = useCategoryPreload(
     route.name === 'list' ? route.category : ''
   );
@@ -135,8 +141,8 @@ export default function App() {
 
   const navigateHome = () => { window.location.hash = '/'; };
   const navigateMenu = () => { window.location.hash = '/menu'; };
+  const navigateOurPlace = () => { window.location.hash = '/our-place'; };
   const navigateList = (cat: Category) => { window.location.hash = CATEGORY_DATA[cat].listHash; };
-  const navigateDetail = (cat: Category, slug: string) => { window.location.hash = `/menu/${cat}/${slug}`; };
 
   const scrollToMenu = () => {
     document.getElementById('menu-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -169,7 +175,7 @@ export default function App() {
   // Category list page
   if (route.name === 'list') {
     const data = CATEGORY_DATA[route.category];
-    
+
     // Padel gets its own custom page
     if (route.category === 'padel') {
       return (
@@ -182,7 +188,7 @@ export default function App() {
         </>
       );
     }
-    
+
     const HERO_IMAGES: Partial<Record<Category, string[]>> = {
       'hot-drinks': [
         hotDrinksMenuBoard,
@@ -230,6 +236,11 @@ export default function App() {
     if (route.category === 'shisha') {
       return (<><ShishaPage navigate={navigateMenu} onBack={back} /><WhatsAppButton /></>);
     }
+  }
+
+  // Our Place cinematic page
+  if (route.name === 'our-place') {
+    return <OurPlace onBack={navigateHome} />;
   }
 
   // Dedicated gallery page
@@ -316,27 +327,33 @@ export default function App() {
           A grove, two courts, and the slowest afternoon you've ever had.
         </p>
 
-        {/* Scroll CTA */}
-        <button
-          onClick={scrollToMenu}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 10,
-            background: '#596B3D', color: '#f5f2e8',
-            border: 'none', borderRadius: 999,
-            padding: '16px 38px',
-            fontSize: 15, fontWeight: 800, letterSpacing: '0.06em',
-            cursor: 'pointer',
-            boxShadow: '0 4px 28px rgba(89,107,61,0.45)',
-          }}
-        >
-          View Menu
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 5v14M5 12l7 7 7-7" />
-          </svg>
-        </button>
+        {/* CTA group */}
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', justifyContent: 'center' }}>
+          {/* View Menu */}
+          <button
+            onClick={scrollToMenu}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              background: '#596B3D', color: '#f5f2e8',
+              border: 'none', borderRadius: 999,
+              padding: '16px 38px',
+              fontSize: 15, fontWeight: 800, letterSpacing: '0.06em',
+              cursor: 'pointer',
+              boxShadow: '0 4px 28px rgba(89,107,61,0.45)',
+            }}
+          >
+            View Menu
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M5 12l7 7 7-7" />
+            </svg>
+          </button>
+
+          {/* Our Place */}
+          <OurPlaceButton onClick={navigateOurPlace} />
+        </div>
       </section>
 
-      {/* ── Menu — zero changes inside ── */}
+      {/* ── Menu ── */}
       <div id="menu-section">
         <Menu
           onHotDrinks={() => navigateList('hot-drinks')}
@@ -354,3 +371,56 @@ export default function App() {
   );
 }
 
+// ─── "Our Place" hero button ─────────────────────────────
+function OurPlaceButton({ onClick }: { onClick: () => void }) {
+  const ref = useRef<HTMLButtonElement>(null);
+  return (
+    <button
+      ref={ref}
+      onClick={onClick}
+      onMouseEnter={() => {
+        if (!ref.current) return;
+        ref.current.style.borderColor = 'rgba(212,168,67,0.8)';
+        ref.current.style.boxShadow = '0 0 22px rgba(212,168,67,0.28), 0 4px 20px rgba(0,0,0,0.35)';
+        ref.current.style.transform = 'translateY(-2px)';
+        const arrow = ref.current.querySelector('.op-arrow') as HTMLElement | null;
+        if (arrow) arrow.style.transform = 'translateX(4px)';
+      }}
+      onMouseLeave={() => {
+        if (!ref.current) return;
+        ref.current.style.borderColor = 'rgba(212,168,67,0.35)';
+        ref.current.style.boxShadow = '0 4px 20px rgba(0,0,0,0.25)';
+        ref.current.style.transform = 'translateY(0)';
+        const arrow = ref.current.querySelector('.op-arrow') as HTMLElement | null;
+        if (arrow) arrow.style.transform = 'translateX(0)';
+      }}
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 10,
+        background: 'rgba(26,38,18,0.55)',
+        border: '1px solid rgba(212,168,67,0.35)',
+        borderRadius: 999,
+        padding: '15px 36px',
+        color: 'rgba(245,242,232,0.88)',
+        fontSize: 15, fontWeight: 800, letterSpacing: '0.06em',
+        cursor: 'pointer',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+        transition: 'border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease',
+      }}
+    >
+      Our Place
+      <span
+        className="op-arrow"
+        style={{
+          display: 'inline-flex',
+          transition: 'transform 0.25s ease',
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </span>
+    </button>
+  );
+}

@@ -1,60 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-}
-
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-}
-
-@layer base {
-  * {
-    border-color: var(--border);
-  }
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-  }
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -145,7 +92,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
 .psk2 { position:absolute; pointer-events:none; animation:sk1 3.5s ease-out infinite; font-size:16px; animation-delay:1.2s; }
 .psk3 { position:absolute; pointer-events:none; animation:sk1 4s ease-out infinite; font-size:18px; animation-delay:2.3s; }
 
-/* Real smoke effect for 2aragile button */
+/* Real smoke effect for shisha button */
 .smoke-container {
   position: absolute;
   bottom: 0;
@@ -191,10 +138,9 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   }
 }
 
-/* Night Olive Luxury — homepage-only styles
-   Palette: #4D6437 #556B2F #3F4638 #2F2C28 #4A3426 #CCA478 #DCCFB6 #FAF9F6 */
+/* Night Olive Luxury — homepage-only styles */
 
-/* Hero image slow zoom + living-camera drift (transform only) */
+/* Hero image slow zoom + living-camera drift */
 @keyframes noh-hero-zoom {
   0%   { transform: scale(1.02) translate(0, 0); }
   50%  { transform: scale(1.045) translate(1px, -1px); }
@@ -339,7 +285,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   transition: opacity 0.1s linear;
 }
 
-/* Logo circle — travels from top-left to center-top */
+/* Logo circle */
 .noh-logo-circle {
   border-radius: 50%;
   overflow: hidden;
@@ -348,7 +294,6 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   pointer-events: none;
 }
 
-/* Mobile: smaller shadow */
 @media (max-width: 767px) {
   .noh-logo-circle {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(220, 207, 182, 0.25);
@@ -373,4 +318,18 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
 }
 .noh-gallery-logo.visible {
   opacity: 1;
+}
+
+/* ─── Our Place nav dots ───────────────────────────────── */
+/* Desktop: show right-side vertical dots, hide bottom dots */
+@media (min-width: 768px) {
+  .our-place-dots-desktop { display: flex !important; }
+  .our-place-dots-mobile  { display: none !important; }
+}
+/* Mobile: hide right dots, show bottom dots */
+@media (max-width: 767px) {
+  .our-place-dots-desktop { display: none !important; }
+  .our-place-dots-mobile  { display: flex !important; }
+  /* Hide extra images on very small screens */
+  [style*="--img-display"] { --img-display: none; }
 }

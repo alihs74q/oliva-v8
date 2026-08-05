@@ -1,0 +1,72 @@
+First inspect the existing project, its framework, routing, brand colors, logo assets, animation libraries, and responsive system. Implement this inside the current architecture without rebuilding the website.
+
+REFERENCE:
+https://le-mugs.com/
+
+Study the “La Carte / On Passe À Table” section. Recreate its visual rhythm and scroll experience with original code and Oliva assets. Do not copy their source code, wording, logo, images, or hotlink their files. Do not use an iframe.
+
+HOMEPAGE CHANGE:
+
+* Add one new CTA button named “Our Place” inside the existing hero CTA group.
+* Match Oliva’s premium café theme and the existing button dimensions.
+* Use a dark olive translucent background, thin cream/gold border, cream text and a small elegant arrow.
+* On hover: subtle lift, gold glow, arrow movement and smooth color transition.
+* On click, navigate smoothly to a new `/our-place` page.
+* Do not change anything else in the hero or homepage.
+
+NEW “OUR PLACE” PAGE:
+Create a cinematic, full-screen scroll experience inspired by the reference:
+
+* Use Oliva’s existing dark olive/green background, creamy-white typography and restrained gold accents.
+* Display the original Oliva logo without redesigning it.
+* Add a clear premium back/home button.
+* Begin with a centered, stacked, very thin editorial headline:
+  “OUR”
+  “PLACE”
+* Build a pinned scroll sequence lasting approximately 4–5 viewports while normal scrolling remains natural.
+* Layer existing real Oliva venue images around the centered typography: café interior, drinks, seating, padel and kids area where available.
+* Images should enter from different edges, partially extend outside the viewport, overlap naturally and use varied sizes, depth and slight rotations.
+* Animate images using smooth translate, scale, rotation, opacity and subtle blur-to-sharp effects.
+* Some layers should move at different speeds for a refined parallax effect.
+* Never use fake stock photos or Le Mugs assets. Reuse only existing Oliva images as temporary content.
+* Avoid excessive animation, bouncing or cartoon effects. The result must feel modern, artistic and premium.
+
+Create approximately four editable scenes using temporary text:
+
+1. “OUR PLACE”
+2. “MORE THAN A CAFÉ”
+3. “COFFEE • PADEL • MOMENTS”
+4. “SEE YOU AT OLIVA”
+
+Store every scene’s title, subtitle, description, image path and alt text inside one clearly named data/config file such as `ourPlaceContent`, so all wording and images can be edited later without touching the page layout or animation code.
+
+NAVIGATION:
+
+* On desktop, add fixed vertical progress dots on the right, inspired by Le Mugs.
+* The active dot should expand and reveal the current scene label.
+* Allow clicking a dot to smoothly reach its scene.
+* On mobile, use small bottom progress dots or a compact vertical indicator that does not cover content.
+
+RESPONSIVE BEHAVIOR:
+
+* Preserve the cinematic feeling on desktop, tablet and mobile.
+* On mobile, reduce the number and size of simultaneous image layers.
+* Keep the title readable, prevent horizontal overflow and use `100svh`.
+* Support touch scrolling and `prefers-reduced-motion`.
+* Do not create layout shifts or scroll trapping.
+
+PERFORMANCE:
+
+* Animate only transform and opacity where possible.
+* Use the project’s existing animation library. Do not install another heavy library unless necessary.
+* Preload only the opening image and lazy-load later scenes.
+* Preserve image aspect ratios and optimize loading.
+* Maintain smooth performance on average phones.
+
+STRICT REQUIREMENTS:
+
+* Do not modify menu items, prices, product pages, routes or existing functionality.
+* Do not redesign the Oliva logo.
+* Do not change the homepage except for adding the “Our Place” button.
+* Keep browser back/forward navigation working.
+* Run the build and type-check after implementation and fix all errors.
