@@ -505,11 +505,17 @@ function CinematicImage({
   objectPosition?: string;
   style?: React.CSSProperties;
 }) {
-  const rotate = useTransform(
-    scrollYProgress,
-    [entryStart, entryEnd, Math.min(entryEnd + 0.12, 1)],
-    rm ? [0, 0, 0] : [initRotate, 0, 0],
-  );
+  // Avoid duplicate keypoints: if entryEnd is already at 1.0, adding a third
+  // point at min(1.0 + 0.12, 1) = 1.0 creates [x, 1.0, 1.0] which breaks
+  // Framer Motion's interpolation and makes the image invisible at scroll end.
+  const rotateThird = Math.min(entryEnd + 0.12, 1);
+  const rotateInputs = rotateThird > entryEnd
+    ? ([entryStart, entryEnd, rotateThird] as const)
+    : ([entryStart, entryEnd] as const);
+  const rotateValues = rm
+    ? Array(rotateInputs.length).fill(0)
+    : rotateInputs.length === 3 ? [initRotate, 0, 0] : [initRotate, 0];
+  const rotate = useTransform(scrollYProgress, [...rotateInputs], rotateValues);
   const scale  = useTransform(
     scrollYProgress,
     [entryStart, entryEnd],
@@ -614,8 +620,11 @@ function SectionContent({
 
   // Fade the entire text block out once the section scrolls past — so it
   // disappears cleanly before the next section arrives.
-  const textFadeOutStart = Math.min(1, sceneCenterProgress + 0.07);
-  const textFadeOutEnd   = Math.min(1, sceneCenterProgress + 0.14);
+  // For the last section there is no next section, so we push the fade-out
+  // well beyond scrollYProgress=1 so it never triggers.
+  const isLastSection = sectionIndex === SECTIONS.length - 1;
+  const textFadeOutStart = isLastSection ? 1.5 : Math.min(1, sceneCenterProgress + 0.07);
+  const textFadeOutEnd   = isLastSection ? 2.0 : Math.min(1, sceneCenterProgress + 0.14);
   const textBlockOp = useTransform(
     scrollYProgress,
     [titleStart, Math.min(1, sceneCenterProgress + 0.01), textFadeOutStart, textFadeOutEnd],
