@@ -620,15 +620,19 @@ function SectionContent({
 
   // Fade the entire text block out once the section scrolls past — so it
   // disappears cleanly before the next section arrives.
-  // For the last section there is no next section, so we push the fade-out
-  // well beyond scrollYProgress=1 so it never triggers.
-  const isLastSection = sectionIndex === SECTIONS.length - 1;
-  const textFadeOutStart = isLastSection ? 1.5 : Math.min(1, sceneCenterProgress + 0.07);
-  const textFadeOutEnd   = isLastSection ? 2.0 : Math.min(1, sceneCenterProgress + 0.14);
+  // For the last section there is no next section, so the final output stays
+  // at 1 (no fade-out). All keypoints must be in [0,1] AND monotonically
+  // non-decreasing — enforce that by clamping each against the previous.
+  const isLastSection    = sectionIndex === SECTIONS.length - 1;
+  const textFadeOutOpacity = isLastSection ? 1 : 0;
+  const k1 = titleStart;
+  const k2 = Math.min(1, sceneCenterProgress + 0.01);
+  const k3 = Math.min(1, Math.max(k2, sceneCenterProgress + 0.07));
+  const k4 = Math.min(1, Math.max(k3, sceneCenterProgress + 0.14));
   const textBlockOp = useTransform(
     scrollYProgress,
-    [titleStart, Math.min(1, sceneCenterProgress + 0.01), textFadeOutStart, textFadeOutEnd],
-    rm ? [1, 1, 1, 1] : [0, 1, 1, 0],
+    [k1, k2, k3, k4],
+    rm ? [1, 1, 1, 1] : [0, 1, 1, textFadeOutOpacity],
   );
 
   // The optimized venue gallery is intentionally eager so the story feels
