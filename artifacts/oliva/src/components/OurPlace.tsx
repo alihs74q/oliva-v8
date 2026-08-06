@@ -604,8 +604,18 @@ function SectionContent({
     0,
     Math.min(1, (yPx - viewportHeight * 0.5) / scrollRange),
   );
-  const imgEntry   = Math.max(0, sceneCenterProgress - 0.11);
-  const imgSettled = Math.min(1, sceneCenterProgress - 0.035);
+
+  // Declare early — used by both image timing and text fade-out logic below.
+  const isLastSection = sectionIndex === SECTIONS.length - 1;
+
+  // For the last section, begin and complete the image entry animation
+  // much earlier so every image is fully settled (opacity 1, no transforms)
+  // well before the scroll reaches the bottom — eliminating any chance of
+  // images disappearing due to clamping artifacts at scrollYProgress → 1.
+  const imgEntryOffset   = isLastSection ? 0.26 : 0.11;
+  const imgSettledOffset = isLastSection ? 0.18 : 0.035;
+  const imgEntry   = Math.max(0, sceneCenterProgress - imgEntryOffset);
+  const imgSettled = Math.min(1, sceneCenterProgress - imgSettledOffset);
   const titleStart = Math.max(0, sceneCenterProgress - 0.055);
   const titleEnd   = Math.min(1, sceneCenterProgress + 0.055);
 
@@ -623,7 +633,6 @@ function SectionContent({
   // For the last section there is no next section, so the final output stays
   // at 1 (no fade-out). All keypoints must be in [0,1] AND monotonically
   // non-decreasing — enforce that by clamping each against the previous.
-  const isLastSection    = sectionIndex === SECTIONS.length - 1;
   const textFadeOutOpacity = isLastSection ? 1 : 0;
   const k1 = titleStart;
   const k2 = Math.min(1, sceneCenterProgress + 0.01);
