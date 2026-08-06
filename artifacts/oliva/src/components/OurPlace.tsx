@@ -46,6 +46,18 @@ interface SectionDef {
   mainAlt: string;
   secImg: string;
   secAlt: string;
+  extraImgs?: ExtraImageDef[];
+}
+
+interface ExtraImageDef {
+  src: string;
+  alt: string;
+  desktopStyle: React.CSSProperties;
+  mobileStyle: React.CSSProperties;
+  initRotate: number;
+  initScale: number;
+  initX: number;
+  initY: number;
 }
 
 const SECTIONS: SectionDef[] = [
@@ -55,10 +67,10 @@ const SECTIONS: SectionDef[] = [
     subtitle: 'Where the slowest afternoon\nstarts with one cup.',
     yFrac:    0.14,
     side:     'left',
-    mainImg:  '/cappuccino.jpeg',
-    mainAlt:  'Cappuccino at Oliva',
-    secImg:   '/images/products/OlivaFrappe.jpg',
-    secAlt:   'Oliva signature frappe',
+    mainImg:  '/images/our-place/image_1785976615790.webp',
+    mainAlt:  'Oliva café interior with framed artwork and warm lighting',
+    secImg:   '/images/our-place/image_1785976654650.webp',
+    secAlt:   'Oliva café lounge with leather seating',
   },
   {
     id:       'padel',
@@ -66,10 +78,10 @@ const SECTIONS: SectionDef[] = [
     subtitle: 'Two courts. Full menu.\nZero rush.',
     yFrac:    0.37,
     side:     'right',
-    mainImg:  '/caramel-frappuccino.jpg',
-    mainAlt:  'Refreshment at Oliva padel',
-    secImg:   '/images/products/LotusMilkshake.jpg',
-    secAlt:   'Lotus milkshake',
+    mainImg:  '/images/our-place/image_1785976952250.webp',
+    mainAlt:  'Oliva padel courts with a mountain view',
+    secImg:   '/images/our-place/image_1785977020610.webp',
+    secAlt:   'Blue padel court at Oliva',
   },
   {
     id:       'kids',
@@ -77,21 +89,46 @@ const SECTIONS: SectionDef[] = [
     subtitle: 'Sweet moments,\njust the right size.',
     yFrac:    0.62,
     side:     'left',
-    mainImg:  '/choconut-milkshake.png',
-    mainAlt:  'Kids corner at Oliva',
-    secImg:   '/images/products/RaspberryCheesecake.jpg',
-    secAlt:   'Raspberry cheesecake',
+    mainImg:  '/images/our-place/image_1785976838797.webp',
+    mainAlt:  'Outdoor kids play area at Oliva',
+    secImg:   '/images/our-place/image_1785976877956.webp',
+    secAlt:   'Oliva Kids Corner with outdoor seating and play equipment',
   },
   {
     id:       'moments',
-    title:    'YOUR MOMENTS',
+    title:    'FEEL THE VIBE',
     subtitle: 'Book a court. Order something cold.\nStay longer than planned.',
-    yFrac:    0.87,
+    // Keep the final collage comfortably inside the viewport at the end of
+    // the long story track instead of pushing it too close to the bottom edge.
+    yFrac:    0.90,
     side:     'right',
-    mainImg:  '/images/products/OreoCheesecake.jpg',
-    mainAlt:  'Moments at Oliva',
-    secImg:   '/floral-fusion.png',
-    secAlt:   'Floral fusion at Oliva',
+    mainImg:  '/images/our-place/image_1785977214305.webp',
+    mainAlt:  'A bright Oliva gathering space',
+    secImg:   '/images/our-place/image_1785977268687.webp',
+    secAlt:   'Oliva atmosphere and details',
+    extraImgs: [
+      {
+        src: '/images/our-place/image_1785977311760.webp',
+        alt: 'Oliva interior detail',
+        desktopStyle: { left: '4%', top: '42%', width: 'clamp(150px, 19vw, 260px)', height: 'clamp(220px, 34vh, 390px)', zIndex: 2 },
+        mobileStyle: { left: '4%', top: '42%', width: '39vw', height: '27vh', zIndex: 2 },
+        initRotate: -6, initScale: 0.8, initX: -70, initY: 40,
+      },
+      {
+        src: '/images/our-place/image_1785977350211.webp',
+        alt: 'Oliva seating area',
+        desktopStyle: { right: '3%', top: '45%', width: 'clamp(150px, 19vw, 260px)', height: 'clamp(220px, 34vh, 390px)', zIndex: 2 },
+        mobileStyle: { right: '4%', top: '44%', width: '39vw', height: '27vh', zIndex: 2 },
+        initRotate: 6, initScale: 0.8, initX: 70, initY: 45,
+      },
+      {
+        src: '/images/our-place/image_1785977405801.webp',
+        alt: 'Oliva café atmosphere',
+        desktopStyle: { left: '27%', bottom: '1%', width: 'clamp(140px, 17vw, 230px)', height: 'clamp(190px, 28vh, 320px)', zIndex: 3 },
+        mobileStyle: { left: '29%', top: '57%', width: '39vw', height: '27vh', zIndex: 3 },
+        initRotate: -3, initScale: 0.78, initX: 0, initY: 70,
+      },
+    ],
   },
 ];
 
@@ -505,6 +542,7 @@ function CinematicImage({
         opacity,
         borderRadius: 12,
         overflow: 'hidden',
+        background: '#192317',
         // Reduce heavy shadow blur on mobile to avoid paint cost
         boxShadow: isMobile
           ? '0 8px 24px rgba(0,0,0,0.55)'
@@ -517,7 +555,8 @@ function CinematicImage({
         src={src}
         alt={alt}
         loading={loading}
-        decoding={loading === 'lazy' ? 'async' : 'auto'}
+        decoding="async"
+        fetchPriority={loading === 'eager' ? 'high' : 'auto'}
         style={{
           width: '100%',
           height: '100%',
@@ -549,22 +588,20 @@ function SectionContent({
   const yPx    = pageHeightPx * section.yFrac;
   const isLeft = section.side === 'left';
 
-  // ── Synchronized scroll ranges ─────────────────────────────────────────────
-  // Order enforced: images enter → images settle → title writes → description
-  // visible → hold → next scene enters.
-  //
-  // With PAGE_VH = 550 and yFrac gaps ≈ 0.23–0.25:
-  //   imgEntry  = yFrac - 0.09  → images start entering
-  //   imgSettled= yFrac - 0.01  → main image settled BEFORE title starts
-  //   titleStart= yFrac         → title begins writing after images settled
-  //   titleEnd  = yFrac + 0.09  → title fully written
-  //   next imgEntry = nextYFrac - 0.09 ≥ yFrac + 0.14 → ~27 vh hold after each title
-  // Shift everything earlier so the title writes while the section is
-  // centred in the viewport, not after it has scrolled to the top.
-  const imgEntry   = Math.max(0, section.yFrac - 0.18);
-  const imgSettled = Math.max(0, section.yFrac - 0.08);
-  const titleStart = Math.max(0, section.yFrac - 0.08);
-  const titleEnd   = Math.min(1, section.yFrac + 0.07);
+  // `scrollYProgress` measures the scrollable range (track minus viewport),
+  // while each scene is positioned against the full track height. Convert
+  // the scene's actual viewport-center position into that same progress space
+  // so images and lettering arrive while the scene is visible, not afterward.
+  const viewportHeight = typeof window === 'undefined' ? 0 : window.innerHeight;
+  const scrollRange = Math.max(pageHeightPx - viewportHeight, 1);
+  const sceneCenterProgress = Math.max(
+    0,
+    Math.min(1, (yPx - viewportHeight * 0.5) / scrollRange),
+  );
+  const imgEntry   = Math.max(0, sceneCenterProgress - 0.11);
+  const imgSettled = Math.min(1, sceneCenterProgress - 0.035);
+  const titleStart = Math.max(0, sceneCenterProgress - 0.055);
+  const titleEnd   = Math.min(1, sceneCenterProgress + 0.055);
 
   // Description becomes fully visible immediately after ~70% of title is written
   const subFadeStart = titleStart + (titleEnd - titleStart) * 0.70;
@@ -575,14 +612,16 @@ function SectionContent({
     rm ? [1, 1] : [0, 1],
   );
 
-  // Only the first scene loads eagerly; all others load lazily
-  const imgLoading: 'eager' | 'lazy' = sectionIndex === 0 ? 'eager' : 'lazy';
+  // The optimized venue gallery is intentionally eager so the story feels
+  // instant when visitors scroll between scenes.
+  const imgLoading: 'eager' | 'lazy' = 'eager';
 
-  // PNG files are poster-style product renders — use contain so subject stays visible
+  // Venue photos keep their full portrait/landscape composition rather than
+  // cropping to fill the decorative frames.
   const mainFit: React.CSSProperties['objectFit'] =
-    section.mainImg.endsWith('.png') ? 'contain' : 'cover';
+    section.mainImg.includes('/our-place/') ? 'contain' : 'cover';
   const secFit: React.CSSProperties['objectFit'] =
-    section.secImg.endsWith('.png') ? 'contain' : 'cover';
+    section.secImg.includes('/our-place/') ? 'contain' : 'cover';
 
   // Frame is 100vh tall, centred on yPx
   // Children use vh-relative positioning inside this frame
@@ -619,8 +658,8 @@ function SectionContent({
           position: 'absolute',
           [isLeft ? 'left' : 'right']: 'clamp(-50px, -4vw, -20px)',
           top: '5%',
-          width: 'clamp(320px, 63vw, 860px)',
-          height: 'clamp(380px, 74vh, 920px)',
+          width: isMobile ? 'min(78vw, 340px)' : 'clamp(320px, 63vw, 860px)',
+          height: isMobile ? 'min(60vh, 520px)' : 'clamp(380px, 74vh, 920px)',
           zIndex: 3,
         }}
       />
@@ -645,11 +684,34 @@ function SectionContent({
           position: 'absolute',
           [isLeft ? 'right' : 'left']: 'clamp(8px, 5vw, 64px)',
           top: '8%',
-          width: 'clamp(190px, 27vw, 380px)',
-          height: 'clamp(240px, 38vh, 490px)',
+          width: isMobile ? 'min(40vw, 170px)' : 'clamp(190px, 27vw, 380px)',
+          height: isMobile ? 'min(30vh, 260px)' : 'clamp(240px, 38vh, 490px)',
           zIndex: 2,
         }}
       />
+
+      {/* Extra photos turn the final scene into a responsive five-photo
+          collage without changing the existing scroll choreography. */}
+      {section.extraImgs?.map((image, extraIndex) => (
+        <CinematicImage
+          key={image.src}
+          src={image.src}
+          alt={image.alt}
+          scrollYProgress={scrollYProgress}
+          entryStart={imgEntry + 0.04 + extraIndex * 0.015}
+          entryEnd={imgSettled + 0.04 + extraIndex * 0.015}
+          initRotate={image.initRotate}
+          initScale={image.initScale}
+          initX={image.initX}
+          initY={image.initY}
+          rm={rm}
+          isMobile={isMobile}
+          loading={imgLoading}
+          objectFit="contain"
+          objectPosition="center"
+          style={isMobile ? image.mobileStyle : image.desktopStyle}
+        />
+      ))}
 
       {/* ── Text: handwritten title + subtitle ── */}
       <div
