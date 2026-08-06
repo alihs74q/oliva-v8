@@ -612,6 +612,16 @@ function SectionContent({
     rm ? [1, 1] : [0, 1],
   );
 
+  // Fade the entire text block out once the section scrolls past — so it
+  // disappears cleanly before the next section arrives.
+  const textFadeOutStart = Math.min(1, sceneCenterProgress + 0.07);
+  const textFadeOutEnd   = Math.min(1, sceneCenterProgress + 0.14);
+  const textBlockOp = useTransform(
+    scrollYProgress,
+    [titleStart, Math.min(1, sceneCenterProgress + 0.01), textFadeOutStart, textFadeOutEnd],
+    rm ? [1, 1, 1, 1] : [0, 1, 1, 0],
+  );
+
   // The optimized venue gallery is intentionally eager so the story feels
   // instant when visitors scroll between scenes.
   const imgLoading: 'eager' | 'lazy' = 'eager';
@@ -714,13 +724,14 @@ function SectionContent({
       ))}
 
       {/* ── Text: handwritten title + subtitle ── */}
-      <div
+      <motion.div
         style={{
           position: 'absolute',
           [isLeft ? 'right' : 'left']: 'clamp(16px, 4vw, 72px)',
           bottom: '6%',
           width: 'clamp(220px, 38vw, 540px)',
           zIndex: 20,
+          opacity: textBlockOp,
         }}
       >
         <HandwrittenTitle
@@ -748,7 +759,7 @@ function SectionContent({
         >
           {section.subtitle}
         </motion.p>
-      </div>
+      </motion.div>
     </div>
   );
 }
