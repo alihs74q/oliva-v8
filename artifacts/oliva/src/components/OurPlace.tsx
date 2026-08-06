@@ -46,6 +46,8 @@ interface SectionDef {
   mainAlt: string;
   secImg: string;
   secAlt: string;
+  /** True only for the one landscape main image (all others are portrait ~4:5) */
+  mainIsLandscape?: boolean;
   extraImgs?: ExtraImageDef[];
 }
 
@@ -106,26 +108,27 @@ const SECTIONS: SectionDef[] = [
     mainAlt:  'A bright Oliva gathering space',
     secImg:   '/images/our-place/image_1785977268687.webp',
     secAlt:   'Oliva atmosphere and details',
+    mainIsLandscape: true,
     extraImgs: [
       {
         src: '/images/our-place/image_1785977311760.webp',
         alt: 'Oliva interior detail',
-        desktopStyle: { left: '4%', top: '42%', width: 'clamp(150px, 19vw, 260px)', height: 'clamp(220px, 34vh, 390px)', zIndex: 2 },
-        mobileStyle: { left: '4%', top: '42%', width: '39vw', height: '27vh', zIndex: 2 },
+        desktopStyle: { left: '4%', top: '42%', height: 'clamp(220px, 34vh, 390px)', aspectRatio: '4/5', zIndex: 2 },
+        mobileStyle: { left: '4%', top: '42%', height: '27vh', aspectRatio: '4/5', zIndex: 2 },
         initRotate: -6, initScale: 0.8, initX: -70, initY: 40,
       },
       {
         src: '/images/our-place/image_1785977350211.webp',
         alt: 'Oliva seating area',
-        desktopStyle: { right: '3%', top: '45%', width: 'clamp(150px, 19vw, 260px)', height: 'clamp(220px, 34vh, 390px)', zIndex: 2 },
-        mobileStyle: { right: '4%', top: '44%', width: '39vw', height: '27vh', zIndex: 2 },
+        desktopStyle: { right: '3%', top: '45%', height: 'clamp(220px, 34vh, 390px)', aspectRatio: '4/5', zIndex: 2 },
+        mobileStyle: { right: '4%', top: '44%', height: '27vh', aspectRatio: '4/5', zIndex: 2 },
         initRotate: 6, initScale: 0.8, initX: 70, initY: 45,
       },
       {
         src: '/images/our-place/image_1785977405801.webp',
         alt: 'Oliva café atmosphere',
-        desktopStyle: { left: '27%', bottom: '1%', width: 'clamp(140px, 17vw, 230px)', height: 'clamp(190px, 28vh, 320px)', zIndex: 3 },
-        mobileStyle: { left: '29%', top: '57%', width: '39vw', height: '27vh', zIndex: 3 },
+        desktopStyle: { left: '27%', bottom: '1%', height: 'clamp(190px, 28vh, 320px)', aspectRatio: '4/5', zIndex: 3 },
+        mobileStyle: { left: '29%', top: '57%', height: '27vh', aspectRatio: '4/5', zIndex: 3 },
         initRotate: -3, initScale: 0.78, initX: 0, initY: 70,
       },
     ],
@@ -548,7 +551,7 @@ function CinematicImage({
         opacity,
         borderRadius: 12,
         overflow: 'hidden',
-        background: '#192317',
+        border: '1px solid rgba(25,35,23,0.55)',
         // Reduce heavy shadow blur on mobile to avoid paint cost
         boxShadow: isMobile
           ? '0 8px 24px rgba(0,0,0,0.55)'
@@ -648,141 +651,149 @@ function SectionContent({
   // instant when visitors scroll between scenes.
   const imgLoading: 'eager' | 'lazy' = 'eager';
 
-  // Venue photos keep their full portrait/landscape composition rather than
-  // cropping to fill the decorative frames.
-  const mainFit: React.CSSProperties['objectFit'] =
-    section.mainImg.includes('/our-place/') ? 'contain' : 'cover';
-  const secFit: React.CSSProperties['objectFit'] =
-    section.secImg.includes('/our-place/') ? 'contain' : 'cover';
+  // Two independent absolutely-positioned sibling layers share the same
+  // viewport frame (top/height/transform) but are never parent/child of
+  // each other.  This ensures that opacity changes on the text layer
+  // never touch the image compositing layer — the root cause of the
+  // "Feel the Vibe" images vanishing when the title fades in.
+  const layerBase: React.CSSProperties = {
+    position:  'absolute',
+    top:       yPx,
+    left:      0,
+    right:     0,
+    height:    '100vh',
+    transform: 'translateY(-50%)',
+    pointerEvents: 'none',
+  };
 
-  // Frame is 100vh tall, centred on yPx
-  // Children use vh-relative positioning inside this frame
   return (
-    <div
-      style={{
-        position:  'absolute',
-        top:       yPx,
-        left:      0,
-        right:     0,
-        height:    '100vh',
-        transform: 'translateY(-50%)',
-        zIndex:    10,
-        pointerEvents: 'none',
-      }}
-    >
-      {/* ── Main image (large, 55–72 vw, bleeds off-screen edge) ── */}
-      <CinematicImage
-        src={section.mainImg}
-        alt={section.mainAlt}
-        scrollYProgress={scrollYProgress}
-        entryStart={imgEntry}
-        entryEnd={imgSettled}
-        initRotate={isLeft ? -7 : 7}
-        initScale={0.82}
-        initX={isLeft ? -100 : 100}
-        initY={60}
-        rm={rm}
-        isMobile={isMobile}
-        loading={imgLoading}
-        objectFit={mainFit}
-        objectPosition="center"
-        style={{
-          position: 'absolute',
-          [isLeft ? 'left' : 'right']: 'clamp(-50px, -4vw, -20px)',
-          top: '5%',
-          width: isMobile ? 'min(78vw, 340px)' : 'clamp(320px, 63vw, 860px)',
-          height: isMobile ? 'min(60vh, 520px)' : 'clamp(380px, 74vh, 920px)',
-          zIndex: 3,
-        }}
-      />
+    <>
+      {/* ── IMAGE LAYER — never receives opacity from text animation ── */}
+      <div style={{ ...layerBase, zIndex: 10 }}>
 
-      {/* ── Secondary image (smaller, opposite side) ── */}
-      <CinematicImage
-        src={section.secImg}
-        alt={section.secAlt}
-        scrollYProgress={scrollYProgress}
-        entryStart={imgEntry + 0.03}
-        entryEnd={imgSettled + 0.05}
-        initRotate={isLeft ? 9 : -9}
-        initScale={0.78}
-        initX={isLeft ? 70 : -70}
-        initY={-55}
-        rm={rm}
-        isMobile={isMobile}
-        loading={imgLoading}
-        objectFit={secFit}
-        objectPosition="center"
-        style={{
-          position: 'absolute',
-          [isLeft ? 'right' : 'left']: 'clamp(8px, 5vw, 64px)',
-          top: '8%',
-          width: isMobile ? 'min(40vw, 170px)' : 'clamp(190px, 27vw, 380px)',
-          height: isMobile ? 'min(30vh, 260px)' : 'clamp(240px, 38vh, 490px)',
-          zIndex: 2,
-        }}
-      />
-
-      {/* Extra photos turn the final scene into a responsive five-photo
-          collage without changing the existing scroll choreography. */}
-      {section.extraImgs?.map((image, extraIndex) => (
+        {/* Main image (large, bleeds off-screen edge).
+            Portrait: fix height, aspect-ratio calculates width.
+            Landscape (moments only): fix width, aspect-ratio calculates height. */}
         <CinematicImage
-          key={image.src}
-          src={image.src}
-          alt={image.alt}
+          src={section.mainImg}
+          alt={section.mainAlt}
           scrollYProgress={scrollYProgress}
-          entryStart={imgEntry + 0.04 + extraIndex * 0.015}
-          entryEnd={imgSettled + 0.04 + extraIndex * 0.015}
-          initRotate={image.initRotate}
-          initScale={image.initScale}
-          initX={image.initX}
-          initY={image.initY}
+          entryStart={imgEntry}
+          entryEnd={imgSettled}
+          initRotate={isLeft ? -7 : 7}
+          initScale={0.82}
+          initX={isLeft ? -100 : 100}
+          initY={60}
           rm={rm}
           isMobile={isMobile}
           loading={imgLoading}
-          objectFit="contain"
+          objectFit="cover"
           objectPosition="center"
-          style={isMobile ? image.mobileStyle : image.desktopStyle}
-        />
-      ))}
-
-      {/* ── Text: handwritten title + subtitle ── */}
-      <motion.div
-        style={{
-          position: 'absolute',
-          [isLeft ? 'right' : 'left']: 'clamp(16px, 4vw, 72px)',
-          bottom: '6%',
-          width: 'clamp(220px, 38vw, 540px)',
-          zIndex: 20,
-          opacity: textBlockOp,
-        }}
-      >
-        <HandwrittenTitle
-          text={section.title}
-          scrollYProgress={scrollYProgress}
-          revealStart={titleStart}
-          revealEnd={titleEnd}
-          rm={rm}
-          fontSize={88}
-        />
-
-        <motion.p
           style={{
-            opacity:    subOp,
-            marginTop:  16,
-            fontSize:   'clamp(16px, 1.5vw, 19px)',
-            fontFamily: '"Cormorant Garamond", serif',
-            fontStyle:  'italic',
-            fontWeight: 600,
-            lineHeight: 1.55,
-            color:      'rgba(245, 242, 232, 0.88)',
-            whiteSpace: 'pre-line',
-            textShadow: '0 1px 4px rgba(0,0,0,0.45)',
+            position: 'absolute',
+            [isLeft ? 'left' : 'right']: 'clamp(-50px, -4vw, -20px)',
+            top: '5%',
+            ...(section.mainIsLandscape
+              ? {
+                  width: isMobile ? 'min(78vw, 340px)' : 'clamp(320px, 63vw, 860px)',
+                  aspectRatio: '3/2',
+                }
+              : {
+                  height: isMobile ? 'min(60vh, 520px)' : 'clamp(380px, 74vh, 920px)',
+                  aspectRatio: '4/5',
+                }),
+            zIndex: 3,
+          }}
+        />
+
+        {/* Secondary image (smaller, opposite side) — all portrait ~4:5 */}
+        <CinematicImage
+          src={section.secImg}
+          alt={section.secAlt}
+          scrollYProgress={scrollYProgress}
+          entryStart={imgEntry + 0.03}
+          entryEnd={imgSettled + 0.05}
+          initRotate={isLeft ? 9 : -9}
+          initScale={0.78}
+          initX={isLeft ? 70 : -70}
+          initY={-55}
+          rm={rm}
+          isMobile={isMobile}
+          loading={imgLoading}
+          objectFit="cover"
+          objectPosition="center"
+          style={{
+            position: 'absolute',
+            [isLeft ? 'right' : 'left']: 'clamp(8px, 5vw, 64px)',
+            top: '8%',
+            height: isMobile ? 'min(30vh, 260px)' : 'clamp(240px, 38vh, 490px)',
+            aspectRatio: '4/5',
+            zIndex: 2,
+          }}
+        />
+
+        {/* Extra photos — final "Feel the Vibe" collage */}
+        {section.extraImgs?.map((image, extraIndex) => (
+          <CinematicImage
+            key={image.src}
+            src={image.src}
+            alt={image.alt}
+            scrollYProgress={scrollYProgress}
+            entryStart={imgEntry + 0.04 + extraIndex * 0.015}
+            entryEnd={imgSettled + 0.04 + extraIndex * 0.015}
+            initRotate={image.initRotate}
+            initScale={image.initScale}
+            initX={image.initX}
+            initY={image.initY}
+            rm={rm}
+            isMobile={isMobile}
+            loading={imgLoading}
+            objectFit="cover"
+            objectPosition="center"
+            style={isMobile ? image.mobileStyle : image.desktopStyle}
+          />
+        ))}
+      </div>
+
+      {/* ── TEXT LAYER — independent sibling; opacity here never affects images ── */}
+      <div style={{ ...layerBase, zIndex: 20 }}>
+        <motion.div
+          style={{
+            position: 'absolute',
+            [isLeft ? 'right' : 'left']: 'clamp(16px, 4vw, 72px)',
+            bottom: '6%',
+            width: 'clamp(220px, 38vw, 540px)',
+            opacity: textBlockOp,
           }}
         >
-          {section.subtitle}
-        </motion.p>
-      </motion.div>
-    </div>
+          <HandwrittenTitle
+            text={section.title}
+            scrollYProgress={scrollYProgress}
+            revealStart={titleStart}
+            revealEnd={titleEnd}
+            rm={rm}
+            fontSize={88}
+          />
+
+          <motion.p
+            style={{
+              opacity:    subOp,
+              marginTop:  16,
+              fontSize:   'clamp(16px, 1.5vw, 19px)',
+              fontFamily: '"Cormorant Garamond", serif',
+              fontStyle:  'italic',
+              fontWeight: 600,
+              lineHeight: 1.55,
+              color:      'rgba(245, 242, 232, 0.88)',
+              whiteSpace: 'pre-line',
+              textShadow: '0 1px 4px rgba(0,0,0,0.45)',
+            }}
+          >
+            {section.subtitle}
+          </motion.p>
+        </motion.div>
+      </div>
+    </>
   );
 }
 
