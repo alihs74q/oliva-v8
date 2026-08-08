@@ -1,0 +1,511 @@
+You are a senior full-stack engineer upgrading the existing Oliva Café website. Work directly inside the CURRENT Replit workspace. This workspace is the only source of truth.
+
+## Main objective
+
+Build a secure, production-ready Admin CMS inside the same website at:
+
+`/#/admin`
+
+The Admin must allow exactly three pre-approved users to sign in using email and password. All three users have full permissions.
+
+The highest-priority feature is a completely data-driven menu manager:
+
+* The admin can add, edit, duplicate, hide, reorder, or delete any product.
+* The admin enters the product information only.
+* A newly added product must automatically appear in the correct section and subcategory using the EXACT same existing product-card design, spacing, animations, responsive behavior, fonts, and section theme.
+* The admin must never need to design a product card manually.
+* Do not create separate JSX/CSS for every product.
+* Existing and future products must render through the same reusable templates.
+* If the shared template for a section changes, the change must automatically apply to every old and new product in that section.
+
+Example: If the admin adds a product to `Cold Drinks → Smoothies`, it must immediately use the same Cold Drinks theme and the same Smoothies product-card design as all existing products after publishing.
+
+## Critical project rules
+
+1. Inspect the entire existing project before editing.
+2. Preserve the current public website pixel-for-pixel on the first migration.
+3. Do not redesign, recreate, replace, or simplify the existing website.
+4. Preserve all existing:
+
+   * Text
+   * Images
+   * Products
+   * Prices
+   * Ingredients
+   * Optional extras
+   * Categories and subcategories
+   * Routes
+   * Animations
+   * Mobile behavior
+   * Desktop behavior
+   * Currency toggle
+   * GSAP/scroll behavior
+   * Our Place experience
+   * WhatsApp button and links
+5. Reuse the existing React components and CSS. Refactor them minimally to receive database data.
+6. Do not clone, pull, reset, or import an older GitHub/Vercel version.
+7. Do not migrate the framework.
+8. Production stays on Vercel with `www.olivacafe.fun`. Replit is the development workspace.
+9. Do not change the domain or deploy to production without explicit approval.
+10. Do not stop after writing a plan. Inspect, implement, test, and finish the feature.
+11. Ask only when an external secret or account connection is genuinely required.
+12. Never replace a real feature with mock data, localStorage-only storage, or a fake demo.
+
+## Required architecture
+
+Keep the current Vite/React application and Hash Router.
+
+Use:
+
+* Supabase Auth for email/password authentication.
+* Supabase PostgreSQL for content.
+* Supabase Storage for new uploaded media.
+* Vercel Functions or the existing compatible server for protected API routes.
+* The existing public React components as the real renderer.
+
+Do not use Replit Auth because the requested login is a private Oliva email/password login, not Replit accounts.
+
+If an equivalent secure backend already exists, reuse it instead of creating a second backend, but it must satisfy every security and publishing requirement below.
+
+## Authentication requirements
+
+* English login interface matching the Oliva visual identity.
+* Email and password login only.
+* No public signup.
+* No Google, GitHub, social login, or magic-link login.
+* Password recovery may be available only for the three existing accounts.
+* Read exactly three unique emails from a server-only `ADMIN_EMAILS` environment variable.
+* Validate that the allowlist contains exactly three emails.
+* Never hardcode the emails or passwords in frontend code, Git, or database seed files.
+* Never store passwords in the application database.
+* Passwords must be handled only by Supabase Auth.
+* Provide a secure server-only provisioning script that invites/provisions the three allowed emails without printing passwords.
+* All three accounts have identical full CMS permissions.
+* Do not allow admins to add a fourth account from the Admin panel.
+* Logged-out users visiting `/#/admin` see the login screen.
+* A signed-in but non-allowlisted user receives a real server-side `403`.
+* Protect every `/api/admin/*` route on the server.
+* Never rely only on hiding the page or checking the email in React.
+* Use secure HttpOnly, Secure, SameSite cookies and Supabase’s supported PKCE/server-session flow.
+* Do not store access or refresh tokens in localStorage.
+* Add logout, session refresh, generic login errors, and provider-supported rate limiting.
+* Add `noindex, nofollow` to all Admin and authenticated preview screens.
+
+## Database and publishing model
+
+Use versioned content documents suitable for this café website.
+
+Create migrations for:
+
+* `admin_users`
+* `content_documents`
+* `site_releases`
+* `site_state`
+* `media_assets`
+* `audit_log`
+
+Suggested document keys:
+
+* `global`
+* `theme`
+* `home`
+* `menu:settings`
+* One document for each menu category
+* `our-place`
+* `padel`
+* `seo`
+
+Each document must have:
+
+* Draft JSON
+* Schema version
+* Revision number
+* Updated date
+* Updated-by administrator
+
+Publishing must:
+
+1. Validate the complete draft.
+2. Build one full-site content snapshot.
+3. Create an immutable release.
+4. Atomically switch the active release inside one database transaction.
+5. Record the administrator and a publish message.
+6. Keep all previous releases.
+
+Rollback must restore an old release as a new active release without deleting history.
+
+Use optimistic locking. If two admins edit the same document, never silently overwrite the newer work. Show a conflict and offer reload/compare.
+
+All deletes must be recoverable soft deletes until a release is published.
+
+## Initial data migration
+
+Find the current static menu/content files automatically. Do not manually recreate or guess the data.
+
+Create an idempotent seed/migration that:
+
+* Imports every current category.
+* Imports every subcategory.
+* Imports every product.
+* Imports names, descriptions, prices, ingredients, extras, images, galleries, order, visibility, themes, and routes.
+* Creates the first published release from the exact existing site content.
+* Can run multiple times without creating duplicates.
+* Does not overwrite future Admin changes.
+* Keeps the current static content as a bundled emergency fallback.
+
+Do not relocate existing working image URLs during the first migration. Register them as legacy media assets and preserve their exact appearance.
+
+Audit current broken or unsafe image paths, including filenames containing spaces, accents, or incorrect casing. Fix a reference only when the correct existing asset is verified. Never invent or substitute an image.
+
+## Menu CMS — highest priority
+
+Create an English Menu Manager with:
+
+### Sections/categories
+
+The admin can:
+
+* Add a section.
+* Edit a section.
+* Duplicate a section.
+* Hide/show a section.
+* Delete/restore a section.
+* Drag to reorder sections.
+* Edit its name, slug, description, tagline, cover image, hero gallery, theme color, background, text color, and visibility.
+
+Seed every current section exactly as it exists. Support future sections without code changes.
+
+### Subcategories
+
+Inside any section, the admin can:
+
+* Add, edit, duplicate, hide, delete, restore, and reorder subcategories.
+* Edit the name, slug, description, image/icon, order, and visibility.
+* Move a subcategory to another section safely.
+
+### Products
+
+For every product, support:
+
+* Product name
+* Slug
+* Section
+* Subcategory
+* Main image
+* Additional gallery images
+* Image alt text
+* Image focal point/crop
+* Short description
+* Full description
+* LBP price
+* Automatically calculated USD price
+* Ordered ingredients
+* Optional extras
+* Tags
+* Allergens/dietary labels
+* Featured/Top Seller
+* Available/Sold Out
+* Visible/Hidden
+* Display order
+* Draft status
+
+Actions:
+
+* Add
+* Edit
+* Duplicate
+* Move
+* Hide/show
+* Mark sold out
+* Delete/restore
+* Drag to reorder
+* Preview
+* Publish
+
+Use repeatable list inputs for ingredients and extras. Allow drag-and-drop ordering.
+
+## Essential reusable-template behavior
+
+This requirement is non-negotiable:
+
+* Product content and product design must be separated.
+* A product record stores data, not duplicated layout code.
+* Render all products using the existing reusable `ProductCard`/product renderer.
+* New products automatically inherit their section’s theme.
+* New products automatically inherit their subcategory/product layout.
+* Product cards must remain visually consistent.
+* Adding a product must never require a redeployment or code edit.
+* The admin selects the section/subcategory and fills in the data; the website handles the design automatically.
+* Never allow one accidental product edit to damage the shared design.
+* Template changes must have a preview and apply consistently to all affected products.
+* Preserve the current View Recipe interaction, ingredients expansion, price note design, images, responsive layout, and animations.
+
+## LBP and automatic USD pricing
+
+The administrator enters only the LBP price.
+
+Create global currency settings containing:
+
+* `lbpPerUsd`
+* USD rounding rule
+* USD decimal display
+* Currency labels and symbols
+
+Calculation:
+
+`USD price = LBP price ÷ lbpPerUsd`
+
+Use safe decimal math, not unreliable floating-point money calculations.
+
+The USD field in a product editor must be read-only and update instantly while typing the LBP price.
+
+Seed the exchange rate and rounding behavior from the current website so existing displayed prices do not change.
+
+Current visible behavior includes examples such as:
+
+* 300,000 LBP → $3.50
+* 350,000 LBP → $4
+* 400,000 LBP → $4.50
+* 450,000 LBP → $5
+
+Preserve the current behavior until the administrator intentionally changes the global rate or rounding setting.
+
+Changing the exchange rate must automatically update every product’s USD display without editing each product.
+
+## Site-wide content editor
+
+Besides the menu, allow editing of:
+
+* Logo and brand images
+* Home hero text
+* Taglines
+* Descriptions
+* Buttons and labels
+* Button links
+* WhatsApp number and prefilled message
+* Menu section cards
+* Our Place sections
+* Padel content
+* Galleries
+* Opening hours
+* Contact information
+* Social links
+* SEO title and description
+* Open Graph image
+* Image alt text
+* Global colors
+* Fonts
+* Typography
+* Spacing
+* Borders
+* Radius
+* Shadows
+* Backgrounds
+* Animation presets, speed, and delay
+
+Every hardcoded public text string should become editable content when doing so is safe.
+
+## Safe Mode and Advanced Mode
+
+Provide two design-editing modes.
+
+### Safe Mode
+
+* Default mode.
+* Click an element in the live preview to edit it.
+* Edit text, images, colors, fonts, alignment, spacing, visibility, links, and order.
+* Drag sections/items to reorder.
+* Use validated design tokens.
+* Protect the responsive structure and shared product templates.
+* Include undo, redo, reset field, reset section, and reset page.
+
+### Advanced Mode
+
+Advanced Mode must show a clear warning before activation.
+
+Allow validated responsive controls for:
+
+* Width/min/max width
+* Height/min/max height
+* Padding and margin
+* Gap
+* Grid columns
+* Flex direction
+* Alignment
+* Position and offsets
+* Z-index
+* Transform
+* Opacity
+* Typography
+* Borders
+* Shadows
+* Backgrounds
+* Animation settings
+* Per-device overrides
+
+Provide previews for:
+
+* Mobile
+* Tablet
+* Desktop
+
+Advanced edits must be schema-based and validated. Do not allow arbitrary JavaScript, unsafe HTML, `@import`, external `url()` CSS injection, or unvalidated raw code.
+
+For menu products, Advanced Mode edits the shared section/product template—not a duplicated card for one product—unless a deliberately supported product variant is selected.
+
+Use the same real public components inside the preview. Do not build a fake preview that differs from the live site.
+
+## Media Manager
+
+Build a reusable media library supporting:
+
+* Upload
+* Replace
+* Search
+* Preview
+* Crop
+* Focal point
+* Alt text
+* File dimensions
+* File size
+* Usage references
+* Soft delete and restore
+
+Validate real file type and size server-side.
+
+Accept only approved image formats. Re-encode unsafe image uploads.
+
+Generate optimized responsive versions where supported.
+
+Use versioned/hashed filenames. Replacing an image must create a new URL so customers never see a stale cached image.
+
+Do not delete an asset that is still used by published content without a clear warning.
+
+## Public-site data loading
+
+The public website must read only the active published release. Draft content must never leak publicly.
+
+Use a fast versioned-content strategy:
+
+* Render the last known good content immediately.
+* Check a small active-release version endpoint in the background.
+* Download a new immutable snapshot only when its release ID changes.
+* Cache versioned snapshots safely.
+* Use the original bundled content if the database is unavailable on a first visit.
+* Never show a blank menu because of a temporary API/database problem.
+* New published changes should appear without rebuilding or redeploying the website.
+
+For images:
+
+* Use versioned URLs.
+* Preserve aspect ratios.
+* Prevent layout shift.
+* Load hero/current-section images first.
+* Lazy-load noncritical images.
+* Do not force unchanged images to download again after one product image changes.
+
+## Security
+
+* Enable Supabase Row Level Security on every exposed table and storage bucket.
+* Public users may read only the active published release and public media.
+* Only active allowed admins may access drafts, publishing, revisions, media management, or audit logs.
+* Validate every request with server-side schemas such as Zod.
+* Sanitize all editable text/rich content.
+* No `dangerouslySetInnerHTML` without strict sanitization.
+* Restrict CORS and mutation origins to the real site and approved preview origins.
+* Add CSRF protection for cookie-authenticated mutations.
+* Never expose the Supabase secret/service key to the browser.
+* Only public/publishable keys may use a `VITE_` prefix.
+* Keep secrets in Replit Secrets for development and Vercel Environment Variables for production.
+* Add an `.env.example` containing placeholders only.
+* Record every create, edit, delete, upload, publish, and rollback in the audit log.
+* Admin API errors must not leak secrets, SQL, stack traces, or account existence.
+
+## Required environment variables
+
+Use secure names similar to:
+
+* `VITE_SUPABASE_URL`
+* `VITE_SUPABASE_PUBLISHABLE_KEY`
+* `SUPABASE_SECRET_KEY`
+* `ADMIN_EMAILS`
+* `SITE_ORIGIN`
+
+Never put `SUPABASE_SECRET_KEY` or administrator emails in frontend bundles.
+
+## Testing requirements
+
+Before changing public rendering:
+
+1. Run the current build/typecheck.
+2. Capture baseline screenshots for the home page, every menu section, product recipe state, and Our Place.
+3. Test desktop, tablet, and mobile.
+
+After implementation, test:
+
+* All three allowed accounts can log in.
+* A fourth/non-allowed account cannot access Admin.
+* Public users cannot access drafts or admin APIs.
+* Add a new Cold Drinks product and confirm it automatically uses the exact existing design.
+* Add a product to every type of section and confirm template inheritance.
+* Edit a product.
+* Duplicate a product.
+* Move a product between subcategories.
+* Reorder products.
+* Hide and restore a product.
+* Upload and replace an image.
+* Confirm image cache invalidation.
+* Confirm LBP automatically converts to USD.
+* Change the global exchange rate and confirm all USD prices update.
+* Preview without publishing.
+* Publish atomically.
+* Roll back to a previous release.
+* Simulate database/API failure and confirm the public fallback works.
+* Confirm all current routes and animations still work.
+* Confirm no draft data appears in public API responses.
+* Confirm no console errors or broken images.
+
+Run the project’s correct package-manager commands, including:
+
+* Build
+* Typecheck
+* Unit tests
+* Integration tests
+* Playwright end-to-end tests
+
+Do not mark the task complete while tests fail.
+
+## Definition of done
+
+The task is complete only when:
+
+* `www.olivacafe.fun/#/admin` is implemented inside the existing application.
+* Login is limited server-side to exactly three email/password accounts.
+* All three accounts have full CMS permissions.
+* Admin UI is English.
+* The entire current menu is migrated without lost data.
+* Any product can be added or edited without touching code.
+* New products automatically inherit the exact section/subcategory design.
+* LBP is entered manually and USD is calculated automatically.
+* Draft, preview, publish, history, audit, and rollback work.
+* Safe Mode and Advanced Mode work.
+* Existing public design has no visible regression.
+* Mobile and desktop remain responsive.
+* Existing routes and animations remain intact.
+* Production remains on Vercel.
+* No secrets are exposed.
+* Build, tests, and visual checks pass.
+
+At the end, provide a concise handoff containing:
+
+1. Files changed.
+2. Database migrations created.
+3. Exact environment variables still needed.
+4. How to provision the three accounts safely.
+5. How to run locally.
+6. How to test Admin.
+7. How to deploy to Vercel.
+8. Test/build results.
+9. Any feature that could not be made safely editable.
+
+Do not deploy or modify production DNS without explicit approval.

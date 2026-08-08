@@ -24,6 +24,8 @@ import { subcategoryData } from './data/subcategories';
 import PadelPage from './components/PadelPage';
 import { useOfflineSupport } from './hooks/useOfflineSupport';
 import { useImagePreloader, useCategoryPreload } from './hooks/useImagePreloader';
+import { usePublishedContent } from './hooks/usePublishedContent';
+import AdminPage from './components/AdminPage';
 
 
 type Category = 'cold-drinks' | 'hot-drinks' | 'desserts' | 'shisha' | 'sandwiches' | 'yogurt' | 'padel';
@@ -34,11 +36,13 @@ type ParsedRoute =
   | { name: 'gallery' }
   | { name: 'our-place' }
   | { name: 'list'; category: Category }
-  | { name: 'detail'; category: Category; slug: string };
+  | { name: 'detail'; category: Category; slug: string }
+  | { name: 'admin' }
 
 function parseRoute(): ParsedRoute {
   if (typeof window === 'undefined') return { name: 'home' };
   const hash = window.location.hash.replace(/^#/, '');
+  if (hash === '/admin') return { name: 'admin' };
   const listMatch = hash.match(/^\/menu\/(cold-drinks|hot-drinks|desserts|shisha|sandwiches|yogurt|padel)$/);
   if (listMatch) return { name: 'list', category: listMatch[1] as Category };
   const detailMatch = hash.match(/^\/menu\/(cold-drinks|hot-drinks|desserts|shisha|sandwiches|yogurt|padel)\/(.+)$/);
@@ -119,6 +123,7 @@ const CATEGORY_DATA: Record<Category, { title: string; subtitle: string; theme: 
 
 export default function App() {
   const [route, setRoute] = useState<ParsedRoute>(parseRoute);
+  const { menu: publishedMenu } = usePublishedContent();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const offlineStatus = useOfflineSupport();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -143,6 +148,8 @@ export default function App() {
   const navigateMenu = () => { window.location.hash = '/menu'; };
   const navigateOurPlace = () => { window.location.hash = '/our-place'; };
   const navigateList = (cat: Category) => { window.location.hash = CATEGORY_DATA[cat].listHash; };
+
+  if (route.name === 'admin') return <AdminPage />;
 
   const scrollToMenu = () => {
     document.getElementById('menu-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -211,7 +218,7 @@ export default function App() {
           title={data.title}
           subtitle={data.subtitle}
           theme={data.theme}
-          subcategories={subcategoryData[route.category]}
+          subcategories={publishedMenu[route.category] ?? subcategoryData[route.category]}
           navigate={() => navigateHome()}
           onBack={navigateMenu}
           heroImages={HERO_IMAGES[route.category]}
