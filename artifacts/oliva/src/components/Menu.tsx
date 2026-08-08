@@ -61,7 +61,18 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
   const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   const handlers: Record<string, (() => void) | undefined> = {
-    hot: onHotDrinks, cold: onColdDrinks, dessert: onDesserts, shisha: onShisha, sandwiches: onSandwiches, yogurt: onYogurt, padel: onPadel,
+    // CMS cards use their stable section slugs. Keep the short keys for the
+    // bundled fallback cards, but route both forms to the same destination.
+    hot: onHotDrinks,
+    'hot-drinks': onHotDrinks,
+    cold: onColdDrinks,
+    'cold-drinks': onColdDrinks,
+    dessert: onDesserts,
+    desserts: onDesserts,
+    shisha: onShisha,
+    sandwiches: onSandwiches,
+    yogurt: onYogurt,
+    padel: onPadel,
   }
 
   return (
