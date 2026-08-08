@@ -175,6 +175,10 @@ export interface ExchangeRateUpdate {
   roundingTo?: number;
 }
 
+export type HealthCheckSimple200 = {
+  ok: true;
+};
+
 export type GetAdminSettings200 = {[key: string]: string};
 
 export type UpdateAdminSettings200 = {[key: string]: string};

@@ -12,7 +12,7 @@ The admin CMS uses a two-layer content model:
 - `cms_subcategories` — subcategories with sortOrder, hidden, deleted flags
 - `cms_products` — products with priceLbp, priceUsd (auto-calc), hidden, soldOut, deleted flags
 - `cms_site_settings` — key/value store for exchange rate, hero text, WhatsApp info
-- `admin_users` — email allowlist (ADMIN_EMAILS env var), passwordHash is NULL until first login
+- `admin_users` — legacy account metadata retained for schema compatibility; active login uses server-only `ADMIN_EMAIL` and `ADMIN_PASSWORD`
 
 ## Admin account setup
 - Accounts are created WITHOUT a password (passwordHash = NULL)

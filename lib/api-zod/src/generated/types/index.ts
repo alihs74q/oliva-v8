@@ -19,6 +19,7 @@ export * from './contentSnapshotSettings';
 export * from './exchangeRate';
 export * from './exchangeRateUpdate';
 export * from './getAdminSettings200';
+export * from './healthCheckSimple200';
 export * from './healthStatus';
 export * from './mediaAsset';
 export * from './productInput';

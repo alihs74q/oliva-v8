@@ -17,6 +17,23 @@ tags:
   - name: public-content
     description: Public content serving
 paths:
+  /health:
+    get:
+      operationId: healthCheckSimple
+      tags: [health]
+      summary: Simple health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok:
+                    type: boolean
+                    const: true
   /healthz:
     get:
       operationId: healthCheck

@@ -9,6 +9,14 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Simple health check
+ */
+export const HealthCheckSimpleResponse = zod.object({
+  "ok": zod.boolean()
+})
+
+
+/**
  * Returns server health status
  * @summary Health check
  */

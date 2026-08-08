@@ -31,6 +31,7 @@ import type {
   ExchangeRate,
   ExchangeRateUpdate,
   GetAdminSettings200,
+  HealthCheckSimple200,
   HealthStatus,
   MediaAsset,
   ProductInput,
@@ -70,6 +71,83 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getHealthCheckSimpleUrl = () => {
+
+
+
+
+  return `/api/health`
+}
+
+/**
+ * @summary Simple health check
+ */
+export const healthCheckSimple = async ( options?: RequestInit): Promise<HealthCheckSimple200> => {
+
+  return customFetch<HealthCheckSimple200>(getHealthCheckSimpleUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getHealthCheckSimpleQueryKey = () => {
+    return [
+    `/api/health`
+    ] as const;
+    }
+
+
+export const getHealthCheckSimpleQueryOptions = <TData = Awaited<ReturnType<typeof healthCheckSimple>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof healthCheckSimple>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getHealthCheckSimpleQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof healthCheckSimple>>> = ({ signal }) => healthCheckSimple({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof healthCheckSimple>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type HealthCheckSimpleQueryResult = NonNullable<Awaited<ReturnType<typeof healthCheckSimple>>>
+export type HealthCheckSimpleQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Simple health check
+ */
+
+export function useHealthCheckSimple<TData = Awaited<ReturnType<typeof healthCheckSimple>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof healthCheckSimple>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getHealthCheckSimpleQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getHealthCheckUrl = () => {
 
