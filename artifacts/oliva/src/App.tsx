@@ -188,6 +188,7 @@ export default function App() {
             )}
             <Menu
               onBack={navigateHome}
+              cards={menuCards}
               onHotDrinks={() => navigateList('hot-drinks')}
               onColdDrinks={() => navigateList('cold-drinks')}
               onDesserts={() => navigateList('desserts')}
