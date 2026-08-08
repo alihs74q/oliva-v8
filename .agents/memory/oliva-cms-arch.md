@@ -1,0 +1,36 @@
+---
+name: Oliva CMS Architecture
+description: How the Oliva admin CMS stores, drafts, and publishes menu content.
+---
+
+# Oliva CMS Architecture
+
+The admin CMS uses a two-layer content model:
+
+## Draft layer (editable tables)
+- `cms_sections` — 7 sections (cold-drinks, hot-drinks, desserts, shisha, sandwiches, yogurt, padel)
+- `cms_subcategories` — subcategories with sortOrder, hidden, deleted flags
+- `cms_products` — products with priceLbp, priceUsd (auto-calc), hidden, soldOut, deleted flags
+- `cms_site_settings` — key/value store for exchange rate, hero text, WhatsApp info
+- `admin_users` — email allowlist (ADMIN_EMAILS env var), passwordHash is NULL until first login
+
+## Admin account setup
+- Accounts are created WITHOUT a password (passwordHash = NULL)
+- Account holder uses "Set Initial Password" flow at /#/admin on first visit
+- No credentials are ever hardcoded, seeded, or committed
+- `POST /api/admin/auth/set-initial-password` — works only when passwordHash IS NULL
+
+## Published layer (immutable snapshots)
+- `cms_releases` — JSON snapshot of all sections/subcategories/products + settings at publish time
+- `isCurrent = true` on one row → that's what the public API serves
+- Rollback = atomic transaction flipping isCurrent
+
+## Public API
+- `GET /api/public/content` — serves the `isCurrent` release snapshot, no auth, 30s cache
+- Falls back to bundled static data in `artifacts/oliva/src/data/` if API unreachable
+
+## Exchange rate
+- Stored in cms_site_settings (exchange_rate_lbp_per_usd, exchange_rate_rounding)
+- On rate change, all product priceUsd fields are recalculated atomically in the DB
+
+**Why:** Keeps published content immutable (rollback is safe) while draft edits are live in mutable tables.

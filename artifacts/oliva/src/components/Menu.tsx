@@ -12,6 +12,8 @@ interface CatCard {
   image: string | null
 }
 
+export type MenuCard = CatCard
+
 // Per-category text accent colors — soft, premium, readable
 const TEXT_ACCENT: Record<string, string> = {
   hot:         '#d4844a',  // light orange
@@ -45,7 +47,7 @@ const IMG_BG: Record<string, string> = {
   padel:       '#1a3a2a',   // dark green    — padel
 }
 
-export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, onShisha, onSandwiches, onYogurt, onPadel }: {
+export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, onShisha, onSandwiches, onYogurt, onPadel, cards = CARDS }: {
   onBack?: () => void
   onHotDrinks?: () => void
   onColdDrinks?: () => void
@@ -54,6 +56,7 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
   onSandwiches?: () => void
   onYogurt?: () => void
   onPadel?: () => void
+  cards?: MenuCard[]
 }) {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
 
@@ -119,7 +122,7 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
         gap: 'clamp(16px,2.5vw,24px)',
         position: 'relative', zIndex: 10,
       }}>
-        {CARDS.map((card, i) => {
+        {cards.map((card, i) => {
           const isHovered = hoveredId === card.id
           const accentColor = TEXT_ACCENT[card.id] ?? '#6b7c4a'
           return (

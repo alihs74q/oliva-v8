@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useContent } from '../contexts/ContentContext'
 
 // ── WhatsApp config — change these two values to update ───────────────────
 export const WHATSAPP_NUMBER = '961XXXXXXXX'
@@ -6,7 +7,10 @@ export const WHATSAPP_MESSAGE =
   'Hello, I would like to ask about the café and padel court.'
 
 export default function WhatsAppButton() {
-  const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
+  const { settings } = useContent()
+  const number = settings.whatsapp_number || WHATSAPP_NUMBER
+  const message = settings.whatsapp_message || WHATSAPP_MESSAGE
+  const href = `https://wa.me/${number.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`
 
   return (
     <motion.a

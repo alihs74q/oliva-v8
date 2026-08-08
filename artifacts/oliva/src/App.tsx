@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { imageAssets } from './utils/imageAssets';
 import OurPlace from './components/OurPlace';
 import hotDrinksMenuBoard from './assets/hot-drinks/hot-drinks-menu-board.jpeg';
@@ -11,7 +11,8 @@ import refreshersMenu from './assets/cold-drinks/refreshers-menu.jpeg';
 import smoothiesMenu from './assets/cold-drinks/smoothies-menu.jpeg';
 import milkshakesMenu from './assets/cold-drinks/milkshakes-menu.jpeg';
 import Navbar from './components/Navbar';
-import Menu from './components/Menu';
+import Menu, { type MenuCard } from './components/Menu';
+import PromoGallery from './components/PromoGallery';
 import GalleryPage from './components/GalleryPage';
 import SiteFooter from './components/SiteFooter';
 import WhatsAppButton from './components/WhatsAppButton';
@@ -25,7 +26,10 @@ import PadelPage from './components/PadelPage';
 import { useOfflineSupport } from './hooks/useOfflineSupport';
 import { useImagePreloader, useCategoryPreload } from './hooks/useImagePreloader';
 import { usePublishedContent } from './hooks/usePublishedContent';
-import AdminPage from './components/AdminPage';
+import { ContentProvider } from './contexts/ContentContext';
+import { useContent } from './contexts/ContentContext';
+
+const AdminApp = lazy(() => import('./admin/AdminApp'));
 
 
 type Category = 'cold-drinks' | 'hot-drinks' | 'desserts' | 'shisha' | 'sandwiches' | 'yogurt' | 'padel';
@@ -35,14 +39,15 @@ type ParsedRoute =
   | { name: 'menu' }
   | { name: 'gallery' }
   | { name: 'our-place' }
-  | { name: 'list'; category: Category }
-  | { name: 'detail'; category: Category; slug: string }
   | { name: 'admin' }
+  | { name: 'list'; category: Category }
+  | { name: 'detail'; category: Category; slug: string };
 
 function parseRoute(): ParsedRoute {
   if (typeof window === 'undefined') return { name: 'home' };
   const hash = window.location.hash.replace(/^#/, '');
-  if (hash === '/admin') return { name: 'admin' };
+  // Admin routes take precedence
+  if (hash === '/admin' || hash.startsWith('/admin/')) return { name: 'admin' };
   const listMatch = hash.match(/^\/menu\/(cold-drinks|hot-drinks|desserts|shisha|sandwiches|yogurt|padel)$/);
   if (listMatch) return { name: 'list', category: listMatch[1] as Category };
   const detailMatch = hash.match(/^\/menu\/(cold-drinks|hot-drinks|desserts|shisha|sandwiches|yogurt|padel)\/(.+)$/);
@@ -123,7 +128,25 @@ const CATEGORY_DATA: Record<Category, { title: string; subtitle: string; theme: 
 
 export default function App() {
   const [route, setRoute] = useState<ParsedRoute>(parseRoute);
-  const { menu: publishedMenu } = usePublishedContent();
+  // Load published content from API; falls back to static data if unavailable
+  const { subcategories: publishedSubcategories } = usePublishedContent();
+  const { promoGallery, sections, settings } = useContent();
+  const menuCards = sections.length > 0
+    ? sections.map((section) => {
+      const key = section.slug.replace(/-drinks$/, '').replace('desserts', 'dessert')
+      const fallback = ({
+        hot: { gradient: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#fed7aa', image: 'https://images.pexels.com/photos/15851583/pexels-photo-15851583/free-photo-of-cappuccino-in-cup-on-table.jpeg?auto=compress&cs=tinysrgb&w=400' },
+        cold: { gradient: 'linear-gradient(135deg,#0ea5e9,#2563eb)', accent: '#bae6fd', image: 'https://images.pexels.com/photos/22873679/pexels-photo-22873679.jpeg?auto=compress&cs=tinysrgb&w=400' },
+        dessert: { gradient: 'linear-gradient(135deg,#ec4899,#be185d)', accent: '#fbcfe8', image: 'https://images.pexels.com/photos/3625372/pexels-photo-3625372.jpeg?auto=compress&cs=tinysrgb&w=400' },
+        shisha: { gradient: 'linear-gradient(135deg,#eab308,#a16207)', accent: '#fef08a', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-awRUXZgCUaSRd5LnoYKBVKhnE9Z36Z.png' },
+        sandwiches: { gradient: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#fed7aa', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Sandwich%20PNG-ALWYL1Ttrugnx7fPbCpNyn3mu4AcTN.jpg' },
+        yogurt: { gradient: 'linear-gradient(135deg,#d946ef,#be185d)', accent: '#f9a8d4', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/14988611256100392-VcfSLudrmQ98JzCToSTWUmeOANUBaV.jpg' },
+        padel: { gradient: 'linear-gradient(135deg,#06b6d4,#0891b2)', accent: '#06f6d4', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-0a6RZwqQSo38UmBftouiTQtlg9C8Rc.png' },
+      } as Record<string, { gradient: string; accent: string; image: string }>)[key] ?? { gradient: 'linear-gradient(135deg,#596b3d,#2c3a24)', accent: '#d4a843', image: null };
+      const theme = (section.theme || {}) as Record<string, string>;
+      return { id: section.slug, label: section.name, desc: section.subtitle, gradient: theme.gradient || fallback.gradient, accent: theme.accent || fallback.accent, image: theme.image || fallback.image };
+    })
+    : undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const offlineStatus = useOfflineSupport();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -149,11 +172,18 @@ export default function App() {
   const navigateOurPlace = () => { window.location.hash = '/our-place'; };
   const navigateList = (cat: Category) => { window.location.hash = CATEGORY_DATA[cat].listHash; };
 
-  if (route.name === 'admin') return <AdminPage />;
-
   const scrollToMenu = () => {
     document.getElementById('menu-section')?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // Admin area — lazy-loaded, isolated from public site
+  if (route.name === 'admin') {
+    return (
+      <Suspense fallback={<div style={{ minHeight: '100svh', background: '#0d1509' }} />}>
+        <AdminApp />
+      </Suspense>
+    );
+  }
 
   // Dedicated menu page
   if (route.name === 'menu') {
@@ -161,6 +191,11 @@ export default function App() {
       <>
         <div style={{ background: '#faf9f4' }}>
           <main className="relative z-10">
+            {promoGallery.some((slide) => slide.visible && slide.imageUrl) && (
+              <div style={{ background: '#faf9f4', padding: 'clamp(80px,12vh,120px) clamp(16px,4vw,40px) 0' }}>
+                <PromoGallery slides={promoGallery} />
+              </div>
+            )}
             <Menu
               onBack={navigateHome}
               onHotDrinks={() => navigateList('hot-drinks')}
@@ -190,6 +225,9 @@ export default function App() {
           <PadelPage
             theme={data.theme}
             onBack={navigateMenu}
+             items={publishedSubcategories.padel?.flatMap((sub) => sub.drinks).map((drink) => ({
+               title: drink.name, description: drink.description, price: drink.price, lbpPrice: drink.lbpPrice, image: drink.image,
+             }))}
           />
           <WhatsAppButton />
         </>
@@ -218,7 +256,7 @@ export default function App() {
           title={data.title}
           subtitle={data.subtitle}
           theme={data.theme}
-          subcategories={publishedMenu[route.category] ?? subcategoryData[route.category]}
+          subcategories={publishedSubcategories[route.category] ?? subcategoryData[route.category]}
           navigate={() => navigateHome()}
           onBack={navigateMenu}
           heroImages={HERO_IMAGES[route.category]}
@@ -305,10 +343,10 @@ export default function App() {
         </div>
 
         {/* Eyebrow */}
-        <p style={{
+           <p style={{
           margin: '0 0 14px', fontSize: 'clamp(11px,1.2vw,13px)', fontWeight: 800,
           letterSpacing: '0.32em', textTransform: 'uppercase', color: '#8aa86a',
-        }}>Padel · Café · Shisha</p>
+        }}>{settings.hero_eyebrow || 'Padel · Café · Shisha'}</p>
 
         {/* Headline */}
         <h1 style={{
@@ -320,7 +358,7 @@ export default function App() {
           lineHeight: 1.05,
           maxWidth: 680,
         }}>
-          From Court<br />to Cup
+          {(settings.hero_headline_line1 || 'From Court')}<br />{settings.hero_headline_line2 || 'to Cup'}
         </h1>
 
         {/* Subline */}
@@ -331,7 +369,7 @@ export default function App() {
           maxWidth: 460,
           lineHeight: 1.65,
         }}>
-          A grove, two courts, and the slowest afternoon you've ever had.
+           {settings.hero_subline || "A grove, two courts, and the slowest afternoon you've ever had."}
         </p>
 
         {/* CTA group */}
@@ -349,7 +387,7 @@ export default function App() {
               boxShadow: '0 4px 28px rgba(89,107,61,0.45)',
             }}
           >
-            View Menu
+             {settings.hero_menu_button || 'View Menu'}
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>
@@ -362,7 +400,13 @@ export default function App() {
 
       {/* ── Menu ── */}
       <div id="menu-section">
-        <Menu
+        {promoGallery.some((slide) => slide.visible && slide.imageUrl) && (
+          <div style={{ background: '#faf9f4', padding: 'clamp(56px,8vh,88px) clamp(16px,4vw,40px) 0' }}>
+            <PromoGallery slides={promoGallery} />
+          </div>
+        )}
+         <Menu
+           cards={menuCards}
           onHotDrinks={() => navigateList('hot-drinks')}
           onColdDrinks={() => navigateList('cold-drinks')}
           onDesserts={() => navigateList('desserts')}

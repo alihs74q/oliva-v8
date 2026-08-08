@@ -10,6 +10,12 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: admin-auth
+    description: Admin authentication
+  - name: admin-content
+    description: CMS content management
+  - name: public-content
+    description: Public content serving
 paths:
   /healthz:
     get:
@@ -24,6 +30,529 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ─── Public content ───────────────────────────────────────────────────────────
+  /public/content:
+    get:
+      operationId: getPublishedContent
+      tags: [public-content]
+      summary: Get currently published content
+      responses:
+        "200":
+          description: Published content snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentSnapshot"
+        "404":
+          description: No published content yet
+
+  # ─── Auth ─────────────────────────────────────────────────────────────────────
+  /admin/auth/login:
+    post:
+      operationId: adminLogin
+      tags: [admin-auth]
+      summary: Log in as admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginInput"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSession"
+        "401":
+          description: Invalid credentials
+
+  /admin/auth/logout:
+    post:
+      operationId: adminLogout
+      tags: [admin-auth]
+      summary: Log out
+      responses:
+        "204":
+          description: Logged out
+
+  /admin/auth/session:
+    get:
+      operationId: getAdminSession
+      tags: [admin-auth]
+      summary: Get current session
+      responses:
+        "200":
+          description: Current session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSession"
+        "401":
+          description: Not authenticated
+
+  /admin/auth/change-password:
+    post:
+      operationId: adminChangePassword
+      tags: [admin-auth]
+      summary: Change own password (must be authenticated)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordInput"
+      responses:
+        "204":
+          description: Password changed
+        "400":
+          description: Invalid input
+        "401":
+          description: Not authenticated or wrong current password
+
+  # ─── CMS sections ─────────────────────────────────────────────────────────────
+  /admin/sections:
+    get:
+      operationId: listAdminSections
+      tags: [admin-content]
+      summary: List all sections with subcategories and products
+      responses:
+        "200":
+          description: Sections list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdminSection"
+        "401":
+          description: Not authenticated
+
+  /admin/sections/{sectionSlug}:
+    patch:
+      operationId: updateAdminSection
+      tags: [admin-content]
+      summary: Update a section
+      parameters:
+        - name: sectionSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SectionUpdate"
+      responses:
+        "200":
+          description: Updated section
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSection"
+        "401":
+          description: Not authenticated
+
+  # ─── CMS subcategories ────────────────────────────────────────────────────────
+  /admin/sections/{sectionSlug}/subcategories:
+    post:
+      operationId: createAdminSubcategory
+      tags: [admin-content]
+      summary: Create a new subcategory in a section
+      parameters:
+        - name: sectionSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubcategoryInput"
+      responses:
+        "201":
+          description: Created subcategory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSubcategory"
+        "401":
+          description: Not authenticated
+
+  /admin/subcategories/{id}:
+    patch:
+      operationId: updateAdminSubcategory
+      tags: [admin-content]
+      summary: Update a subcategory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubcategoryUpdate"
+      responses:
+        "200":
+          description: Updated subcategory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSubcategory"
+        "401":
+          description: Not authenticated
+
+    delete:
+      operationId: deleteAdminSubcategory
+      tags: [admin-content]
+      summary: Soft-delete a subcategory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Not authenticated
+
+  /admin/subcategories/{id}/restore:
+    post:
+      operationId: restoreAdminSubcategory
+      tags: [admin-content]
+      summary: Restore a soft-deleted subcategory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Restored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSubcategory"
+        "401":
+          description: Not authenticated
+
+  # ─── CMS products ─────────────────────────────────────────────────────────────
+  /admin/subcategories/{subcategoryId}/products:
+    post:
+      operationId: createAdminProduct
+      tags: [admin-content]
+      summary: Create a product in a subcategory
+      parameters:
+        - name: subcategoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "201":
+          description: Created product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminProduct"
+        "401":
+          description: Not authenticated
+
+  /admin/products/{id}:
+    patch:
+      operationId: updateAdminProduct
+      tags: [admin-content]
+      summary: Update a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductUpdate"
+      responses:
+        "200":
+          description: Updated product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminProduct"
+        "401":
+          description: Not authenticated
+
+    delete:
+      operationId: deleteAdminProduct
+      tags: [admin-content]
+      summary: Soft-delete a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Not authenticated
+
+  /admin/products/{id}/restore:
+    post:
+      operationId: restoreAdminProduct
+      tags: [admin-content]
+      summary: Restore a soft-deleted product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Restored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminProduct"
+        "401":
+          description: Not authenticated
+
+  /admin/products/{id}/duplicate:
+    post:
+      operationId: duplicateAdminProduct
+      tags: [admin-content]
+      summary: Duplicate a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "201":
+          description: Duplicated product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminProduct"
+        "401":
+          description: Not authenticated
+
+  # ─── Reorder ──────────────────────────────────────────────────────────────────
+  /admin/subcategories/reorder:
+    post:
+      operationId: reorderAdminSubcategories
+      tags: [admin-content]
+      summary: Reorder subcategories within a section
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReorderInput"
+      responses:
+        "204":
+          description: Reordered
+        "401":
+          description: Not authenticated
+
+  /admin/products/reorder:
+    post:
+      operationId: reorderAdminProducts
+      tags: [admin-content]
+      summary: Reorder products within a subcategory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReorderInput"
+      responses:
+        "204":
+          description: Reordered
+        "401":
+          description: Not authenticated
+
+  # ─── Settings ─────────────────────────────────────────────────────────────────
+  /admin/settings:
+    get:
+      operationId: getAdminSettings
+      tags: [admin-content]
+      summary: Get all site settings
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        "401":
+          description: Not authenticated
+
+    patch:
+      operationId: updateAdminSettings
+      tags: [admin-content]
+      summary: Update site settings (key-value pairs)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsUpdate"
+      responses:
+        "200":
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        "401":
+          description: Not authenticated
+
+  # ─── Exchange rate ────────────────────────────────────────────────────────────
+  /admin/exchange-rate:
+    get:
+      operationId: getExchangeRate
+      tags: [admin-content]
+      summary: Get current LBP/USD exchange rate config
+      responses:
+        "200":
+          description: Exchange rate
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExchangeRate"
+        "401":
+          description: Not authenticated
+
+    patch:
+      operationId: updateExchangeRate
+      tags: [admin-content]
+      summary: Update exchange rate (recalculates all USD prices)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExchangeRateUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExchangeRate"
+        "401":
+          description: Not authenticated
+
+  # ─── Releases (publish / rollback) ───────────────────────────────────────────
+  /admin/releases:
+    get:
+      operationId: listAdminReleases
+      tags: [admin-content]
+      summary: List publish history
+      responses:
+        "200":
+          description: Releases list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdminRelease"
+        "401":
+          description: Not authenticated
+
+    post:
+      operationId: publishContent
+      tags: [admin-content]
+      summary: Publish current draft as a new release
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PublishInput"
+      responses:
+        "201":
+          description: Published
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminRelease"
+        "401":
+          description: Not authenticated
+
+  /admin/releases/{id}/rollback:
+    post:
+      operationId: rollbackRelease
+      tags: [admin-content]
+      summary: Restore a previous release as the live version
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Rolled back
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminRelease"
+        "401":
+          description: Not authenticated
+
+  # ─── Media ─────────────────────────────────────────────────────────────────────
+  # Note: upload is handled via /admin/media/upload directly in the Express route
+  # using multer — not included in OpenAPI spec to avoid binary codegen issues.
+
+  /admin/media:
+    get:
+      operationId: listAdminMedia
+      tags: [admin-content]
+      summary: List uploaded media assets
+      responses:
+        "200":
+          description: Media list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MediaAsset"
+        "401":
+          description: Not authenticated
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +563,312 @@ components:
       required:
         - status
 
+    # ─── Auth schemas ────────────────────────────────────────────────────────────
+    AdminLoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    AdminSession:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+
+    ChangePasswordInput:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+          minLength: 8
+
+    # ─── Content shapes ──────────────────────────────────────────────────────────
+    AdminProduct:
+      type: object
+      required: [id, subcategoryDbId, name, shortName, description, priceLbp, priceUsd, recipe, flavors, sortOrder, hidden, soldOut, deleted, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        subcategoryDbId:
+          type: integer
+        name:
+          type: string
+        shortName:
+          type: string
+        description:
+          type: string
+        priceLbp:
+          type: integer
+        priceUsd:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        recipe:
+          type: string
+        flavors:
+          type: array
+          items:
+            type: string
+        sortOrder:
+          type: integer
+        hidden:
+          type: boolean
+        soldOut:
+          type: boolean
+        deleted:
+          type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    AdminSubcategory:
+      type: object
+      required: [id, sectionSlug, subcategoryId, name, description, themeColor, accentColor, sortOrder, hidden, deleted, products, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        sectionSlug:
+          type: string
+        subcategoryId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        themeColor:
+          type: string
+        accentColor:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        sortOrder:
+          type: integer
+        hidden:
+          type: boolean
+        deleted:
+          type: boolean
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminProduct"
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    AdminSection:
+      type: object
+      required: [id, slug, name, subtitle, sortOrder, hidden, theme, subcategories]
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+        name:
+          type: string
+        subtitle:
+          type: string
+        sortOrder:
+          type: integer
+        hidden:
+          type: boolean
+        theme:
+          type: object
+          additionalProperties: true
+        subcategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminSubcategory"
+
+    AdminRelease:
+      type: object
+      required: [id, version, label, publishedBy, isCurrent, publishedAt]
+      properties:
+        id:
+          type: integer
+        version:
+          type: integer
+        label:
+          type: string
+        publishedBy:
+          type: string
+        isCurrent:
+          type: boolean
+        publishedAt:
+          type: string
+
+    MediaAsset:
+      type: object
+      required: [id, url, altText, filename, createdAt]
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+        altText:
+          type: string
+        filename:
+          type: string
+        createdAt:
+          type: string
+
+    ExchangeRate:
+      type: object
+      required: [ratePerUsd, roundingTo]
+      properties:
+        ratePerUsd:
+          type: integer
+          description: LBP per 1 USD (e.g. 89500)
+        roundingTo:
+          type: integer
+          description: Round up to nearest N LBP (e.g. 50000)
+
+    # ─── Public content snapshot ──────────────────────────────────────────────────
+    ContentSnapshot:
+      type: object
+      required: [sections, settings, publishedAt]
+      properties:
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminSection"
+        settings:
+          type: object
+          additionalProperties:
+            type: string
+        publishedAt:
+          type: string
+
+    # ─── Input/Update schemas ─────────────────────────────────────────────────────
+    SectionUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        subtitle:
+          type: string
+        hidden:
+          type: boolean
+        theme:
+          type: object
+          additionalProperties: true
+
+    SubcategoryInput:
+      type: object
+      required: [name]
+      properties:
+        subcategoryId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        themeColor:
+          type: string
+        accentColor:
+          type: string
+        imageUrl:
+          type: string
+
+    SubcategoryUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        themeColor:
+          type: string
+        accentColor:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        hidden:
+          type: boolean
+        sortOrder:
+          type: integer
+
+    ProductInput:
+      type: object
+      required: [name, priceLbp]
+      properties:
+        name:
+          type: string
+        shortName:
+          type: string
+        description:
+          type: string
+        priceLbp:
+          type: integer
+        imageUrl:
+          type: string
+        recipe:
+          type: string
+        flavors:
+          type: array
+          items:
+            type: string
+
+    ProductUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        shortName:
+          type: string
+        description:
+          type: string
+        priceLbp:
+          type: integer
+        imageUrl:
+          type: ["string", "null"]
+        recipe:
+          type: string
+        flavors:
+          type: array
+          items:
+            type: string
+        hidden:
+          type: boolean
+        soldOut:
+          type: boolean
+        sortOrder:
+          type: integer
+
+    ReorderInput:
+      type: object
+      required: [ids]
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+
+    PublishInput:
+      type: object
+      properties:
+        label:
+          type: string
+
+    SettingsUpdate:
+      type: object
+      additionalProperties:
+        type: string
+
+    ExchangeRateUpdate:
+      type: object
+      required: [ratePerUsd]
+      properties:
+        ratePerUsd:
+          type: integer
+        roundingTo:
+          type: integer

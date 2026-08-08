@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import OlivaLogo from './OlivaLogo'
-import { shishaItems } from '../data/shisha'
+import { shishaItems as staticShishaItems } from '../data/shisha'
+import { useContent } from '../contexts/ContentContext'
 import CurrencyToggle from './CurrencyToggle'
 import { useCurrency } from '../hooks/useCurrency'
 import type { Currency } from '../hooks/useCurrency'
@@ -22,7 +23,7 @@ function ImagePlaceholder() {
   )
 }
 
-function ShishaCard({ item, index, currency }: { item: typeof shishaItems[number]; index: number; currency: Currency }) {
+function ShishaCard({ item, index, currency }: { item: typeof staticShishaItems[number]; index: number; currency: Currency }) {
   const displayedPrice = currency === 'USD' ? item.price : item.lbpPrice
   return (
     <motion.div
@@ -75,6 +76,7 @@ function ShishaCard({ item, index, currency }: { item: typeof shishaItems[number
 }
 
 export default function ShishaPage({ navigate, onBack }: { navigate: (to: NavRoute) => void; onBack?: () => void }) {
+  const { shishaItems } = useContent() // shadows module-level static import
   const { currency, toggle } = useCurrency('USD')
 
   return (

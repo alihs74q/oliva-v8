@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { coldDrinks } from '../data/coldDrinks'
+import { coldDrinks as staticColdDrinks } from '../data/coldDrinks'
+import { useContent } from '../contexts/ContentContext'
 import OlivaLogo from './OlivaLogo'
 import FlavorPicker from './FlavorPicker'
 import DrinkGallery from './DrinkGallery'
@@ -77,7 +78,7 @@ function ColdDrinkPlaceholder({ size = 150 }: { size?: number }) {
 
 // ─── Per-drink content panel (dissolves on change) ────────────────────────────
 function ProductPanel({ drink, dir, reducedMotion }: {
-  drink: typeof coldDrinks[number]; dir: number; reducedMotion: boolean
+  drink: typeof staticColdDrinks[number]; dir: number; reducedMotion: boolean
 }) {
   const variants = reducedMotion ? dissolveVReduced : dissolveV
   const placeholderSize = typeof window !== 'undefined'
@@ -180,7 +181,7 @@ function Dots({ total, active, onDot }: { total: number; active: number; onDot: 
 
 // ─── "See All" grid card ──────────────────────────────────────────────────────
 function DrinkGridCard({ drink, isActive, onClick }: {
-  drink: typeof coldDrinks[number]; isActive: boolean; onClick: () => void
+  drink: typeof staticColdDrinks[number]; isActive: boolean; onClick: () => void
 }) {
   const [hover, setHover] = useState(false)
   return (
@@ -229,8 +230,8 @@ function DrinkGridCard({ drink, isActive, onClick }: {
 }
 
 // ─── "See All Cold Drinks" overlay ────────────────────────────────────────────
-function AllColdDrinksOverlay({ activeIdx, onSelect, onClose }: {
-  activeIdx: number; onSelect: (i: number) => void; onClose: () => void
+function AllColdDrinksOverlay({ drinks, activeIdx, onSelect, onClose }: {
+  drinks: typeof staticColdDrinks; activeIdx: number; onSelect: (i: number) => void; onClose: () => void
 }) {
   return (
     <motion.div
@@ -285,7 +286,7 @@ function AllColdDrinksOverlay({ activeIdx, onSelect, onClose }: {
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: 'clamp(8px,1.8vw,16px)',
         }}>
-          {coldDrinks.map((drink, i) => (
+          {drinks.map((drink, i) => (
             <DrinkGridCard key={drink.name} drink={drink} isActive={i === activeIdx}
               onClick={() => onSelect(i)} />
           ))}
@@ -297,6 +298,7 @@ function AllColdDrinksOverlay({ activeIdx, onSelect, onClose }: {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function ColdDrinksPage({ navigate, onBack, initialSlug }: { navigate: (to: NavRoute) => void; onBack?: () => void; initialSlug?: string }) {
+  const { coldDrinks } = useContent() // shadows module-level static import
   const [view, setView] = useState<View>('hero')
   const [heroIdx, setHeroIdx] = useState(() => {
     if (!initialSlug) return 0

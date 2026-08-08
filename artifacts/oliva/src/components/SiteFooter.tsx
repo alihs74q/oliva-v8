@@ -1,4 +1,5 @@
 import OlivaLogo from './OlivaLogo'
+import { useContent } from '../contexts/ContentContext'
 
 // ── Footer contact info — edit these values ────────────────────────────────
 const FOOTER_INFO = {
@@ -19,7 +20,19 @@ export default function SiteFooter({
   navigate: (to: Route) => void
   onBook: () => void
 }) {
-  const waHref = `https://wa.me/${FOOTER_INFO.whatsappNumber}?text=${encodeURIComponent(FOOTER_INFO.whatsappMessage)}`
+  const { settings } = useContent()
+  const info = {
+    ...FOOTER_INFO,
+    description: settings.footer_description || FOOTER_INFO.description,
+    hours: settings.opening_hours || FOOTER_INFO.hours,
+    instagram: settings.instagram_url || FOOTER_INFO.instagram,
+    whatsappNumber: settings.whatsapp_number || FOOTER_INFO.whatsappNumber,
+    whatsappMessage: settings.whatsapp_message || FOOTER_INFO.whatsappMessage,
+    address: settings.contact_address || 'Beirut, Lebanon',
+    phone: settings.contact_phone || '+961 71 234 567',
+    email: settings.contact_email || 'hello@oliva.com',
+  }
+  const waHref = `https://wa.me/${info.whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(info.whatsappMessage)}`
 
   const linkBase =
     'text-stone-400 hover:text-white transition-colors duration-200 text-left'
@@ -34,7 +47,7 @@ export default function SiteFooter({
               <OlivaLogo size={64} showText={false} />
             </div>
             <p className="text-sm leading-relaxed text-stone-400">
-              {FOOTER_INFO.description}
+              {info.description}
             </p>
           </div>
 
@@ -78,10 +91,10 @@ export default function SiteFooter({
               Contact
             </h4>
             <ul className="space-y-3 text-sm text-stone-400">
-              <li>Beirut, Lebanon</li>
-              <li>+961 71 234 567</li>
-              <li>hello@oliva.com</li>
-              <li>{FOOTER_INFO.hours}</li>
+               <li>{info.address}</li>
+               <li>{info.phone}</li>
+               <li>{info.email}</li>
+               <li>{info.hours}</li>
             </ul>
           </div>
 
@@ -92,7 +105,7 @@ export default function SiteFooter({
             </h4>
             <div className="flex items-center gap-3">
               <a
-                href={FOOTER_INFO.instagram}
+                 href={info.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -116,7 +129,7 @@ export default function SiteFooter({
                 </svg>
               </a>
             </div>
-            <p className="text-sm text-stone-400 mt-4">{FOOTER_INFO.hours}</p>
+             <p className="text-sm text-stone-400 mt-4">{info.hours}</p>
           </div>
         </div>
 

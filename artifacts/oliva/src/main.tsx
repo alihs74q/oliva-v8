@@ -4,6 +4,7 @@ import App from './App';
 import './index.css';
 import { preloadImage } from './utils/imageOptimization';
 import { initServiceWorkerUpdater } from './utils/serviceWorkerUpdater';
+import { ContentProvider } from './contexts/ContentContext';
 
 // Check for Service Worker updates on page load
 initServiceWorkerUpdater();
@@ -13,6 +14,8 @@ preloadImage('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Style_of_c
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <ContentProvider>
+      <App />
+    </ContentProvider>
   </StrictMode>
 );

@@ -11,7 +11,7 @@ interface PadelItem {
   description: string
   price: string
   lbpPrice: string
-  image: string
+  image: string | null
 }
 
 const PADEL_ITEMS: PadelItem[] = [
@@ -23,10 +23,11 @@ const PADEL_ITEMS: PadelItem[] = [
 ]
 
 export default function PadelPage({
-  theme, onBack,
+  theme, onBack, items = PADEL_ITEMS,
 }: {
   theme: CategoryTheme
   onBack: () => void
+  items?: PadelItem[]
 }) {
   const { currency, toggle } = useCurrency('USD')
 
@@ -160,7 +161,7 @@ export default function PadelPage({
             gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
             gap: 'clamp(16px, 3vw, 24px)',
           }}>
-            {PADEL_ITEMS.map((item, idx) => (
+            {items.map((item, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
@@ -243,8 +244,8 @@ export default function PadelPage({
                   overflow: 'hidden',
                   flexShrink: 0,
                 }}>
-                  <img
-                    src={item.image}
+                   <img
+                     src={item.image || PADEL_ITEMS[idx % PADEL_ITEMS.length].image || undefined}
                     alt={item.title}
                     style={{
                       width: '100%',

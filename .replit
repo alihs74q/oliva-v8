@@ -1,4 +1,4 @@
-modules = ["nodejs-20", "web", "bash"]
+modules = ["nodejs-20", "web", "bash", "python-base-3.13"]
 
 [deployment]
 router = "application"
@@ -20,6 +20,10 @@ author = "agent"
 task = "workflow.run"
 args = "artifacts/oliva: web"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "artifacts/api-server: API Server"
+
 [[workflows.workflow]]
 name = "artifacts/oliva: web"
 author = "agent"
@@ -40,4 +44,21 @@ timeoutMs = 20000
 channel = "stable-25_05"
 
 [objectStorage]
-defaultBucketID = "replit-objstore-16e04672-5027-4623-934e-4af113114c42"
+defaultBucketID = "replit-objstore-16e04672-5027-4623-934e-4af1131142"
+
+[userenv]
+
+[userenv.shared]
+ADMIN_EMAILS = "oliva@cafe.fun,oliva2@cafe.fun,oliva3@cafe.fun"
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
+
+[[ports]]
+localPort = 8081
+externalPort = 8081
+
+[[ports]]
+localPort = 25654
+externalPort = 3000

@@ -4,7 +4,8 @@ import {
 import {
   motion, AnimatePresence,
 } from 'framer-motion'
-import { desserts, type Dessert } from '../data/desserts'
+import { desserts as staticDesserts, type Dessert } from '../data/desserts'
+import { useContent } from '../contexts/ContentContext'
 import OlivaLogo from './OlivaLogo'
 import FlavorPicker from './FlavorPicker'
 import CurrencyToggle from './CurrencyToggle'
@@ -263,9 +264,10 @@ function Dots({ total, active, onDot, tone }: { total: number; active: number; o
 
 // ─── Hero view ────────────────────────────────────────────────────────────────
 function HeroView({
-  idx, dir, locked, reducedMotion, tone, currency, onCurrencyToggle,
+  desserts, idx, dir, locked, reducedMotion, tone, currency, onCurrencyToggle,
   onPrev, onNext, onDot, onShowAll, onPointerDown,
 }: {
+  desserts: typeof staticDesserts
   idx: number; dir: number; locked: boolean; reducedMotion: boolean
   tone: { bg: string; fg: string }
   currency: Currency; onCurrencyToggle: () => void
@@ -345,8 +347,8 @@ function DessertCard({ dessert, dist, cardW, cardH, onClick }: {
 }
 
 // ─── All Desserts view (Top-Sellers-style carousel) ───────────────────────────
-function AllDessertsView({ initialIdx, onSelect, onBack, tone }: {
-  initialIdx: number; onSelect: (i: number) => void; onBack: () => void; tone: { bg: string; fg: string }
+function AllDessertsView({ desserts, initialIdx, onSelect, onBack, tone }: {
+  desserts: typeof staticDesserts; initialIdx: number; onSelect: (i: number) => void; onBack: () => void; tone: { bg: string; fg: string }
 }) {
   const [idx, setIdx] = useState(initialIdx)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -475,6 +477,7 @@ function AllDessertsView({ initialIdx, onSelect, onBack, tone }: {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function DessertsPage({ navigate, onBack, initialSlug }: { navigate: (to: NavRoute) => void; onBack?: () => void; initialSlug?: string }) {
+  const { desserts } = useContent() // shadows module-level static import
   const { currency, toggle: toggleCurrency } = useCurrency('USD')
   const [view, setView] = useState<View>('hero')
   const [heroIdx, setHeroIdx] = useState(() => {
@@ -617,14 +620,14 @@ export default function DessertsPage({ navigate, onBack, initialSlug }: { naviga
       <div style={{ flex: 1, position: 'relative', zIndex: 5 }}>
         <AnimatePresence mode="wait">
           {view === 'hero' ? (
-            <HeroView key="hero" idx={heroIdx} dir={dir} locked={locked} reducedMotion={reducedMotion.current} tone={tone}
+            <HeroView key="hero" desserts={desserts} idx={heroIdx} dir={dir} locked={locked} reducedMotion={reducedMotion.current} tone={tone}
               currency={currency} onCurrencyToggle={toggleCurrency}
               onPrev={() => paginate(-1)} onNext={() => paginate(1)} onDot={goTo}
               onShowAll={() => { setAllInit(heroIdx); setView('all') }}
               onPointerDown={onPD}
             />
           ) : (
-            <AllDessertsView key="all" initialIdx={allInit} tone={tone}
+            <AllDessertsView key="all" desserts={desserts} initialIdx={allInit} tone={tone}
               onSelect={(i) => { setHeroIdx(i); setView('hero') }}
               onBack={() => setView('hero')}
             />
