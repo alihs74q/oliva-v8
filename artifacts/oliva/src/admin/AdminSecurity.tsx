@@ -39,7 +39,7 @@ export default function AdminSecurity({ onBack }: Props) {
       <main style={{ flex: 1, padding: 'clamp(16px,3vw,32px) clamp(16px,4vw,40px)', maxWidth: 420, width: '100%', margin: '0 auto' }}>
         <div style={{ marginBottom: 24 }}>
           <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: '#f5f2e8' }}>Change Password</h2>
-          <p style={{ margin: 0, fontSize: 13, color: 'rgba(245,242,232,0.4)' }}>Update your admin account password.</p>
+              <p style={{ margin: 0, fontSize: 13, color: 'rgba(245,242,232,0.4)' }}>The admin password is managed securely by the server.</p>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>

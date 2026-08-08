@@ -79,7 +79,7 @@ export default function AdminPage() {
   async function loadSession() {
     setLoading(true);
     try {
-      const config = await fetch(`${API}/admin/config`).then((response) => response.json());
+      const config = await fetch(`${API}/admin/config`, { credentials: 'include' }).then((response) => response.json());
       setConfigured(Boolean(config.configured));
       const session = await fetch(`${API}/admin/auth/me`, { credentials: 'include' });
       if (session.ok) {

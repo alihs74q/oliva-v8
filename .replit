@@ -47,6 +47,3 @@ channel = "stable-25_05"
 defaultBucketID = "replit-objstore-16e04672-5027-4623-934e-4af113114c42"
 
 [userenv]
-
-[userenv.shared]
-ADMIN_EMAILS = "oliva@cafe.fun,oliva2@cafe.fun,oliva3@cafe.fun"

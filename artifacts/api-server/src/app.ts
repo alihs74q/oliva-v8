@@ -8,6 +8,7 @@ import { logger } from "./lib/logger.js";
 import { PostgresSessionStore } from "./lib/postgresSessionStore.js";
 
 const app: Express = express();
+app.set("trust proxy", 1);
 
 app.use(
   pinoHttp({
@@ -39,24 +40,26 @@ app.use(
 // requests to this API if CORS were open to all *.replit.dev origins.
 function buildAllowedOrigins(): Set<string> {
   const origins = new Set<string>();
-  // REPLIT_DOMAINS is a comma-separated list of domain names (no scheme).
-  const domains = process.env.REPLIT_DOMAINS ?? "";
-  for (const d of domains.split(",").map((s) => s.trim()).filter(Boolean)) {
-    origins.add(`https://${d}`);
-  }
-  // REPLIT_DEV_DOMAIN is the single dev-preview domain.
-  const dev = process.env.REPLIT_DEV_DOMAIN;
-  if (dev) origins.add(`https://${dev}`);
-  // Additional explicit origins (e.g. local dev, custom domains)
   const extra = process.env.ALLOWED_ORIGINS ?? "";
   for (const o of extra.split(",").map((s) => s.trim()).filter(Boolean)) {
     origins.add(o);
+  }
+  // Keep Replit Preview working without weakening production CORS.
+  if (process.env.NODE_ENV !== "production") {
+    const domains = process.env.REPLIT_DOMAINS ?? "";
+    for (const d of domains.split(",").map((s) => s.trim()).filter(Boolean)) {
+      origins.add(`https://${d}`);
+    }
+    const dev = process.env.REPLIT_DEV_DOMAIN;
+    if (dev) origins.add(`https://${dev}`);
   }
   return origins;
 }
 
 const allowedOrigins = buildAllowedOrigins();
-const crossSiteCookies = process.env.COOKIE_SAME_SITE === "none";
+if (process.env.NODE_ENV === "production" && !process.env.ALLOWED_ORIGINS) {
+  throw new Error("ALLOWED_ORIGINS environment variable must be set in production");
+}
 
 app.use(
   cors({
@@ -77,18 +80,17 @@ if (!process.env.SESSION_SECRET && process.env.NODE_ENV === "production") {
   throw new Error("SESSION_SECRET environment variable must be set in production");
 }
 
-// SameSite=Strict prevents cross-site requests from carrying the session cookie,
-// providing CSRF protection for all admin mutations without explicit CSRF tokens.
 app.use(
   session({
     store: new PostgresSessionStore(),
-    secret: process.env.SESSION_SECRET ?? "dev-only-insecure-secret-DO-NOT-USE-IN-PROD",
+    secret: process.env.SESSION_SECRET ?? "preview-only-session-secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: crossSiteCookies ? "none" : "strict",
+      sameSite: "lax",
+      path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     },
   }),

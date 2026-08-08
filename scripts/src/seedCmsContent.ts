@@ -5,18 +5,15 @@
  * database tables. Running it twice will NOT duplicate rows or overwrite
  * later admin edits — it only inserts rows that don't already exist.
  *
- * Admin accounts are created WITHOUT a password hash. Each admin must visit
- * /#/admin and use "Set Initial Password" on their first login. This ensures
- * no credentials are ever committed to source code or readable log files.
+ * Admin credentials are server-only environment variables and are never
+ * created, changed, or printed by this seeder.
  *
  * Run with:
  *   pnpm --filter @workspace/scripts run seed:cms
  */
 
-import { randomBytes } from "node:crypto";
 import { db } from "@workspace/db";
 import {
-  adminUsersTable,
   cmsSectionsTable,
   cmsSubcategoriesTable,
   cmsProductsTable,
@@ -322,58 +319,6 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   menu_promo_gallery: "[]",
 };
 
-// ─── Admin accounts ───────────────────────────────────────────────────────────
-// The allowlist is server-only configuration. Passwords are never seeded.
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
-  .split(",").map((email) => email.trim().toLowerCase()).filter(Boolean);
-if (ADMIN_EMAILS.length !== 3 || new Set(ADMIN_EMAILS).size !== 3) {
-  throw new Error("ADMIN_EMAILS must contain exactly three unique emails before seeding CMS admins");
-}
-
-/**
- * Admin accounts are created WITHOUT a password hash.
- * A one-time setup token is generated and stored ONLY in the database.
- * No token is ever printed to logs, stdout, or any observable output.
- *
- * The server operator retrieves tokens by querying the database directly:
- *   psql "$DATABASE_URL" -c \
- *     "SELECT email, setup_token FROM admin_users WHERE password_hash IS NULL;"
- *
- * Each admin then visits /#/admin → "Set Initial Password", enters their email
- * and setup token, and chooses a password. The token is single-use and cleared.
- *
- * Tokens are only visible to users with direct database access, never to
- * application users or through any API endpoint.
- */
-async function seedAdmins() {
-  console.log("Seeding admin accounts (passwordless — setup tokens stored in DB only)...");
-  for (const email of ADMIN_EMAILS) {
-    const existing = await db.select().from(adminUsersTable).where(eq(adminUsersTable.email, email));
-    if (existing.length > 0) {
-      const [user] = existing;
-      if (user.passwordHash) {
-        console.log(`  Admin ${email} — password already set, skipping.`);
-      } else if (user.setupToken) {
-        console.log(`  Admin ${email} — pending setup (retrieve token via DB query).`);
-      } else {
-        // Account exists but token was cleared and no password — regenerate token silently
-        const token = randomBytes(32).toString("hex");
-        await db.update(adminUsersTable).set({ setupToken: token }).where(eq(adminUsersTable.email, email));
-        console.log(`  Admin ${email} — setup token regenerated (retrieve via DB query).`);
-      }
-      continue;
-    }
-    // New account — generate a setup token stored only in DB
-    const token = randomBytes(32).toString("hex");
-    await db.insert(adminUsersTable).values({ email, passwordHash: null, setupToken: token });
-    console.log(`  Created admin: ${email} (retrieve setup token via DB query).`);
-  }
-  console.log("");
-  console.log("  To retrieve setup tokens for unclaimed accounts:");
-  console.log("    psql \"$DATABASE_URL\" -c \"SELECT email, setup_token FROM admin_users WHERE password_hash IS NULL;\"");
-  console.log("");
-}
-
 async function seedSections() {
   console.log("Seeding sections...");
   for (const section of SECTIONS) {
@@ -456,7 +401,17 @@ async function createInitialRelease() {
 
 async function main() {
   console.log("Starting CMS seed...\n");
-  await seedAdmins();
+  const [sections, subcategories, products, settings, releases] = await Promise.all([
+    db.select({ id: cmsSectionsTable.id }).from(cmsSectionsTable).limit(1),
+    db.select({ id: cmsSubcategoriesTable.id }).from(cmsSubcategoriesTable).limit(1),
+    db.select({ id: cmsProductsTable.id }).from(cmsProductsTable).limit(1),
+    db.select({ id: cmsSiteSettingsTable.id }).from(cmsSiteSettingsTable).limit(1),
+    db.select({ id: cmsReleasesTable.id }).from(cmsReleasesTable).limit(1),
+  ]);
+  if ([sections, subcategories, products, settings, releases].some((rows) => rows.length > 0)) {
+    console.log("CMS database is not empty; skipping seed to protect existing data.");
+    return;
+  }
   await seedSections();
   await seedSubcategoriesAndProducts();
   await seedSettings();
