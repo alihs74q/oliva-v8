@@ -20,6 +20,7 @@ import { subcategoryData, type Subcategory } from '../data/subcategories';
 import type { ContentSnapshot, ApiSection, ApiProduct } from '../hooks/usePublishedContent';
 import type { PromoGallerySlide } from '../components/PromoGallery';
 import { getStaticCalories } from '../data/nutrition';
+import { getDefaultProductExtras } from '../data/menuExtras';
 
 // ─── Context shape ─────────────────────────────────────────────────────────────
 export interface ContentContextValue {
@@ -140,7 +141,9 @@ function apiToSubcategoryData(sections: ApiSection[]): Record<string, Subcategor
             recipe: p.recipe || undefined,
             calories: p.calories ?? getStaticCalories(p.name),
             extraCalories: p.extraCalories ?? {},
-            extras: p.extras ?? [],
+             extras: p.extras ?? getDefaultProductExtras(p.name, sub.subcategoryId),
+             priceLbp: p.priceLbp,
+             soldOut: p.soldOut,
           })),
       } as Subcategory));
   }

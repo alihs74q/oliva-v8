@@ -56,6 +56,7 @@ interface ProductSeed {
   imageUrl?: string | null;
   recipe?: string;
   flavors?: string[];
+  extras?: string[];
   calories?: number;
   extraCalories?: Record<string, number>;
 }
@@ -115,20 +116,35 @@ const SEED_CALORIES: Record<string, number> = {
   Toppings: 100,
 };
 
-const DEFAULT_EXTRA_CALORIES = { Cream: 80, "Ice Cream": 180, Flavor: 50 };
+const DEFAULT_EXTRA_CALORIES = { Cream: 25, "Ice Cream": 140, Flavor: 50, "Extra Shot": 5 };
 
 function seedCalories(name: string): number {
   return SEED_CALORIES[name] ?? 0;
 }
 
-function seedExtraCalories(subcategoryId: string): Record<string, number> {
-  if (["smoothies", "milk-shake", "coffee-frappe", "iced-latte", "refreshers"].includes(subcategoryId)) {
-    return DEFAULT_EXTRA_CALORIES;
+function seedExtras(subcategoryId: string, productName: string): string[] {
+  const name = productName.trim().toLowerCase();
+  if (subcategoryId === "milk-shake") return ["Cream", "Ice Cream", "Flavor"];
+  if (subcategoryId === "smoothies") return ["Cream", "Flavor"];
+  if (subcategoryId === "refreshers") return ["Flavor"];
+  if (subcategoryId === "coffee-frappe") return ["Cream", "Ice Cream", "Extra Shot", "Flavor"];
+  if (subcategoryId === "iced-latte") return ["Cream", "Extra Shot", "Flavor"];
+  if (["cakes", "cheesecakes", "pastries"].includes(subcategoryId)) return ["Cream", "Ice Cream"];
+  if (subcategoryId === "cold-beverages") return name === "water 0.5 l" ? [] : ["Flavor"];
+  if (subcategoryId === "classic-hot") {
+    if (name === "ginger and honey" || name === "ginger & honey") return [];
+    if (name === "cappuccino") return ["Extra Shot", "Flavor"];
+    if (name === "tea" || name === "chamomile" || name === "green tea") return ["Flavor"];
+    if (name === "espresso") return ["Cream", "Ice Cream", "Extra Shot", "Flavor"];
+    return ["Cream", "Extra Shot", "Flavor"];
   }
-  if (["cakes", "cheesecakes", "pastries"].includes(subcategoryId)) {
-    return { "Ice Cream": DEFAULT_EXTRA_CALORIES["Ice Cream"] };
-  }
-  return {};
+  return [];
+}
+
+function seedExtraCalories(subcategoryId: string, productName: string): Record<string, number> {
+  return Object.fromEntries(
+    seedExtras(subcategoryId, productName).map((name) => [name, DEFAULT_EXTRA_CALORIES[name as keyof typeof DEFAULT_EXTRA_CALORIES]]),
+  );
 }
 
 const SUBCATEGORIES: Record<string, SubcategorySeed[]> = {
@@ -172,7 +188,9 @@ const SUBCATEGORIES: Record<string, SubcategorySeed[]> = {
       products: [
         { name: "Iced Spanish Latte",                          description: "Condensed milk sweetness over iced espresso.",      priceLbp: 400000, imageUrl: "/images/products/IcedSpanishLatte.jpg", recipe: "Double espresso · Cold whole milk · Sweetened condensed milk · Ice" },
         { name: "Iced Mocha Latte",                            description: "Chocolate and espresso over ice.",                  priceLbp: 400000, imageUrl: "/images/products/IcedMochaLatte.jpg",  recipe: "Double espresso · Cold whole milk · Chocolate sauce · Ice" },
-        { name: "Iced Latte (Vanilla, Hazelnut, Salted Caramel)", description: "Choose your favorite flavor over ice.",         priceLbp: 300000, imageUrl: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Iced_Hazelnut_Latte_product_card_202608020513-WboajCiLFCT6MyUPVw06jG14enp3zF.jpeg", recipe: "Double espresso · Cold whole milk · Choice of: Vanilla syrup / Hazelnut syrup / Salted-caramel syrup · Ice", flavors: ["Vanilla", "Hazelnut", "Salted Caramel"] },
+        { name: "Iced Vanilla Latte",                            description: "Vanilla syrup over iced espresso.",                priceLbp: 300000, imageUrl: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Iced_Hazelnut_Latte_product_card_202608020513-WboajCiLFCT6MyUPVw06jG14enp3zF.jpeg", recipe: "Double espresso · Cold whole milk · Vanilla syrup · Ice" },
+        { name: "Iced Hazelnut Latte",                           description: "Hazelnut syrup over iced espresso.",               priceLbp: 300000, imageUrl: "/images/products/IcedHazelnutLatte.jpg", recipe: "Double espresso · Cold whole milk · Hazelnut syrup · Ice" },
+        { name: "Iced Salted Caramel Latte",                     description: "Salted caramel over iced espresso.",               priceLbp: 300000, imageUrl: "/images/products/IcedSaltedCaramelLatte.jpg", recipe: "Double espresso · Cold whole milk · Salted caramel syrup · Ice" },
         { name: "Irish Cream Latte",                           description: "Irish cream flavor over iced espresso.",            priceLbp: 300000, imageUrl: "/images/products/IrishCreamLatte.jpg", recipe: "Double espresso · Cold whole milk · Non-alcoholic Irish-cream syrup · Ice" },
         { name: "Caramel Macchiato",                           description: "Vanilla and caramel over iced espresso.",          priceLbp: 300000, imageUrl: "/images/products/CaramelMacchiato.jpg",recipe: "Double espresso · Cold whole milk · Vanilla syrup · Caramel drizzle · Ice" },
         { name: "Iced Matcha Latte",                           description: "Stone-ground matcha whisked with cold milk.",      priceLbp: 350000, imageUrl: "/images/products/IcedMatchaLatte.jpg", recipe: "Matcha green tea · Cold whole milk · Light sweetener · Ice", flavors: ["Oat Milk", "Almond Milk", "Regular Milk"] },
@@ -190,13 +208,23 @@ const SUBCATEGORIES: Record<string, SubcategorySeed[]> = {
         { name: "Summer Mix",          description: "A refreshing blend of summer fruits.", priceLbp: 300000, imageUrl: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-o91obZpOJCEwAWMd9n8anVLDsKXoqt.png", recipe: "Mixed summer fruits · Citrus juice · Sparkling water · Ice" },
       ],
     },
+    {
+      id: "cold-beverages", name: "Cold Beverages", description: "Simple, crisp, and refreshing", themeColor: "#0f766e", accentColor: "#5eead4",
+      imageUrl: null,
+      products: [
+        { name: "Water 0.5 L", description: "Still mineral water.", priceLbp: 50000, imageUrl: null, recipe: "Still mineral water" },
+        { name: "Sparkling Water", description: "Chilled sparkling water.", priceLbp: 100000, imageUrl: null, recipe: "Carbonated mineral water" },
+      ],
+    },
   ],
   "hot-drinks": [
     {
       id: "classic-hot", name: "Classic Hot Drinks", description: "Warm & aromatic classics", themeColor: "#b45309", accentColor: "#fdba74",
       imageUrl: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/29484572558483377%20%281%29-1iER0hWvPNuvfPzzBs3dGVMmgG3dos.jpg",
       products: [
-        { name: "Café Latte (Vanilla, Hazelnut)", description: "Smooth espresso with silky steamed milk.",     priceLbp: 300000, imageUrl: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Vanilla_Caf%C3%A9_Latte_product_card_202608020517-HwDA8UXqICt6eX69m3jbPZejMSF3zZ.jpeg", recipe: "Double espresso · Steamed whole milk · Choice of: Vanilla syrup / Hazelnut syrup · Thin velvety microfoam", flavors: ["Vanilla", "Hazelnut"] },
+        { name: "Café Latte",         description: "Smooth espresso with silky steamed milk.",     priceLbp: 300000, imageUrl: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Vanilla_Caf%C3%A9_Latte_product_card_202608020517-HwDA8UXqICt6eX69m3jbPZejMSF3zZ.jpeg", recipe: "Double espresso · Steamed whole milk · Thin velvety microfoam" },
+        { name: "Vanilla Café Latte", description: "Vanilla syrup with silky steamed milk.",       priceLbp: 300000, imageUrl: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Vanilla_Caf%C3%A9_Latte_product_card_202608020517-HwDA8UXqICt6eX69m3jbPZejMSF3zZ.jpeg", recipe: "Double espresso · Steamed whole milk · Vanilla syrup · Thin velvety microfoam" },
+        { name: "Hazelnut Café Latte",description: "Hazelnut syrup with silky steamed milk.",      priceLbp: 300000, imageUrl: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Vanilla_Caf%C3%A9_Latte_product_card_202608020517-HwDA8UXqICt6eX69m3jbPZejMSF3zZ.jpeg", recipe: "Double espresso · Steamed whole milk · Hazelnut syrup · Thin velvety microfoam" },
         { name: "Hot Chocolate",    description: "Rich dark cocoa with steamed milk and a touch of cream.", priceLbp: 300000, imageUrl: "/images/products/HotChocolate.jpg",  recipe: "Chocolate or cocoa · Steamed whole milk · Light milk foam · Whipped cream", flavors: ["Dark", "Milk", "White"] },
         { name: "Cappuccino",       description: "Velvety microfoam over a double espresso shot.",          priceLbp: 300000, imageUrl: "/images/products/Cappuccino.jpg",     recipe: "Double espresso · Steamed whole milk · Thick velvety microfoam · Equal parts espresso, milk and foam", flavors: ["Classic", "Wet", "Dry"] },
         { name: "Espresso",         description: "Rich single-origin shot, bold and intensely aromatic.",   priceLbp: 100000, imageUrl: "/images/products/Espresso.jpg",       recipe: "Freshly ground coffee · Hot water under pressure · Concentrated coffee shot · Natural crema", flavors: ["Single Shot", "Double Shot", "Ristretto"] },
@@ -386,7 +414,8 @@ async function seedSubcategoriesAndProducts() {
           description: p.description, priceLbp: p.priceLbp, priceUsd: computeUsd(p.priceLbp),
           imageUrl: p.imageUrl ?? null, recipe: p.recipe ?? "", flavors: p.flavors ?? [],
           calories: p.calories ?? seedCalories(p.name),
-          extraCalories: p.extraCalories ?? seedExtraCalories(sub.id),
+          extras: p.extras ?? seedExtras(sub.id, p.name),
+          extraCalories: p.extraCalories ?? seedExtraCalories(sub.id, p.name),
           sortOrder: pi,
         });
         console.log(`    Created product: ${p.name}`);

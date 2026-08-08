@@ -4,3 +4,4 @@
 - [Admin auth setup](admin-auth-setup.md) — first-time setup can partially succeed before audit logging fails; check account state before retrying.
 - [CMS schema migrations](cms-schema-migrations.md) — when live CMS tables contain legacy columns, use additive migrations rather than broad generated diffs.
 - [Replit optional native dependencies](replit-optional-native-deps.md) — Vite needs Linux optional runtime packages; restore them before debugging app code or preview ports.
+- [Oliva menu extras](oliva-menu-extras.md) — shared extra catalog with product-level availability; an explicit empty list means no extras.

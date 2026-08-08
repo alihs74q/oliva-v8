@@ -8,6 +8,7 @@ import { getImageForProduct } from '../utils/imageMatching'
 import { imageAssets } from '../utils/imageAssets'
 import { ViewRecipeButton } from './ViewRecipeButton'
 import { DEFAULT_EXTRA_CALORIES, getStaticCalories } from '../data/nutrition'
+import { getDefaultProductExtras, getMenuExtra, formatLbp, formatUsdFromLbp, type MenuExtraName } from '../data/menuExtras'
 
 export interface CategoryTheme {
   bgGradient: string
@@ -166,8 +167,10 @@ function HeroGallery({ images, accent }: { images: string[]; accent: string }) {
 }
 
 // ─── Price sticky note ────────────────────────────────────────────────────────
-function PriceStickyNote({ price, lbpPrice, currency }: { price: string; lbpPrice: string; currency: Currency }) {
-  const displayedPrice = currency === 'USD' ? price : lbpPrice
+function PriceStickyNote({ price, lbpPrice, totalLbp, currency }: { price: string; lbpPrice: string; totalLbp?: number; currency: Currency }) {
+  const displayedPrice = totalLbp !== undefined
+    ? currency === 'USD' ? formatUsdFromLbp(totalLbp) : formatLbp(totalLbp)
+    : currency === 'USD' ? price : lbpPrice
   const isLBP = currency === 'LBP'
 
   return (
@@ -218,16 +221,17 @@ function PriceStickyNote({ price, lbpPrice, currency }: { price: string; lbpPric
 // ─── Individual drink card ────────────────────────────────────────────────────
 function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: SubcategoryDrink; sub: Subcategory; theme?: CategoryTheme; index: number; currency: Currency; isMobile: boolean }) {
   const [open, setOpen] = useState(false)
-  const [selectedExtras, setSelectedExtras] = useState<string[]>([])
+  const [selectedExtras, setSelectedExtras] = useState<MenuExtraName[]>([])
   const displayImage = getImageForProduct(drink.name, drink.image ?? undefined)
   const baseCalories = drink.calories ?? getStaticCalories(drink.name)
-  const extras: { name: string; price?: string }[] = drink.extras?.length
-    ? drink.extras.map(extra => typeof extra === 'string' ? { name: extra } : extra)
-    : ['smoothies', 'milk-shake', 'coffee-frappe', 'iced-latte', 'refreshers'].includes(sub.id)
-      ? ['Cream', 'Ice Cream', 'Flavor'].map(name => ({ name }))
-      : ['cakes', 'cheesecakes', 'pastries'].includes(sub.id) ? [{ name: 'Ice Cream' }] : []
+  const extras = (drink.extras ?? getDefaultProductExtras(drink.name, sub.id))
+    .filter((name): name is MenuExtraName => Boolean(getMenuExtra(name)))
+  const baseLbp = drink.priceLbp ?? (parseInt((drink.lbpPrice ?? '').replace(/[^0-9]/g, ''), 10) || 0)
+  const extraLbp = selectedExtras.reduce((sum, name) => sum + (getMenuExtra(name)?.priceLbp ?? 0), 0)
+  const totalLbp = baseLbp + extraLbp
   const totalCalories = baseCalories + selectedExtras.reduce((sum, extra) => sum + (drink.extraCalories?.[extra] ?? DEFAULT_EXTRA_CALORIES[extra] ?? 0), 0)
-  const hasDetails = Boolean(drink.recipe || baseCalories || extras.length)
+  const soldOut = Boolean(drink.soldOut)
+  const hasDetails = Boolean(drink.recipe || baseCalories || extras.length || soldOut)
 
   return (
     <motion.div
@@ -238,10 +242,10 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
       style={{
         display: 'flex', flexDirection: 'column',
         background: '#f8f8f8',
-        border: `1px solid ${open ? '#596B3D40' : 'rgba(0,0,0,0.07)'}`,
+        border: `1px solid ${soldOut ? '#b91c1c55' : open ? '#596B3D40' : 'rgba(0,0,0,0.07)'}`,
         borderRadius: 20,
         overflow: 'hidden',
-        boxShadow: open ? '0 6px 20px rgba(89,107,61,0.15)' : '0 4px 16px rgba(0,0,0,0.07)',
+        boxShadow: soldOut ? '0 4px 16px rgba(185,28,28,0.08)' : open ? '0 6px 20px rgba(89,107,61,0.15)' : '0 4px 16px rgba(0,0,0,0.07)',
         transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
       }}
     >
@@ -262,10 +266,10 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
         }}>
           {displayImage ? (
-            <img src={displayImage} alt={drink.name} draggable={false}
+           <img src={displayImage} alt={drink.name} draggable={false}
               loading={index < 2 ? 'eager' : 'lazy'}
               decoding="async"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+               style={{ width: '100%', height: '100%', objectFit: 'cover', filter: soldOut ? 'grayscale(0.75)' : undefined, opacity: soldOut ? 0.62 : 1 }} />
           ) : (
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.3)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -278,12 +282,15 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
         {/* Name */}
         <h4 style={{
           flex: 1, minWidth: 0, margin: 0, alignSelf: 'center',
-          fontSize: 'clamp(18px,2.6vw,26px)', fontWeight: 800, color: '#111',
+           fontSize: 'clamp(18px,2.6vw,26px)', fontWeight: 800, color: soldOut ? '#991b1b' : '#111',
           lineHeight: 1.2, letterSpacing: '-0.01em',
         }}>{drink.name}</h4>
 
         {/* Price sticky note */}
-        <PriceStickyNote price={drink.price} lbpPrice={drink.lbpPrice} currency={currency} />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+          <PriceStickyNote price={drink.price} lbpPrice={drink.lbpPrice} totalLbp={selectedExtras.length ? totalLbp : undefined} currency={currency} />
+          {soldOut && <span style={{ color: '#b91c1c', fontSize: 10, fontWeight: 900, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Out of stock</span>}
+        </div>
       </div>
 
       {/* View Recipe button — only shown when recipe exists */}
@@ -291,7 +298,8 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
         <div style={{ padding: '0 clamp(14px,2vh,20px) clamp(14px,2vh,20px)' }}>
           <ViewRecipeButton
             isExpanded={open}
-            onClick={() => setOpen(prev => !prev)}
+            disabled={soldOut}
+            onClick={() => { if (!soldOut) setOpen(prev => !prev) }}
           />
 
           {/* Smooth animated recipe panel */}
@@ -358,26 +366,6 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
 
                   {/* Optional Extras */}
                   {(() => {
-                    // Determine which extras to show based on subcategory
-                    const drinksWithExtras = ['smoothies', 'milk-shake', 'coffee-frappe', 'iced-latte', 'refreshers']
-                    const dessertsWithExtras = ['cakes', 'cheesecakes', 'pastries']
-                    const noExtras = ['sandwiches-main', 'greek', 'flavors', 'padel-packages']
-                    
-                    let extras: { name: string; price: string }[] = []
-                    
-                    if (drinksWithExtras.includes(sub.id)) {
-                      extras = [
-                        { name: 'Cream', price: '+50,000 LBP' },
-                        { name: 'Ice Cream', price: '+50,000 LBP' },
-                        { name: 'Flavor', price: '+50,000 LBP' },
-                      ]
-                    } else if (dessertsWithExtras.includes(sub.id)) {
-                      extras = [
-                        { name: 'Ice Cream', price: '+50,000 LBP' },
-                      ]
-                    }
-                    
-                    // Show extras section only if there are extras to display
                     if (extras.length === 0) return null
                     
                     return (
@@ -391,32 +379,39 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
                           opacity: 0.9,
                         }}>Optional Extras</p>
                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                          {extras.map((extra, i) => (
+                           {extras.map((extra) => {
+                              const definition = getMenuExtra(extra)
+                              if (!definition) return null
+                              const isSelected = selectedExtras.includes(extra)
+                              return (
                              <motion.button
-                               key={extra.name}
+                                key={extra}
                                type="button"
                                whileTap={{ scale: 0.94 }}
-                               onClick={() => setSelectedExtras(prev => prev.includes(extra.name) ? prev.filter(item => item !== extra.name) : [...prev, extra.name])}
+                                onClick={() => setSelectedExtras(prev => isSelected ? prev.filter(item => item !== extra) : [...prev, extra])}
                                style={{
                                  display: 'inline-flex', alignItems: 'center', gap: 6,
                                  padding: '8px 11px',
-                                 background: selectedExtras.includes(extra.name) ? '#596B3D' : '#fff',
-                                 border: `1px solid ${selectedExtras.includes(extra.name) ? '#596B3D' : '#596B3D50'}`,
+                                  background: isSelected ? '#596B3D' : '#fff',
+                                  border: `1px solid ${isSelected ? '#596B3D' : '#596B3D50'}`,
                                  borderRadius: 10,
                                  fontFamily: '"Manrope", sans-serif',
                                  fontSize: 'clamp(10px,1.1vw,12px)',
-                                 color: selectedExtras.includes(extra.name) ? '#fff' : '#596B3D',
+                                  color: isSelected ? '#fff' : '#596B3D',
                                  fontWeight: 750,
                                  cursor: 'pointer',
                                  transition: 'background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease',
-                                 boxShadow: selectedExtras.includes(extra.name) ? '0 5px 12px rgba(89,107,61,0.2)' : 'none',
+                                  boxShadow: isSelected ? '0 5px 12px rgba(89,107,61,0.2)' : 'none',
                                }}
                              >
-                               <span style={{ fontSize: 15, fontWeight: 800 }}>{selectedExtras.includes(extra.name) ? '✓' : '+'}</span>
-                               <span>{extra.name}</span>
-                               <span style={{ opacity: 0.72, fontSize: 10 }}>+{drink.extraCalories?.[extra.name] ?? DEFAULT_EXTRA_CALORIES[extra.name] ?? 0}</span>
+                                <span style={{ fontSize: 15, fontWeight: 800 }}>{isSelected ? '✓' : '+'}</span>
+                                <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.15 }}>
+                                  <span>{definition.name}</span>
+                                  <span style={{ opacity: 0.68, fontSize: 9, fontWeight: 700 }}>+{formatLbp(definition.priceLbp)} · +{drink.extraCalories?.[extra] ?? definition.calories} cal</span>
+                                </span>
                              </motion.button>
-                          ))}
+                              )
+                           })}
                         </div>
                       </>
                     )

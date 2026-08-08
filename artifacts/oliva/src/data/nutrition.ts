@@ -1,7 +1,8 @@
 export const DEFAULT_EXTRA_CALORIES: Record<string, number> = {
-  Cream: 80,
-  'Ice Cream': 180,
+  Cream: 25,
+  'Ice Cream': 140,
   Flavor: 50,
+  'Extra Shot': 5,
 }
 
 const calories: Record<string, number> = {

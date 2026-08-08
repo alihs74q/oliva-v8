@@ -77,6 +77,7 @@ export const ProductInput = z.object({
   tags: z.array(z.string()).optional(),
   allergens: z.array(z.string()).optional(),
   featured: z.boolean().optional(),
+  soldOut: z.boolean().optional(),
 });
 
 export const ProductUpdate = z.object({

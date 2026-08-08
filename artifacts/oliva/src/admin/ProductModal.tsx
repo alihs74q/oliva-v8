@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { ApiProduct } from '../hooks/usePublishedContent';
 import ImagePickerInput from './ImagePickerInput';
 import { DEFAULT_EXTRA_CALORIES, getStaticCalories } from '../data/nutrition';
+import { MENU_EXTRAS, getMenuExtra, type MenuExtraName } from '../data/menuExtras';
 
 const GOLD = '#D4A843';
 const RATE = 89500; // Approximate, actual is fetched from settings
@@ -32,7 +33,9 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
   const [imageFocalPoint, setImageFocalPoint] = useState(product?.imageFocalPoint ?? 'center');
   const [recipe, setRecipe] = useState(product?.recipe ?? '');
   const [flavorsText, setFlavorsText] = useState((product?.flavors ?? []).join(', '));
-  const [extrasText, setExtrasText] = useState((product?.extras ?? []).join(', '));
+  const [selectedExtras, setSelectedExtras] = useState<MenuExtraName[]>(
+    (product?.extras ?? []).filter((extra): extra is MenuExtraName => Boolean(getMenuExtra(extra))),
+  );
   const [calories, setCalories] = useState(String(product?.calories ?? getStaticCalories(product?.name ?? '')));
   const [extraCaloriesText, setExtraCaloriesText] = useState(
     Object.entries(product?.extraCalories ?? {}).map(([name, value]) => `${name}: ${value}`).join('\n'),
@@ -73,7 +76,7 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
         imageFocalPoint,
         recipe: recipe.trim(),
         flavors: flavorsText.split(',').map((f) => f.trim()).filter(Boolean),
-        extras: extrasText.split(',').map((f) => f.trim()).filter(Boolean),
+         extras: selectedExtras,
         calories: Math.max(0, parseInt(calories, 10) || 0),
         extraCalories,
         tags: tagsText.split(',').map((f) => f.trim()).filter(Boolean),
@@ -160,9 +163,37 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
           <Field label="Flavor options (comma-separated)">
             <input value={flavorsText} onChange={(e) => setFlavorsText(e.target.value)} style={inputStyle} placeholder="Classic, Vanilla, Hazelnut" />
           </Field>
-          <Field label="Extras (comma-separated)">
-            <input value={extrasText} onChange={(e) => setExtrasText(e.target.value)} style={inputStyle} placeholder="Whipped cream, Syrup" />
-          </Field>
+          <div style={{ padding: 14, borderRadius: 12, background: 'rgba(89,107,61,0.1)', border: '1px solid rgba(89,107,61,0.28)' }}>
+            <div style={{ color: '#f5f2e8', fontWeight: 800, fontSize: 13, marginBottom: 4 }}>Available extras</div>
+            <div style={{ color: 'rgba(245,242,232,0.44)', fontSize: 11, marginBottom: 12 }}>
+              Choose which extras customers can add to this product. Prices and calories are fixed in the menu.
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }}>
+              {MENU_EXTRAS.map((extra) => {
+                const checked = selectedExtras.includes(extra.name);
+                return (
+                  <label key={extra.name} style={{
+                    display: 'flex', alignItems: 'center', gap: 9, padding: '10px 11px',
+                    borderRadius: 10, cursor: 'pointer',
+                    background: checked ? 'rgba(212,168,67,0.16)' : 'rgba(255,255,255,0.04)',
+                    border: `1px solid ${checked ? 'rgba(212,168,67,0.6)' : 'rgba(255,255,255,0.1)'}`,
+                  }}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => setSelectedExtras((current) => checked
+                        ? current.filter((name) => name !== extra.name)
+                        : [...current, extra.name])}
+                    />
+                    <span style={{ minWidth: 0 }}>
+                      <span style={{ display: 'block', color: checked ? '#f5f2e8' : 'rgba(245,242,232,0.7)', fontSize: 12, fontWeight: 800 }}>{extra.name}</span>
+                      <span style={{ display: 'block', color: 'rgba(245,242,232,0.42)', fontSize: 10 }}>+{extra.priceLbp.toLocaleString()} LBP · +{extra.calories} cal</span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
           <Field label="Tags (comma-separated)">
             <input value={tagsText} onChange={(e) => setTagsText(e.target.value)} style={inputStyle} placeholder="popular, seasonal" />
           </Field>

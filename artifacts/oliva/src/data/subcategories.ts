@@ -8,6 +8,8 @@ export interface SubcategoryDrink {
   calories?: number
   extraCalories?: Record<string, number>
   extras?: string[]
+  priceLbp?: number
+  soldOut?: boolean
 }
 
 export interface Subcategory {
@@ -96,6 +98,18 @@ export const coldDrinksSubcategories: Subcategory[] = [
       { name: 'Kiwi Mojito', description: 'Kiwi and mint mocktail, crisp and cool.', price: '$3', lbpPrice: '300,000 LBP', image: '/images/products/KiwiMojito.jpg', recipe: 'Kiwi · Fresh lime · Fresh mint · Sparkling water · Ice' },
       { name: 'Passion Crush', description: 'Passion fruit crushed with ice.', price: '$3.50', lbpPrice: '300,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-hyEo5w3I433kY7LhTcXbkS1hPiqjYB.png', recipe: 'Passion fruit · Fresh lime · Sparkling water · Crushed ice' },
       { name: 'Summer Mix', description: 'A refreshing blend of summer fruits.', price: '$3.50', lbpPrice: '300,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-o91obZpOJCEwAWMd9n8anVLDsKXoqt.png', recipe: 'Mixed summer fruits · Citrus juice · Sparkling water · Ice' },
+    ],
+  },
+  {
+    id: 'cold-beverages',
+    name: 'Cold Beverages',
+    description: 'Simple, crisp, and refreshing',
+    themeColor: '#0f766e',
+    accentColor: '#5eead4',
+    image: null,
+    drinks: [
+      { name: 'Water 0.5 L', description: 'Still mineral water.', price: '$0.50', lbpPrice: '50,000 LBP', image: null, recipe: 'Still mineral water' },
+      { name: 'Sparkling Water', description: 'Chilled sparkling water.', price: '$1', lbpPrice: '100,000 LBP', image: null, recipe: 'Carbonated mineral water' },
     ],
   },
 ]

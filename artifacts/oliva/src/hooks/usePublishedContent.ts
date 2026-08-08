@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { subcategoryData, type Subcategory } from '../data/subcategories';
 import type { PromoGallerySlide } from '../components/PromoGallery';
 import { getStaticCalories } from '../data/nutrition';
+import { getDefaultProductExtras } from '../data/menuExtras';
 
 // ─── API content shapes (mirrors server output) ────────────────────────────────
 export interface ApiProduct {
@@ -90,6 +91,8 @@ function apiProductToSubcategoryDrink(p: ApiProduct) {
     calories: p.calories || getStaticCalories(p.name),
     extraCalories: p.extraCalories ?? {},
     extras: p.extras ?? [],
+    priceLbp: p.priceLbp,
+    soldOut: p.soldOut,
   };
 }
 
@@ -115,7 +118,10 @@ function apiToSubcategoryData(sections: ApiSection[]): Record<string, Subcategor
         drinks: sub.products
           .filter((p) => !p.hidden && !p.deleted)
           .sort((a, b) => a.sortOrder - b.sortOrder)
-          .map(apiProductToSubcategoryDrink),
+           .map((product) => ({
+             ...apiProductToSubcategoryDrink(product),
+             extras: product.extras ?? getDefaultProductExtras(product.name, sub.subcategoryId),
+           })),
       } as Subcategory));
   }
   return result;
