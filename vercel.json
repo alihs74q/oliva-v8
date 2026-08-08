@@ -1,4 +1,10 @@
 {
   "buildCommand": "pnpm --filter @workspace/oliva build",
-  "outputDirectory": "artifacts/oliva/dist/public"
+  "outputDirectory": "artifacts/oliva/dist/public",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://oliva-1.replit.app/api/:path*"
+    }
+  ]
 }

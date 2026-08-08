@@ -60,7 +60,7 @@ export async function apiLogin(email: string, password: string): Promise<{ ok: b
     if (res.status === 429) return { ok: false, error: 'Too many attempts. Please wait 15 minutes and try again.' };
     return { ok: false, error: data.error ?? `Admin API error (${res.status}).` };
   } catch {
-    return { ok: false, error: 'Admin API is unavailable. Configure VITE_API_BASE_URL for this deployment.' };
+    return { ok: false, error: 'Admin API is unavailable. Please try again.' };
   }
 }
 
