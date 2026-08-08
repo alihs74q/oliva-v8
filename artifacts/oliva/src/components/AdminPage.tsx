@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, ChevronRight, Eye, LogOut, Plus, Save, Send, ShieldCheck, Trash2, Upload, X } from 'lucide-react';
 import type { Subcategory, SubcategoryDrink } from '../data/subcategories';
 import { subcategoryData } from '../data/subcategories';
+import { API_BASE } from '../config/api';
 
 type MenuSection = {
   id: string;
@@ -20,7 +21,7 @@ type AdminDocument = {
 
 type AdminRelease = { id: number; message: string; createdAt: string };
 
-const API = '/api';
+const API = API_BASE;
 const initialSections: MenuSection[] = Object.entries(subcategoryData).map(([id, subs]) => ({
   id,
   name: id.split('-').map((word) => word[0].toUpperCase() + word.slice(1)).join(' '),

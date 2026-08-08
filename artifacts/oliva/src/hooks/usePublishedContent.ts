@@ -11,6 +11,7 @@ import { subcategoryData, type Subcategory } from '../data/subcategories';
 import type { PromoGallerySlide } from '../components/PromoGallery';
 import { getStaticCalories } from '../data/nutrition';
 import { getDefaultProductExtras } from '../data/menuExtras';
+import { API_BASE } from '../config/api';
 
 // ─── API content shapes (mirrors server output) ────────────────────────────────
 export interface ApiProduct {
@@ -128,8 +129,7 @@ function apiToSubcategoryData(sections: ApiSection[]): Record<string, Subcategor
 }
 
 // ─── Base API URL ──────────────────────────────────────────────────────────────
-const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
-const API_URL = `${BASE}/api/public/content`;
+const API_URL = `${API_BASE}/public/content`;
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 export type ContentStatus = 'loading' | 'api' | 'fallback';

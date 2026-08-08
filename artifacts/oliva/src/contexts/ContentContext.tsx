@@ -21,6 +21,7 @@ import type { ContentSnapshot, ApiSection, ApiProduct } from '../hooks/usePublis
 import type { PromoGallerySlide } from '../components/PromoGallery';
 import { getStaticCalories } from '../data/nutrition';
 import { getDefaultProductExtras } from '../data/menuExtras';
+import { API_BASE } from '../config/api';
 
 // ─── Context shape ─────────────────────────────────────────────────────────────
 export interface ContentContextValue {
@@ -204,8 +205,7 @@ function snapshotToContextValue(snapshot: ContentSnapshot): Omit<ContentContextV
 }
 
 // ─── Provider ──────────────────────────────────────────────────────────────────
-const BASE = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
-const API_URL = `${BASE}/api/public/content`;
+const API_URL = `${API_BASE}/public/content`;
 
 export function ContentProvider({ children }: { children: ReactNode }) {
   const [value, setValue] = useState<ContentContextValue>({

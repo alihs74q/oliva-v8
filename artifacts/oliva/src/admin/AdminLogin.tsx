@@ -24,7 +24,7 @@ export default function AdminLogin({ onLogin }: Props) {
     if (result.ok) {
       onLogin();
     } else {
-      setError('Invalid email or password.');
+      setError(result.error ?? 'Login failed.');
     }
   };
 

@@ -56,6 +56,7 @@ function buildAllowedOrigins(): Set<string> {
 }
 
 const allowedOrigins = buildAllowedOrigins();
+const crossSiteCookies = process.env.COOKIE_SAME_SITE === "none";
 
 app.use(
   cors({
@@ -87,7 +88,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: crossSiteCookies ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     },
   }),

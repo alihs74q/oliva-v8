@@ -6,12 +6,10 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-
-const BASE = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
-const API = `${BASE}/api`;
+import { API_BASE } from '../config/api';
 
 async function apiFetch(path: string, options?: RequestInit) {
-  const res = await fetch(`${API}${path}`, {
+  const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     credentials: 'include',
     headers: {
@@ -56,9 +54,13 @@ export async function apiLogin(email: string, password: string): Promise<{ ok: b
     });
     if (res.ok) return { ok: true };
     const data = await res.json().catch(() => ({}));
-    return { ok: false, error: data.error ?? 'Login failed' };
+    if (res.status === 401) return { ok: false, error: 'Invalid email or password.' };
+    if (res.status === 403) return { ok: false, error: data.message ?? 'Password is not set for this account.' };
+    if (res.status === 404) return { ok: false, error: 'Admin API is not connected to this website.' };
+    if (res.status === 429) return { ok: false, error: 'Too many attempts. Please wait 15 minutes and try again.' };
+    return { ok: false, error: data.error ?? `Admin API error (${res.status}).` };
   } catch {
-    return { ok: false, error: 'Network error' };
+    return { ok: false, error: 'Admin API is unavailable. Configure VITE_API_BASE_URL for this deployment.' };
   }
 }
 
@@ -239,7 +241,7 @@ export async function apiUploadMedia(file: File, altText = ''): Promise<{ url: s
   const form = new FormData();
   form.append('file', file);
   form.append('altText', altText);
-  const res = await fetch(`${API}/admin/media/upload`, {
+  const res = await fetch(`${API_BASE}/admin/media/upload`, {
     method: 'POST',
     credentials: 'include',
     body: form,
