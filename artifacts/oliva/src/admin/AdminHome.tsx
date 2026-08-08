@@ -173,6 +173,7 @@ export default function AdminHome({ session, onLogout, onNavigate }: Props) {
               { page: 'promotions', label: 'Menu Promotions', icon: '🖼️', desc: 'Add/remove rotating menu ads' },
               { page: 'settings', label: 'Site Settings', icon: '⚙️', desc: 'Contact, hours, social' },
               { page: 'exchange',  label: 'Pricing',       icon: '💱', desc: 'LBP/USD exchange rate' },
+              { page: 'nutrition', label: 'Nutrition',    icon: '◒',  desc: 'Calories & extras' },
               { page: 'releases', label: 'History',        icon: '📋', desc: 'Publish & rollback' },
               { page: 'security', label: 'Security',       icon: '🔐', desc: 'Change password' },
             ].map((item) => (

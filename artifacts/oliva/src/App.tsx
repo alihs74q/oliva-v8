@@ -24,7 +24,6 @@ import CategoryListPage, { type CategoryTheme } from './components/CategoryListP
 import { subcategoryData } from './data/subcategories';
 import PadelPage from './components/PadelPage';
 import { useOfflineSupport } from './hooks/useOfflineSupport';
-import { useImagePreloader, useCategoryPreload } from './hooks/useImagePreloader';
 import { usePublishedContent } from './hooks/usePublishedContent';
 import { ContentProvider } from './contexts/ContentContext';
 import { useContent } from './contexts/ContentContext';
@@ -149,15 +148,6 @@ export default function App() {
     : undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const offlineStatus = useOfflineSupport();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const imagePreloader = useImagePreloader();
-
-  // Preload category images when navigating to list
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { isReady: categoryReady } = useCategoryPreload(
-    route.name === 'list' ? route.category : ''
-  );
-
   useEffect(() => {
     const onHashChange = () => {
       setRoute(parseRoute());

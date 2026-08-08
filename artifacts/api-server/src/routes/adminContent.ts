@@ -182,7 +182,9 @@ router.post("/admin/subcategories/:id/duplicate", async (req, res): Promise<void
       db.insert(cmsProductsTable).values({
         subcategoryDbId: copy.id, name: p.name, shortName: p.shortName, description: p.description,
         priceLbp: p.priceLbp, priceUsd: p.priceUsd, imageUrl: p.imageUrl, recipe: p.recipe,
-        flavors: p.flavors, sortOrder: i,
+        flavors: p.flavors, extras: p.extras, tags: p.tags, allergens: p.allergens,
+        calories: p.calories, extraCalories: p.extraCalories, featured: p.featured,
+        sortOrder: i,
       }).returning().then(([r]) => r)
     )
   );
@@ -212,6 +214,7 @@ router.post("/admin/subcategories/:subcategoryId/products", async (req, res): Pr
     imageAlt: parsed.data.imageAlt ?? "", imageFocalPoint: parsed.data.imageFocalPoint ?? "center",
     recipe: parsed.data.recipe ?? "", flavors: parsed.data.flavors ?? [],
     extras: parsed.data.extras ?? [], tags: parsed.data.tags ?? [],
+     calories: parsed.data.calories ?? 0, extraCalories: parsed.data.extraCalories ?? {},
     allergens: parsed.data.allergens ?? [], featured: parsed.data.featured ?? false,
     sortOrder: maxSort + 1,
   }).returning();
@@ -235,6 +238,8 @@ router.patch("/admin/products/:id", async (req, res): Promise<void> => {
   if (parsed.data.recipe !== undefined) updates.recipe = parsed.data.recipe;
   if (parsed.data.flavors !== undefined) updates.flavors = parsed.data.flavors;
   if (parsed.data.extras !== undefined) updates.extras = parsed.data.extras;
+  if (parsed.data.calories !== undefined) updates.calories = parsed.data.calories;
+  if (parsed.data.extraCalories !== undefined) updates.extraCalories = parsed.data.extraCalories;
   if (parsed.data.tags !== undefined) updates.tags = parsed.data.tags;
   if (parsed.data.allergens !== undefined) updates.allergens = parsed.data.allergens;
   if (parsed.data.featured !== undefined) updates.featured = parsed.data.featured;
@@ -305,6 +310,7 @@ router.post("/admin/products/:id/duplicate", async (req, res): Promise<void> => 
     subcategoryDbId: orig.subcategoryDbId, name: `${orig.name} (Copy)`, shortName: orig.shortName,
     description: orig.description, priceLbp: orig.priceLbp, priceUsd: orig.priceUsd,
     imageUrl: orig.imageUrl, recipe: orig.recipe, flavors: orig.flavors, sortOrder: maxSort + 1,
+     calories: orig.calories, extraCalories: orig.extraCalories,
   }).returning();
   await db.insert(cmsAuditLogTable).values({ userEmail: callerEmail(req), action: "duplicate_product", entityType: "product", entityId: String(copy.id), details: { originalId: id } });
   res.status(201).json({ ...copy, flavors: (copy.flavors as string[]) ?? [], imageUrl: copy.imageUrl ?? null, createdAt: copy.createdAt.toISOString(), updatedAt: copy.updatedAt.toISOString() });

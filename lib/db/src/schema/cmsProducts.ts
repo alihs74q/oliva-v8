@@ -18,6 +18,8 @@ export const cmsProductsTable = pgTable("cms_products", {
   recipe: text("recipe").notNull().default(""), // bullet-separated with " · "
   flavors: jsonb("flavors").notNull().default([]), // string[]
   extras: jsonb("extras").notNull().default([]),
+  calories: integer("calories").notNull().default(0),
+  extraCalories: jsonb("extra_calories").notNull().default({}), // Record<string, number>
   tags: jsonb("tags").notNull().default([]),
   allergens: jsonb("allergens").notNull().default([]),
   featured: boolean("featured").notNull().default(false),

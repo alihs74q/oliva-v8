@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { ApiProduct } from '../hooks/usePublishedContent';
 import ImagePickerInput from './ImagePickerInput';
+import { DEFAULT_EXTRA_CALORIES, getStaticCalories } from '../data/nutrition';
 
 const GOLD = '#D4A843';
 const RATE = 89500; // Approximate, actual is fetched from settings
@@ -32,6 +33,10 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
   const [recipe, setRecipe] = useState(product?.recipe ?? '');
   const [flavorsText, setFlavorsText] = useState((product?.flavors ?? []).join(', '));
   const [extrasText, setExtrasText] = useState((product?.extras ?? []).join(', '));
+  const [calories, setCalories] = useState(String(product?.calories ?? getStaticCalories(product?.name ?? '')));
+  const [extraCaloriesText, setExtraCaloriesText] = useState(
+    Object.entries(product?.extraCalories ?? {}).map(([name, value]) => `${name}: ${value}`).join('\n'),
+  );
   const [tagsText, setTagsText] = useState((product?.tags ?? []).join(', '));
   const [allergensText, setAllergensText] = useState((product?.allergens ?? []).join(', '));
   const [featured, setFeatured] = useState(product?.featured ?? false);
@@ -49,6 +54,13 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
     setSaving(true);
     setError('');
     try {
+      const extraCalories = Object.fromEntries(
+        extraCaloriesText
+          .split('\n')
+          .map((line) => line.split(':'))
+          .map(([key, value]) => [key?.trim(), Number(value?.trim())])
+          .filter(([key, value]) => Boolean(key) && Number.isFinite(value) && Number(value) >= 0),
+      );
       await onSave({
         name: name.trim(),
         slug: slug.trim() || name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
@@ -62,6 +74,8 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
         recipe: recipe.trim(),
         flavors: flavorsText.split(',').map((f) => f.trim()).filter(Boolean),
         extras: extrasText.split(',').map((f) => f.trim()).filter(Boolean),
+        calories: Math.max(0, parseInt(calories, 10) || 0),
+        extraCalories,
         tags: tagsText.split(',').map((f) => f.trim()).filter(Boolean),
         allergens: allergensText.split(',').map((f) => f.trim()).filter(Boolean),
         featured, hidden, soldOut,
@@ -120,6 +134,28 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
           <Field label="Recipe / Ingredients (separate with ·)">
             <textarea value={recipe} onChange={(e) => setRecipe(e.target.value)} style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} placeholder="Milk · Ice · Vanilla · ..." />
           </Field>
+
+          <div style={{ padding: '14px', borderRadius: 12, background: 'rgba(212,168,67,0.07)', border: '1px solid rgba(212,168,67,0.2)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+              <span style={{ width: 28, height: 28, display: 'grid', placeItems: 'center', borderRadius: 9, background: 'rgba(212,168,67,0.16)', color: GOLD }}>◒</span>
+              <div>
+                <div style={{ color: '#f5f2e8', fontWeight: 800, fontSize: 13 }}>Nutrition</div>
+                <div style={{ color: 'rgba(245,242,232,0.42)', fontSize: 11 }}>Shown in the public ingredients panel after publishing.</div>
+              </div>
+            </div>
+            <Field label="Base calories">
+              <input type="number" min="0" value={calories} onChange={(e) => setCalories(e.target.value)} style={inputStyle} placeholder="e.g. 280" />
+            </Field>
+            <div style={{ height: 10 }} />
+            <Field label="Extra calories (one per line: Name: calories)">
+              <textarea
+                value={extraCaloriesText}
+                onChange={(e) => setExtraCaloriesText(e.target.value)}
+                style={{ ...inputStyle, minHeight: 82, resize: 'vertical', fontFamily: '"JetBrains Mono", monospace' }}
+                placeholder={`Cream: ${DEFAULT_EXTRA_CALORIES.Cream}\nIce Cream: ${DEFAULT_EXTRA_CALORIES['Ice Cream']}\nFlavor: ${DEFAULT_EXTRA_CALORIES.Flavor}`}
+              />
+            </Field>
+          </div>
 
           <Field label="Flavor options (comma-separated)">
             <input value={flavorsText} onChange={(e) => setFlavorsText(e.target.value)} style={inputStyle} placeholder="Classic, Vanilla, Hazelnut" />

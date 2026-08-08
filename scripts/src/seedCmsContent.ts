@@ -48,8 +48,88 @@ const SECTIONS = [
   { slug: "padel",       name: "Padel",       subtitle: "Court & Coaching",      sortOrder: 6, theme: { bgGradient: "linear-gradient(160deg,#003a4d,#006b8f 55%,#004d6b)", glowColor: "#4F82C5", text: "#f0f9fa", subtext: "#7dd3fc", accent: "#4F82C5" } },
 ];
 
-interface ProductSeed { name: string; shortName?: string; description: string; priceLbp: number; imageUrl?: string | null; recipe?: string; flavors?: string[] }
+interface ProductSeed {
+  name: string;
+  shortName?: string;
+  description: string;
+  priceLbp: number;
+  imageUrl?: string | null;
+  recipe?: string;
+  flavors?: string[];
+  calories?: number;
+  extraCalories?: Record<string, number>;
+}
 interface SubcategorySeed { id: string; name: string; description: string; themeColor: string; accentColor: string; imageUrl?: string | null; products: ProductSeed[] }
+
+const SEED_CALORIES: Record<string, number> = {
+  "Foral Fusion": 280,
+  Mango: 300,
+  Strawberry: 280,
+  "Passion Fruit": 280,
+  "Cookies & Cream": 600,
+  "Strawberry Whip": 450,
+  "Choco-Nut Milkshake": 550,
+  "Vanilla Milkshake": 450,
+  "Lotus Milkshake": 600,
+  "Oliva Milkshake": 500,
+  "Mocha Frappe": 280,
+  "Caramel Frappe": 280,
+  "Vanilla Frappe": 260,
+  "Toffee Nut Frappe": 300,
+  "Oliva Frappe": 280,
+  "Iced Spanish Latte": 240,
+  "Iced Mocha Latte": 260,
+  "Iced Latte (Vanilla, Hazelnut, Salted Caramel)": 190,
+  "Irish Cream Latte": 200,
+  "Caramel Macchiato": 250,
+  "Iced Matcha Latte": 190,
+  "Razzlychee Iced Tea": 150,
+  "Tropical Iced Tea": 160,
+  "Peach Iced Tea": 160,
+  "Kiwi Mojito": 120,
+  "Passion Crush": 130,
+  "Summer Mix": 150,
+  "Café Latte (Vanilla, Hazelnut)": 250,
+  "Hot Chocolate": 290,
+  Cappuccino: 140,
+  Espresso: 10,
+  Tea: 2,
+  "Ginger and Honey": 70,
+  Chamomile: 2,
+  "Green Tea": 2,
+  "Lazy Cake": 400,
+  Fondant: 500,
+  "Chocolate Cake": 530,
+  "Oreo Cheesecake": 390,
+  "Raspberry Cheesecake": 400,
+  "Vanilla Mushroom Muffin": 380,
+  "Chocolate Mushroom Muffin": 450,
+  Croissant: 270,
+  "Tuna Cado": 460,
+  "Turkey and Cheese": 450,
+  "Hallum Pesto": 500,
+  "Chicken Cesar Salad": 550,
+  Nuts: 300,
+  "Greek Yogurt": 160,
+  "Mango Greek Yogurt": 230,
+  Toppings: 100,
+};
+
+const DEFAULT_EXTRA_CALORIES = { Cream: 80, "Ice Cream": 180, Flavor: 50 };
+
+function seedCalories(name: string): number {
+  return SEED_CALORIES[name] ?? 0;
+}
+
+function seedExtraCalories(subcategoryId: string): Record<string, number> {
+  if (["smoothies", "milk-shake", "coffee-frappe", "iced-latte", "refreshers"].includes(subcategoryId)) {
+    return DEFAULT_EXTRA_CALORIES;
+  }
+  if (["cakes", "cheesecakes", "pastries"].includes(subcategoryId)) {
+    return { "Ice Cream": DEFAULT_EXTRA_CALORIES["Ice Cream"] };
+  }
+  return {};
+}
 
 const SUBCATEGORIES: Record<string, SubcategorySeed[]> = {
   "cold-drinks": [
@@ -304,7 +384,10 @@ async function seedSubcategoriesAndProducts() {
           subcategoryDbId: subDbId, name: p.name,
           shortName: p.shortName ?? p.name.split(" ")[0].toUpperCase(),
           description: p.description, priceLbp: p.priceLbp, priceUsd: computeUsd(p.priceLbp),
-          imageUrl: p.imageUrl ?? null, recipe: p.recipe ?? "", flavors: p.flavors ?? [], sortOrder: pi,
+          imageUrl: p.imageUrl ?? null, recipe: p.recipe ?? "", flavors: p.flavors ?? [],
+          calories: p.calories ?? seedCalories(p.name),
+          extraCalories: p.extraCalories ?? seedExtraCalories(sub.id),
+          sortOrder: pi,
         });
         console.log(`    Created product: ${p.name}`);
       }

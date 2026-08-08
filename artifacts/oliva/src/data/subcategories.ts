@@ -5,6 +5,9 @@ export interface SubcategoryDrink {
   lbpPrice: string
   image: string | null
   recipe?: string
+  calories?: number
+  extraCalories?: Record<string, number>
+  extras?: string[]
 }
 
 export interface Subcategory {

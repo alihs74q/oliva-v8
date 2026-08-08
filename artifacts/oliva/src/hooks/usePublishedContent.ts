@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react';
 import { subcategoryData, type Subcategory } from '../data/subcategories';
 import type { PromoGallerySlide } from '../components/PromoGallery';
+import { getStaticCalories } from '../data/nutrition';
 
 // ─── API content shapes (mirrors server output) ────────────────────────────────
 export interface ApiProduct {
@@ -22,6 +23,8 @@ export interface ApiProduct {
   imageUrl: string | null;
   recipe: string;
   flavors: string[];
+  calories: number;
+  extraCalories: Record<string, number>;
   sortOrder: number;
   hidden: boolean;
   soldOut: boolean;
@@ -84,6 +87,9 @@ function apiProductToSubcategoryDrink(p: ApiProduct) {
     lbpPrice: formatLbp(p.priceLbp),
     image: p.imageUrl ?? null,
     recipe: p.recipe || undefined,
+    calories: p.calories || getStaticCalories(p.name),
+    extraCalories: p.extraCalories ?? {},
+    extras: p.extras ?? [],
   };
 }
 

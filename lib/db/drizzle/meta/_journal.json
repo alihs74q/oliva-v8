@@ -8,6 +8,13 @@
       "when": 1786111387117,
       "tag": "0000_uneven_red_hulk",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786191935071,
+      "tag": "0001_curvy_mauler",
+      "breakpoints": true
     }
   ]
 }

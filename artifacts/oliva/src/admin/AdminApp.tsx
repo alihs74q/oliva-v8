@@ -16,6 +16,7 @@ import AdminSecurity from './AdminSecurity';
 import AdminReleases from './AdminReleases';
 import AdminExchange from './AdminExchange';
 import AdminPromotions from './AdminPromotions';
+import NutritionPage from './NutritionPage';
 import { useState } from 'react';
 
 type AdminPage =
@@ -25,7 +26,8 @@ type AdminPage =
   | { kind: 'security' }
   | { kind: 'releases' }
   | { kind: 'exchange' }
-  | { kind: 'promotions' };
+  | { kind: 'promotions' }
+  | { kind: 'nutrition' };
 
 function parsePage(): AdminPage {
   if (typeof window === 'undefined') return { kind: 'home' };
@@ -37,6 +39,7 @@ function parsePage(): AdminPage {
   if (hash === '/admin/releases') return { kind: 'releases' };
   if (hash === '/admin/exchange') return { kind: 'exchange' };
   if (hash === '/admin/promotions') return { kind: 'promotions' };
+  if (hash === '/admin/nutrition') return { kind: 'nutrition' };
   return { kind: 'home' };
 }
 
@@ -99,6 +102,8 @@ export default function AdminApp() {
       return <AdminExchange onBack={goHome} />;
     case 'promotions':
       return <AdminPromotions onBack={goHome} />;
+    case 'nutrition':
+      return <NutritionPage onBack={goHome} />;
     default:
       return (
         <AdminHome

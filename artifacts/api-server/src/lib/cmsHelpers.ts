@@ -25,6 +25,8 @@ export interface ProductShape {
   recipe: string;
   flavors: string[];
   extras: string[];
+  calories: number;
+  extraCalories: Record<string, number>;
   tags: string[];
   allergens: string[];
   featured: boolean;
@@ -82,6 +84,8 @@ function toProductShape(p: CmsProduct): ProductShape {
     recipe: p.recipe,
     flavors: (p.flavors as string[]) ?? [],
     extras: (p.extras as string[]) ?? [],
+    calories: p.calories ?? 0,
+    extraCalories: (p.extraCalories as Record<string, number>) ?? {},
     tags: (p.tags as string[]) ?? [],
     allergens: (p.allergens as string[]) ?? [],
     featured: p.featured,

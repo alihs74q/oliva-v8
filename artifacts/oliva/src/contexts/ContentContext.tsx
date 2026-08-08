@@ -19,6 +19,7 @@ import { shishaItems as staticShishaItems } from '../data/shisha';
 import { subcategoryData, type Subcategory } from '../data/subcategories';
 import type { ContentSnapshot, ApiSection, ApiProduct } from '../hooks/usePublishedContent';
 import type { PromoGallerySlide } from '../components/PromoGallery';
+import { getStaticCalories } from '../data/nutrition';
 
 // ─── Context shape ─────────────────────────────────────────────────────────────
 export interface ContentContextValue {
@@ -137,6 +138,9 @@ function apiToSubcategoryData(sections: ApiSection[]): Record<string, Subcategor
             lbpPrice: formatLbp(p.priceLbp),
             image: p.imageUrl ?? null,
             recipe: p.recipe || undefined,
+            calories: p.calories ?? getStaticCalories(p.name),
+            extraCalories: p.extraCalories ?? {},
+            extras: p.extras ?? [],
           })),
       } as Subcategory));
   }

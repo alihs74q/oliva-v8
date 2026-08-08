@@ -1,3 +1,5 @@
 - [Oliva CMS Architecture](oliva-cms-arch.md) — admin edits tables are draft; cms_releases holds atomic published snapshots; public site reads from is_current release.
 - [Express router ordering](express-router-ordering.md) — requireAdminAuth router.use() intercepts ALL paths; public routes must be registered before admin routers.
 - [Replit object storage](replit-object-storage.md) — use sidecar signed URLs for durable uploads; never keep user assets in `/tmp`.
+- [Admin auth setup](admin-auth-setup.md) — first-time setup can partially succeed before audit logging fails; check account state before retrying.
+- [CMS schema migrations](cms-schema-migrations.md) — when live CMS tables contain legacy columns, use additive migrations rather than broad generated diffs.

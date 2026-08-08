@@ -7,6 +7,7 @@ import type { Currency } from '../hooks/useCurrency'
 import { getImageForProduct } from '../utils/imageMatching'
 import { imageAssets } from '../utils/imageAssets'
 import { ViewRecipeButton } from './ViewRecipeButton'
+import { DEFAULT_EXTRA_CALORIES, getStaticCalories } from '../data/nutrition'
 
 export interface CategoryTheme {
   bgGradient: string
@@ -40,9 +41,22 @@ function HeroGallery({ images, accent }: { images: string[]; accent: string }) {
     setIndex((next + total) % total)
   }, [total])
 
-  // Preload all images immediately so they're in browser cache before the slide arrives
+  // Keep navigation responsive: only warm the next couple of slides when the
+  // browser is idle instead of decoding the whole gallery during page mount.
   useEffect(() => {
-    images.forEach(src => { const img = new Image(); img.src = src; })
+    const schedule = window.requestIdleCallback
+      ? (callback: () => void) => window.requestIdleCallback(callback, { timeout: 1200 })
+      : (callback: () => void) => window.setTimeout(callback, 500)
+    const cancel = schedule(() => {
+      images.slice(0, 3).forEach(src => {
+        const img = new Image()
+        img.decoding = 'async'
+        img.src = src
+      })
+    })
+    return () => {
+      if (typeof cancel === 'number') window.clearTimeout(cancel)
+    }
   }, [images])
 
   useEffect(() => {
@@ -95,7 +109,8 @@ function HeroGallery({ images, accent }: { images: string[]; accent: string }) {
           initial="enter"
           animate="center"
           exit="exit"
-          loading="eager"
+           loading={index === 0 ? 'eager' : 'lazy'}
+           decoding="async"
           fetchPriority={index === 0 ? 'high' : 'auto'}
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', willChange: 'transform, opacity' }}
         />
@@ -201,15 +216,25 @@ function PriceStickyNote({ price, lbpPrice, currency }: { price: string; lbpPric
 }
 
 // ─── Individual drink card ────────────────────────────────────────────────────
-function DrinkCard({ drink, sub, index, currency }: { drink: SubcategoryDrink; sub: Subcategory; theme?: CategoryTheme; index: number; currency: Currency }) {
+function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: SubcategoryDrink; sub: Subcategory; theme?: CategoryTheme; index: number; currency: Currency; isMobile: boolean }) {
   const [open, setOpen] = useState(false)
+  const [selectedExtras, setSelectedExtras] = useState<string[]>([])
   const displayImage = getImageForProduct(drink.name, drink.image ?? undefined)
+  const baseCalories = drink.calories ?? getStaticCalories(drink.name)
+  const extras: { name: string; price?: string }[] = drink.extras?.length
+    ? drink.extras.map(extra => typeof extra === 'string' ? { name: extra } : extra)
+    : ['smoothies', 'milk-shake', 'coffee-frappe', 'iced-latte', 'refreshers'].includes(sub.id)
+      ? ['Cream', 'Ice Cream', 'Flavor'].map(name => ({ name }))
+      : ['cakes', 'cheesecakes', 'pastries'].includes(sub.id) ? [{ name: 'Ice Cream' }] : []
+  const totalCalories = baseCalories + selectedExtras.reduce((sum, extra) => sum + (drink.extraCalories?.[extra] ?? DEFAULT_EXTRA_CALORIES[extra] ?? 0), 0)
+  const hasDetails = Boolean(drink.recipe || baseCalories || extras.length)
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      className="clp-product-card"
+      initial={isMobile ? false : { opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: EASE, delay: 0.08 + index * 0.05 }}
+      transition={isMobile ? { duration: 0 } : { duration: 0.3, ease: EASE, delay: 0.08 + index * 0.05 }}
       style={{
         display: 'flex', flexDirection: 'column',
         background: '#f8f8f8',
@@ -238,6 +263,8 @@ function DrinkCard({ drink, sub, index, currency }: { drink: SubcategoryDrink; s
         }}>
           {displayImage ? (
             <img src={displayImage} alt={drink.name} draggable={false}
+              loading={index < 2 ? 'eager' : 'lazy'}
+              decoding="async"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.3)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
@@ -260,7 +287,7 @@ function DrinkCard({ drink, sub, index, currency }: { drink: SubcategoryDrink; s
       </div>
 
       {/* View Recipe button — only shown when recipe exists */}
-      {drink.recipe && (
+      {hasDetails && (
         <div style={{ padding: '0 clamp(14px,2vh,20px) clamp(14px,2vh,20px)' }}>
           <ViewRecipeButton
             isExpanded={open}
@@ -279,30 +306,49 @@ function DrinkCard({ drink, sub, index, currency }: { drink: SubcategoryDrink; s
                 style={{ overflow: 'hidden' }}
               >
                 <div style={{
-                  padding: 'clamp(12px,1.5vh,16px)',
-                  background: '#F5F1E8',
-                  border: '1px solid #596B3D60',
-                  borderRadius: 12,
+                   padding: 'clamp(14px,1.7vh,18px)',
+                   background: 'linear-gradient(145deg, #f8f5eb, #eef2e5)',
+                   border: '1px solid #596B3D55',
+                   borderRadius: 16,
+                   boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.75)',
                 }}>
+                   {/* Calorie counter */}
+                   <div style={{
+                     display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+                     padding: '12px 14px', marginBottom: 16, borderRadius: 13,
+                     background: '#596B3D', color: '#fff',
+                     boxShadow: '0 8px 18px rgba(89,107,61,0.2)',
+                   }}>
+                     <div>
+                       <p style={{ margin: 0, fontFamily: '"Manrope", sans-serif', fontSize: 10, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', opacity: 0.72 }}>Your total</p>
+                       <motion.div key={totalCalories} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} style={{ fontFamily: '"Manrope", sans-serif', fontSize: 24, fontWeight: 900, lineHeight: 1.1 }}>
+                         {totalCalories.toLocaleString()} <span style={{ fontSize: 12, fontWeight: 700, opacity: 0.76 }}>CAL</span>
+                       </motion.div>
+                     </div>
+                     <span style={{ width: 40, height: 40, borderRadius: '50%', display: 'grid', placeItems: 'center', background: 'rgba(255,255,255,0.13)', fontSize: 20 }}>◒</span>
+                   </div>
                   {/* Ingredients */}
                   <p style={{
                     margin: '0 0 8px',
-                    fontSize: 11, fontWeight: 700,
-                    letterSpacing: '0.15em', textTransform: 'uppercase',
+                     fontFamily: '"Manrope", sans-serif',
+                     fontSize: 10, fontWeight: 800,
+                     letterSpacing: '0.16em', textTransform: 'uppercase',
                     color: '#596B3D',
                     opacity: 0.9,
                   }}>Ingredients</p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 10px', marginBottom: 12 }}>
-                    {drink.recipe.split(' · ').map((item, i) => (
+                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 10px', marginBottom: 14 }}>
+                     {(drink.recipe ?? '').split(' · ').filter(Boolean).map((item, i) => (
                       <span key={i} style={{
                         display: 'inline-flex', alignItems: 'center', gap: 5,
-                        padding: '4px 10px',
-                        background: '#fff',
-                        border: '1px solid #596B3D40',
-                        borderRadius: 12,
+                         padding: '7px 11px',
+                         background: 'rgba(255,255,255,0.82)',
+                         border: '1px solid rgba(89,107,61,0.18)',
+                         borderRadius: 10,
+                         fontFamily: '"Manrope", sans-serif',
                         fontSize: 'clamp(11px,1.2vw,13px)',
-                        fontWeight: 500,
-                        color: '#333',
+                         fontWeight: 650,
+                         color: '#34412a',
+                         boxShadow: '0 2px 6px rgba(40,55,30,0.05)',
                       }}>
                         <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#596B3D', flexShrink: 0 }} />
                         {item}
@@ -337,27 +383,39 @@ function DrinkCard({ drink, sub, index, currency }: { drink: SubcategoryDrink; s
                     return (
                       <>
                         <p style={{
-                          margin: '8px 0 8px',
-                          fontSize: 11, fontWeight: 700,
-                          letterSpacing: '0.15em', textTransform: 'uppercase',
+                           margin: '12px 0 9px',
+                           fontFamily: '"Manrope", sans-serif',
+                           fontSize: 10, fontWeight: 800,
+                           letterSpacing: '0.16em', textTransform: 'uppercase',
                           color: '#596B3D',
                           opacity: 0.9,
                         }}>Optional Extras</p>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                           {extras.map((extra, i) => (
-                            <div key={i} style={{
-                              display: 'inline-flex', alignItems: 'center', gap: 4,
-                              padding: '5px 10px',
-                              background: '#fff',
-                              border: '1px solid #596B3D50',
-                              borderRadius: 12,
-                              fontSize: 'clamp(10px,1.1vw,12px)',
-                              color: '#596B3D',
-                              fontWeight: 500,
-                            }}>
-                              <span style={{ fontSize: 14, fontWeight: 700 }}>+</span>
-                              <span>{extra.name}</span>
-                            </div>
+                             <motion.button
+                               key={extra.name}
+                               type="button"
+                               whileTap={{ scale: 0.94 }}
+                               onClick={() => setSelectedExtras(prev => prev.includes(extra.name) ? prev.filter(item => item !== extra.name) : [...prev, extra.name])}
+                               style={{
+                                 display: 'inline-flex', alignItems: 'center', gap: 6,
+                                 padding: '8px 11px',
+                                 background: selectedExtras.includes(extra.name) ? '#596B3D' : '#fff',
+                                 border: `1px solid ${selectedExtras.includes(extra.name) ? '#596B3D' : '#596B3D50'}`,
+                                 borderRadius: 10,
+                                 fontFamily: '"Manrope", sans-serif',
+                                 fontSize: 'clamp(10px,1.1vw,12px)',
+                                 color: selectedExtras.includes(extra.name) ? '#fff' : '#596B3D',
+                                 fontWeight: 750,
+                                 cursor: 'pointer',
+                                 transition: 'background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease',
+                                 boxShadow: selectedExtras.includes(extra.name) ? '0 5px 12px rgba(89,107,61,0.2)' : 'none',
+                               }}
+                             >
+                               <span style={{ fontSize: 15, fontWeight: 800 }}>{selectedExtras.includes(extra.name) ? '✓' : '+'}</span>
+                               <span>{extra.name}</span>
+                               <span style={{ opacity: 0.72, fontSize: 10 }}>+{drink.extraCalories?.[extra.name] ?? DEFAULT_EXTRA_CALORIES[extra.name] ?? 0}</span>
+                             </motion.button>
                           ))}
                         </div>
                       </>
@@ -388,6 +446,15 @@ export default function CategoryListPage({
   const { currency, toggle } = useCurrency('LBP')
   const subcategoryRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 767px)')
+    const update = () => setIsMobile(media.matches)
+    update()
+    media.addEventListener?.('change', update)
+    return () => media.removeEventListener?.('change', update)
+  }, [])
 
   const scrollToSubcategory = (subcategoryId: string) => {
     const element = subcategoryRefs.current[subcategoryId]
@@ -551,13 +618,14 @@ export default function CategoryListPage({
         }}>
           {subcategories.map((sub, i) => (
             <motion.div
+              className="clp-subcategory"
               key={sub.id}
               ref={(el) => {
                 if (el) subcategoryRefs.current[sub.id] = el
               }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, ease: EASE, delay: Math.min(i * 0.08, 0.4) }}
+              transition={isMobile ? { duration: 0 } : { duration: 0.4, ease: EASE, delay: Math.min(i * 0.08, 0.4) }}
               style={{
                 marginBottom: 'clamp(28px,4vh,48px)',
                 scrollMarginTop: '100px',
@@ -616,6 +684,7 @@ export default function CategoryListPage({
                     sub={sub}
                     index={index}
                     currency={currency}
+                    isMobile={isMobile}
                   />
                 ))}
               </div>
@@ -629,6 +698,9 @@ export default function CategoryListPage({
         .clp-scroll::-webkit-scrollbar-track { background: transparent; }
         .clp-scroll::-webkit-scrollbar-thumb { background: rgba(89,107,61,0.2); border-radius: 2px; }
         .clp-scroll { scrollbar-width: thin; scrollbar-color: rgba(89,107,61,0.2) transparent; }
+        .clp-scroll { overscroll-behavior-y: contain; }
+        .clp-product-card { content-visibility: auto; contain-intrinsic-size: 190px; }
+        .clp-subcategory { content-visibility: auto; contain-intrinsic-size: 420px; }
         .subcat-nav::-webkit-scrollbar { height: 3px; }
         .subcat-nav::-webkit-scrollbar-track { background: transparent; }
         .subcat-nav::-webkit-scrollbar-thumb { background: rgba(89,107,61,0.15); border-radius: 2px; }
