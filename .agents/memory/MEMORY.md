@@ -7,3 +7,4 @@
 - [Oliva menu extras](oliva-menu-extras.md) — shared extra catalog with product-level availability; an explicit empty list means no extras.
 - [Menu navigation slugs](menu-navigation-slugs.md) — route CMS-driven menu cards from stable full slugs as well as short fallback IDs.
 - [Vercel API deployment](vercel-api-deployment.md) — Vercel hosts only the static frontend; admin auth and CMS require a separately deployed API/database.
+- [Padel visual direction](padel-visual-direction.md) — Padel uses warm Oliva olive/gold styling with preserved CMS content, imagery, and responsive playful motion.

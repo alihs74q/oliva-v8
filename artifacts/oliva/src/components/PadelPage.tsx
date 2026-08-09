@@ -3,6 +3,7 @@ import type { CategoryTheme } from './CategoryListPage'
 import CurrencyToggle from './CurrencyToggle'
 import { useCurrency } from '../hooks/useCurrency'
 import { imageAssets } from '../utils/imageAssets'
+import { useState } from 'react'
 
 const EASE = [0.25, 0.46, 0.45, 0.94] as const
 
@@ -22,246 +23,164 @@ const PADEL_ITEMS: PadelItem[] = [
   { title: 'Ball Set', description: '3 professional balls', price: '$9.99', lbpPrice: '900,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-tASZy37aAXZT8QHk1CUzw40vUE2xQy.png' },
 ]
 
+function ArrowRight() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  )
+}
+
+function CheckIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="m5 12 4 4L19 6" />
+    </svg>
+  )
+}
+
+function TrophyIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z" />
+      <path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4" />
+    </svg>
+  )
+}
+
 export default function PadelPage({
-  theme, onBack, items = PADEL_ITEMS,
+  theme: _theme, onBack, items = PADEL_ITEMS,
 }: {
   theme: CategoryTheme
   onBack: () => void
   items?: PadelItem[]
 }) {
   const { currency, toggle } = useCurrency('USD')
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const displayItems = items.length > 0 ? items : PADEL_ITEMS
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
-      background: theme.bgGradient,
-    }}>
-      {/* Nav */}
-      <nav style={{
-        position: 'relative', zIndex: 10, height: 68, flexShrink: 0,
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 clamp(16px,4vw,40px)',
-      }}>
-        <button onClick={onBack}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            background: 'rgba(255,255,255,0.1)',
-            border: '1px solid rgba(255,255,255,0.15)', borderRadius: 999,
-            padding: '10px 20px', cursor: 'pointer',
-            color: theme.text, fontSize: 13, fontWeight: 700, letterSpacing: '0.08em',
-            transition: 'transform 0.2s ease, background 0.2s ease',
-          }}
-          onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.95)')}
-          onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
-          onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+    <div className="padel-page">
+      <div className="padel-page__glow padel-page__glow--gold" />
+      <div className="padel-page__glow padel-page__glow--olive" />
+
+      <nav className="padel-nav">
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={onBack}
+          className="padel-back-button"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-          BACK
-        </button>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          <span>Back to menu</span>
+        </motion.button>
         <CurrencyToggle currency={currency} onToggle={toggle} />
       </nav>
 
-      {/* Scrollable content */}
-      <div className="padel-scroll" style={{
-        flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden',
-        WebkitOverflowScrolling: 'touch',
-      }}>
-        {/* Header with Image */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: EASE }}
-          style={{
-            position: 'relative',
-            height: 'clamp(240px, 35vh, 380px)',
-            marginBottom: 'clamp(20px, 3vh, 40px)',
-            borderRadius: 'clamp(12px, 2vw, 20px)',
-            overflow: 'hidden',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-          }}
-        >
-          <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-ICoaEDFS2acvkeYqAp1z1uT2HyEtlp.png"
-            alt="Oliva Padel Court"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center',
-            }}
-          />
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(6,182,212,0.3) 100%)',
-          }} />
-        </motion.div>
+      <div className="padel-scroll">
+        <main className="padel-main">
+          <section className="padel-hero">
+            <motion.div
+              className="padel-hero__copy"
+              initial={{ opacity: 0, x: -18 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.55, ease: EASE }}
+            >
+              <div className="padel-eyebrow"><TrophyIcon /> Court &amp; Coaching</div>
+              <h1>Padel<span>.</span></h1>
+              <p>Pick your pace, bring your people, and make an afternoon of it.</p>
+              <div className="padel-pills" aria-label="Padel highlights">
+                <span className="padel-pill padel-pill--active">Book a court</span>
+                <span className="padel-pill">Find your flow</span>
+                <span className="padel-pill">Play together</span>
+              </div>
+            </motion.div>
 
-        {/* Header Text */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: EASE, delay: 0.1 }}
-          style={{
-            textAlign: 'center',
-            padding: '0 clamp(16px,4vw,40px) clamp(12px,2vh,24px)',
-          }}
-        >
-          <p style={{
-            margin: 0, fontSize: 'clamp(12px,1.5vw,14px)', fontWeight: 700, letterSpacing: '0.15em',
-            color: theme.accent, textTransform: 'uppercase',
-          }}>Court & Coaching</p>
-          
-          <h1 style={{
-            margin: 'clamp(8px,1.5vh,12px) 0 0', fontSize: 'clamp(40px,6vw,60px)', fontWeight: 900,
-            color: theme.text, letterSpacing: '-0.02em', lineHeight: 1, fontFamily: "'Segoe UI', system-ui, sans-serif",
-          }}>Padel</h1>
-        </motion.div>
-
-        {/* Animated Logo */}
-        <div style={{
-          margin: 'clamp(16px,2vh,24px) 0',
-          display: 'flex',
-          justifyContent: 'center',
-          perspective: '1200px',
-        }}>
-          <div style={{
-            width: 'clamp(160px,18vw,220px)',
-            height: 'clamp(160px,18vw,220px)',
-            borderRadius: '50%',
-            background: theme.accent,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}>
-            <img
-              src={imageAssets.logo}
-              alt="Oliva"
-              className="logo-3d"
-              style={{
-                width: '78%',
-                height: '78%',
-                objectFit: 'contain',
-                transformStyle: 'preserve-3d',
-                backfaceVisibility: 'hidden',
-                display: 'block',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Items Grid */}
-        <div style={{
-          padding: 'clamp(20px,3vh,40px) clamp(16px,4vw,40px)',
-          maxWidth: 1000, margin: '0 auto', width: '100%',
-        }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: 'clamp(16px, 3vw, 24px)',
-          }}>
-            {items.map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: idx * 0.1, ease: EASE }}
-                style={{
-                  background: `rgba(6, 182, 212, 0.08)`,
-                  border: `2px solid ${theme.accent}60`,
-                  borderRadius: '16px',
-                  padding: 'clamp(24px, 4vw, 32px)',
-                  cursor: 'pointer',
-                  transition: 'all 300ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-                  backdropFilter: 'blur(10px)',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'stretch',
-                  gap: 'clamp(16px, 3vw, 24px)',
-                  minHeight: '140px',
-                }}
-                whileHover={{
-                  background: `rgba(6, 182, 212, 0.15)`,
-                  borderColor: theme.accent,
-                  transform: 'translateY(-6px)',
-                  boxShadow: `0 8px 24px ${theme.accent}30`,
-                }}
-              >
-                {/* Left side: Text */}
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  flex: 1,
-                }}>
+            <motion.div
+              className="padel-hero__visual-wrap"
+              initial={{ opacity: 0, y: 20, rotate: 2 }}
+              animate={{ opacity: 1, y: 0, rotate: -2 }}
+              transition={{ duration: 0.7, ease: EASE, delay: 0.08 }}
+            >
+              <div className="padel-hero__visual-backdrop" />
+              <div className="padel-hero__visual">
+                <img
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-ICoaEDFS2acvkeYqAp1z1uT2HyEtlp.png"
+                  alt="Oliva Padel Court"
+                />
+                <div className="padel-hero__visual-shade" />
+                <div className="padel-hero__visual-caption">
                   <div>
-                    <h3 style={{
-                      margin: '0 0 8px',
-                      fontSize: 'clamp(22px, 2.8vw, 28px)',
-                      fontWeight: 800,
-                      color: theme.accent,
-                      lineHeight: 1.1,
-                      fontFamily: "'Segoe UI', system-ui, sans-serif",
-                      letterSpacing: '-0.01em',
-                    }}>
-                      {item.title}
-                    </h3>
-                    <p style={{
-                      margin: '0 0 16px',
-                      fontSize: 'clamp(14px, 1.8vw, 16px)',
-                      color: theme.subtext,
-                      lineHeight: 1.4,
-                      fontWeight: 500,
-                      fontFamily: "'Segoe UI', system-ui, sans-serif",
-                    }}>
-                      {item.description}
-                    </p>
+                    <strong>Your next rally</strong>
+                    <span>starts at Oliva</span>
                   </div>
-                  <motion.p
-                    key={currency}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    style={{
-                      margin: 0,
-                      fontSize: currency === 'LBP' ? 'clamp(14px, 2vw, 18px)' : 'clamp(28px, 5vw, 36px)',
-                      fontWeight: 900,
-                      color: theme.accent,
-                      letterSpacing: '-0.02em',
-                      whiteSpace: 'nowrap',
+                  <span className="padel-ball" aria-hidden />
+                </div>
+              </div>
+            </motion.div>
+          </section>
+
+          <section className="padel-offers" aria-labelledby="padel-offers-title">
+            <div className="padel-section-heading">
+              <div>
+                <p>Choose your play</p>
+                <h2 id="padel-offers-title">Make it a good one.</h2>
+              </div>
+              <span>Tap a card to highlight</span>
+            </div>
+
+            <div className="padel-grid">
+              {displayItems.map((item, index) => {
+                const isSelected = selectedIndex === index
+                return (
+                  <motion.article
+                    key={`${item.title}-${index}`}
+                    className={`padel-card${isSelected ? ' is-selected' : ''}`}
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: isSelected ? -5 : 0 }}
+                    transition={{ duration: 0.45, delay: index * 0.07, ease: EASE }}
+                    whileTap={{ scale: 0.975 }}
+                    onClick={() => setSelectedIndex(index)}
+                    tabIndex={0}
+                    role="button"
+                    aria-pressed={isSelected}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault()
+                        setSelectedIndex(index)
+                      }
                     }}
                   >
-                    {currency === 'USD' ? item.price : item.lbpPrice}
-                  </motion.p>
-                </div>
+                    <div className="padel-card__image">
+                      <img src={item.image || PADEL_ITEMS[index % PADEL_ITEMS.length].image || undefined} alt={item.title} />
+                      <span className="padel-card__tag">
+                        {index === 0 ? 'Most popular' : index === 1 ? 'Go longer' : index === 2 ? 'Level up' : index === 3 ? 'Fresh gear' : 'Game on'}
+                      </span>
+                    </div>
+                    <div className="padel-card__body">
+                      <div className="padel-card__title-row">
+                        <h3>{item.title}</h3>
+                        <motion.strong key={`${currency}-${item.title}`} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}>
+                          {currency === 'USD' ? item.price : item.lbpPrice}
+                        </motion.strong>
+                      </div>
+                      <p>{item.description}</p>
+                      <div className="padel-card__action">
+                        {isSelected ? <><CheckIcon /> Ready to play</> : <>Pick this one <ArrowRight /></>}
+                      </div>
+                    </div>
+                  </motion.article>
+                )
+              })}
+            </div>
+          </section>
 
-                {/* Right side: Image */}
-                <div style={{
-                  width: 'clamp(100px, 20%, 140px)',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  flexShrink: 0,
-                }}>
-                   <img
-                     src={item.image || PADEL_ITEMS[idx % PADEL_ITEMS.length].image || undefined}
-                    alt={item.title}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      objectPosition: 'center',
-                    }}
-                  />
-                </div>
-              </motion.div>
-            ))}
+          <div className="padel-footer-note">
+            <span className="padel-footer-note__spark" aria-hidden>✦</span>
+            Good games, good coffee, good company.
           </div>
-        </div>
-
-        {/* Footer spacing */}
-        <div style={{ height: 'clamp(40px, 5vh, 60px)' }} />
+        </main>
       </div>
     </div>
   )

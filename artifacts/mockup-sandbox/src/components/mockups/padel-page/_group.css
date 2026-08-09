@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
+
+:root {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: #f5f2e8;
+  background: #10170b;
+}
+
+* { box-sizing: border-box; }
+button { font: inherit; }
+
+@keyframes oliveDrift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(20px, -16px, 0) scale(1.08); }
+}
+
+@keyframes floatBall {
+  0%, 100% { transform: translateY(0) rotate(-8deg); }
+  50% { transform: translateY(-12px) rotate(8deg); }
+}
+
+.padel-preview-scroll::-webkit-scrollbar { width: 8px; }
+.padel-preview-scroll::-webkit-scrollbar-thumb { background: rgba(212,168,67,.35); border-radius: 999px; }
