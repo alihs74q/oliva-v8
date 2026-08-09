@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import coldDrinksCategoryImage from '@assets/image_1786233684800.png'
+import dessertsCategoryImage from '@assets/image_1786233947691.png'
 
 const EASE = [0.25, 0.46, 0.45, 0.94] as const
 
@@ -30,7 +31,7 @@ const TEXT_ACCENT: Record<string, string> = {
 const CARDS: CatCard[] = [
   { id: 'hot', label: 'Hot Drinks', desc: 'Warm & aromatic classics — espresso, cappuccino, Turkish coffee & more', gradient: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#fed7aa', image: 'https://images.pexels.com/photos/15851583/pexels-photo-15851583/free-photo-of-cappuccino-in-cup-on-table.jpeg?auto=compress&cs=tinysrgb&w=400' },
   { id: 'cold', label: 'Cold Drinks', desc: 'Chilled & refreshing — iced lattes, fresh juices, smoothies & shakes', gradient: 'linear-gradient(135deg,#0ea5e9,#2563eb)', accent: '#bae6fd', image: coldDrinksCategoryImage },
-  { id: 'dessert', label: 'Desserts', desc: 'Sweet indulgence — cakes, cheesecakes & freshly baked pastries', gradient: 'linear-gradient(135deg,#ec4899,#be185d)', accent: '#fbcfe8', image: 'https://images.pexels.com/photos/3625372/pexels-photo-3625372.jpeg?auto=compress&cs=tinysrgb&w=400' },
+  { id: 'dessert', label: 'Desserts', desc: 'Sweet indulgence — cakes, cheesecakes & freshly baked pastries', gradient: 'linear-gradient(135deg,#ec4899,#be185d)', accent: '#fbcfe8', image: dessertsCategoryImage },
   { id: 'shisha', label: 'Shisha', desc: 'Premium flavors — fresh mint, double apple & classic blends', gradient: 'linear-gradient(135deg,#eab308,#a16207)', accent: '#fef08a', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-awRUXZgCUaSRd5LnoYKBVKhnE9Z36Z.png' },
   { id: 'sandwiches', label: 'Sandwiches', desc: 'Fresh & delicious — tuna, turkey, halloumi & more', gradient: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#fed7aa', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Sandwich%20PNG-ALWYL1Ttrugnx7fPbCpNyn3mu4AcTN.jpg' },
   { id: 'yogurt', label: 'Yogurt', desc: 'Creamy & refreshing — Greek yogurt with fresh toppings', gradient: 'linear-gradient(135deg,#d946ef,#be185d)', accent: '#f9a8d4', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/14988611256100392-VcfSLudrmQ98JzCToSTWUmeOANUBaV.jpg' },
