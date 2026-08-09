@@ -19,7 +19,7 @@ interface PadelItem {
 
 function normalizePadelItem(item: PadelItem): PadelItem {
   const normalizedTitle = item.title.toLowerCase()
-  if (normalizedTitle.includes('grip')) return { ...item, title: 'Grip' }
+  if (normalizedTitle.includes('grip')) return { ...item, title: 'Grip', image: '/padel-grip.png' }
   if (normalizedTitle.includes('ball')) return { ...item, title: 'Ball Set' }
   return item
 }
@@ -28,7 +28,7 @@ const PADEL_ITEMS: PadelItem[] = [
   { title: '1H Court', description: 'Full hour of play', price: '$20', lbpPrice: '1,800,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-9vR3KMaQrDDBQVuX3Ksa5fIbkllRIY.png' },
   { title: '1.5H Court', description: 'Extended playtime', price: '$30', lbpPrice: '2,700,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-bnWlzxcRfj4wXowKGA3LnfM1trFRSt.png' },
   { title: '1H Coaching', description: 'Professional lessons', price: '$30', lbpPrice: '2,700,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-EmI7Im7lNY0MMRPuj1rn3rtLqw3ZsD.png' },
-  { title: 'Grip', description: 'Premium quality', price: '$5', lbpPrice: '450,000 LBP', image: 'https://images.pexels.com/photos/3808506/pexels-photo-3808506.jpeg?auto=compress&cs=tinysrgb&w=400' },
+  { title: 'Grip', description: 'Premium quality', price: '$5', lbpPrice: '450,000 LBP', image: '/padel-grip.png' },
   { title: 'Ball Set', description: '3 professional balls', price: '$9.99', lbpPrice: '900,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-tASZy37aAXZT8QHk1CUzw40vUE2xQy.png' },
 ]
 
@@ -152,25 +152,28 @@ export default function PadelPage({
 
             <div className="padel-grid">
               {displayItems.map((item, index) => {
-                const isSelected = selectedIndex === index
+                const isBookable = item.title !== 'Grip' && item.title !== 'Ball Set'
+                const isSelected = isBookable && selectedIndex === index
                 return (
                   <motion.article
                     key={`${item.title}-${index}`}
-                    className={`padel-card${isSelected ? ' is-selected' : ''}`}
+                    className={`padel-card${isSelected ? ' is-selected' : ''}${isBookable ? '' : ' padel-card--static'}`}
                     initial={{ opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: isSelected ? -5 : 0 }}
                     transition={{ duration: 0.45, delay: index * 0.07, ease: EASE }}
-                    whileTap={{ scale: 0.975 }}
-                    onClick={() => setSelectedIndex(index)}
-                    tabIndex={0}
-                    role="button"
-                    aria-pressed={isSelected}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault()
-                        setSelectedIndex(index)
-                      }
-                    }}
+                    {...(isBookable ? {
+                      whileTap: { scale: 0.975 },
+                      onClick: () => setSelectedIndex(index),
+                      tabIndex: 0,
+                      role: 'button',
+                      'aria-pressed': isSelected,
+                      onKeyDown: (event: React.KeyboardEvent<HTMLElement>) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault()
+                          setSelectedIndex(index)
+                        }
+                      },
+                    } : {})}
                   >
                     <div className="padel-card__image">
                       <img src={item.image || PADEL_ITEMS[index % PADEL_ITEMS.length].image || undefined} alt={item.title} />
@@ -185,9 +188,10 @@ export default function PadelPage({
                           {currency === 'USD' ? item.price : item.lbpPrice}
                         </motion.strong>
                       </div>
-                      <p>{item.description}</p>
                       <div className="padel-card__action">
-                        {isSelected ? <><CheckIcon /> Ready to play</> : <>Pick this one <ArrowRight /></>}
+                        {isBookable
+                          ? (isSelected ? <><CheckIcon /> Ready to play</> : <>Pick this one <ArrowRight /></>)
+                          : <>Ask the coach 😄</>}
                       </div>
                     </div>
                   </motion.article>
