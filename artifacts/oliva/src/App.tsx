@@ -144,7 +144,7 @@ export default function App() {
         padel: { gradient: 'linear-gradient(135deg,#06b6d4,#0891b2)', accent: '#06f6d4', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-0a6RZwqQSo38UmBftouiTQtlg9C8Rc.png' },
       } as Record<string, { gradient: string; accent: string; image: string }>)[key] ?? { gradient: 'linear-gradient(135deg,#596b3d,#2c3a24)', accent: '#d4a843', image: null };
       const theme = (section.theme || {}) as Record<string, string>;
-      return { id: section.slug, label: section.name, desc: section.subtitle, gradient: theme.gradient || fallback.gradient, accent: theme.accent || fallback.accent, image: theme.image || fallback.image };
+       return { id: section.slug, label: section.name, desc: section.subtitle, gradient: theme.gradient || fallback.gradient, accent: theme.accent || fallback.accent, image: section.slug === 'cold-drinks' ? coldDrinksUploadedImage : theme.image || fallback.image };
     })
     : undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -239,7 +239,6 @@ export default function App() {
         refreshersMenu,
         smoothiesMenu,
         milkshakesMenu,
-        coldDrinksUploadedImage,
       ],
     };
 

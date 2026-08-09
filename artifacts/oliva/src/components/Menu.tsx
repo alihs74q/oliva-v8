@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import coldDrinksCategoryImage from '@assets/image_1786233684800.png'
 
 const EASE = [0.25, 0.46, 0.45, 0.94] as const
 
@@ -28,7 +29,7 @@ const TEXT_ACCENT: Record<string, string> = {
 // imgBg: solid background color shown behind the image in the card
 const CARDS: CatCard[] = [
   { id: 'hot', label: 'Hot Drinks', desc: 'Warm & aromatic classics — espresso, cappuccino, Turkish coffee & more', gradient: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#fed7aa', image: 'https://images.pexels.com/photos/15851583/pexels-photo-15851583/free-photo-of-cappuccino-in-cup-on-table.jpeg?auto=compress&cs=tinysrgb&w=400' },
-  { id: 'cold', label: 'Cold Drinks', desc: 'Chilled & refreshing — iced lattes, fresh juices, smoothies & shakes', gradient: 'linear-gradient(135deg,#0ea5e9,#2563eb)', accent: '#bae6fd', image: 'https://images.pexels.com/photos/22873679/pexels-photo-22873679.jpeg?auto=compress&cs=tinysrgb&w=400' },
+  { id: 'cold', label: 'Cold Drinks', desc: 'Chilled & refreshing — iced lattes, fresh juices, smoothies & shakes', gradient: 'linear-gradient(135deg,#0ea5e9,#2563eb)', accent: '#bae6fd', image: coldDrinksCategoryImage },
   { id: 'dessert', label: 'Desserts', desc: 'Sweet indulgence — cakes, cheesecakes & freshly baked pastries', gradient: 'linear-gradient(135deg,#ec4899,#be185d)', accent: '#fbcfe8', image: 'https://images.pexels.com/photos/3625372/pexels-photo-3625372.jpeg?auto=compress&cs=tinysrgb&w=400' },
   { id: 'shisha', label: 'Shisha', desc: 'Premium flavors — fresh mint, double apple & classic blends', gradient: 'linear-gradient(135deg,#eab308,#a16207)', accent: '#fef08a', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-awRUXZgCUaSRd5LnoYKBVKhnE9Z36Z.png' },
   { id: 'sandwiches', label: 'Sandwiches', desc: 'Fresh & delicious — tuna, turkey, halloumi & more', gradient: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#fed7aa', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Sandwich%20PNG-ALWYL1Ttrugnx7fPbCpNyn3mu4AcTN.jpg' },
