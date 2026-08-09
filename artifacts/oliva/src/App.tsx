@@ -392,26 +392,31 @@ export default function App() {
         <button
           onClick={() => navigateList('padel')}
           style={{
-            marginTop: 22,
+             marginTop: 20,
             display: 'inline-flex',
             alignItems: 'center',
             gap: 10,
-            padding: '13px 24px',
+             padding: '13px 25px 13px 22px',
             borderRadius: 999,
-            border: '1px solid rgba(125,211,252,0.48)',
-            background: 'linear-gradient(135deg, rgba(14,165,233,0.22), rgba(79,130,197,0.12))',
-            boxShadow: '0 8px 28px rgba(14,165,233,0.16), inset 0 1px 0 rgba(255,255,255,0.14)',
-            color: '#dff7ff',
+             border: '1px solid rgba(212,168,67,0.72)',
+             background: 'linear-gradient(135deg, #596B3D, #71864d)',
+             boxShadow: '0 8px 26px rgba(89,107,61,0.4), 0 0 0 4px rgba(212,168,67,0.08), inset 0 1px 0 rgba(255,255,255,0.2)',
+             color: '#f5f2e8',
             fontSize: 13,
             fontWeight: 800,
-            letterSpacing: '0.1em',
+             letterSpacing: '0.08em',
             textTransform: 'uppercase',
             cursor: 'pointer',
             backdropFilter: 'blur(12px)',
           }}
         >
-          <span style={{ fontSize: 16, lineHeight: 1 }}>✦</span>
-          Explore Padel
+           <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 23, height: 23, borderRadius: '50%', background: 'rgba(245,242,232,0.16)', border: '1px solid rgba(245,242,232,0.28)' }}>
+             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f5f2e8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+               <circle cx="8" cy="16" r="4" />
+               <path d="M11 13L18 6M15 4l5 5M18 6l2 2" />
+             </svg>
+           </span>
+           Let's Play Padel
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
