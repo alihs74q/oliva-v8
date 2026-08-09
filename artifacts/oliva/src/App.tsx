@@ -10,6 +10,7 @@ import coffeeFrappeMenu from './assets/cold-drinks/coffee-frappe-menu.jpeg';
 import refreshersMenu from './assets/cold-drinks/refreshers-menu.jpeg';
 import smoothiesMenu from './assets/cold-drinks/smoothies-menu.jpeg';
 import milkshakesMenu from './assets/cold-drinks/milkshakes-menu.jpeg';
+import coldDrinksUploadedImage from '@assets/image_1786233684800.png';
 import Navbar from './components/Navbar';
 import Menu, { type MenuCard } from './components/Menu';
 import PromoGallery from './components/PromoGallery';
@@ -238,6 +239,7 @@ export default function App() {
         refreshersMenu,
         smoothiesMenu,
         milkshakesMenu,
+        coldDrinksUploadedImage,
       ],
     };
 
