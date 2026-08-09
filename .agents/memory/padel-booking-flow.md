@@ -1,10 +1,10 @@
 ---
-name: Padel offer selection
-description: Selecting a Padel offer keeps the card highlight without opening WhatsApp or showing a booking action sheet.
+name: Padel offer booking
+description: Court and coaching offers open WhatsApp with a fixed message; Grip and Ball Set remain non-bookable accessories.
 ---
 
-Padel offer cards remain selectable and keep their highlighted animation. The public site no longer shows a WhatsApp action sheet or opens WhatsApp from Padel selections.
+Padel offer cards remain selectable and keep their highlighted animation. Court and coaching offers reveal the booking action and open WhatsApp with the approved fixed message. Grip and Ball Set are selectable but do not reveal a booking action.
 
-**Why:** The public Oliva site should not expose WhatsApp buttons or WhatsApp booking links.
+**Why:** Court reservations and coaching use WhatsApp, while accessory purchases should not trigger that booking message.
 
-**How to apply:** Preserve the card selection interaction, but keep visitor-facing booking/contact actions on the site separate from WhatsApp unless the user explicitly asks to restore them.
+**How to apply:** Normalize CMS accessory names to exactly “Grip” and “Ball Set,” and gate the booking sheet by those names. Keep the approved Padel WhatsApp message and number only in the Padel booking action.

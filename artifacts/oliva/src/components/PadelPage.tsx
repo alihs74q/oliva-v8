@@ -17,6 +17,13 @@ interface PadelItem {
   image: string | null
 }
 
+function normalizePadelItem(item: PadelItem): PadelItem {
+  const normalizedTitle = item.title.toLowerCase()
+  if (normalizedTitle.includes('grip')) return { ...item, title: 'Grip' }
+  if (normalizedTitle.includes('ball')) return { ...item, title: 'Ball Set' }
+  return item
+}
+
 const PADEL_ITEMS: PadelItem[] = [
   { title: '1H Court', description: 'Full hour of play', price: '$20', lbpPrice: '1,800,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-9vR3KMaQrDDBQVuX3Ksa5fIbkllRIY.png' },
   { title: '1.5H Court', description: 'Extended playtime', price: '$30', lbpPrice: '2,700,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-bnWlzxcRfj4wXowKGA3LnfM1trFRSt.png' },
@@ -59,8 +66,9 @@ export default function PadelPage({
 }) {
   const { currency, toggle } = useCurrency('USD')
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
-  const displayItems = items.length > 0 ? items : PADEL_ITEMS
+  const displayItems = (items.length > 0 ? items : PADEL_ITEMS).map(normalizePadelItem)
   const selectedItem = selectedIndex === null ? null : displayItems[selectedIndex]
+  const selectedItemCanBook = selectedItem !== null && selectedItem.title !== 'Grip' && selectedItem.title !== 'Ball Set'
 
   function openPadelWhatsApp() {
     if (!selectedItem) return
@@ -196,7 +204,7 @@ export default function PadelPage({
       </div>
 
       <AnimatePresence>
-        {selectedItem && (
+        {selectedItemCanBook && selectedItem && (
           <motion.div
             className="padel-booking-sheet"
             initial={{ opacity: 0, y: 120 }}
