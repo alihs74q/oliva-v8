@@ -27,6 +27,9 @@ export interface ApiProduct {
   flavors: string[];
   calories: number;
   extraCalories: Record<string, number>;
+  proteinGrams: number;
+  carbsGrams: number;
+  fatGrams: number;
   sortOrder: number;
   hidden: boolean;
   soldOut: boolean;
@@ -91,6 +94,10 @@ function apiProductToSubcategoryDrink(p: ApiProduct) {
     recipe: p.recipe || undefined,
     calories: p.calories || getStaticCalories(p.name),
     extraCalories: p.extraCalories ?? {},
+    proteinGrams: p.proteinGrams ?? 0,
+    carbsGrams: p.carbsGrams ?? 0,
+    fatGrams: p.fatGrams ?? 0,
+    allergens: p.allergens ?? [],
     extras: p.extras ?? [],
     priceLbp: p.priceLbp,
     soldOut: p.soldOut,

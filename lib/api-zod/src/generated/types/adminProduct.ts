@@ -18,6 +18,11 @@ export interface AdminProduct {
   imageUrl?: string | null;
   recipe: string;
   flavors: string[];
+  calories: number;
+  proteinGrams: number;
+  carbsGrams: number;
+  fatGrams: number;
+  allergens: string[];
   sortOrder: number;
   hidden: boolean;
   soldOut: boolean;

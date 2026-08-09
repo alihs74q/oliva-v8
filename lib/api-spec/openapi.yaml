@@ -610,7 +610,7 @@ components:
     # ─── Content shapes ──────────────────────────────────────────────────────────
     AdminProduct:
       type: object
-      required: [id, subcategoryDbId, name, shortName, description, priceLbp, priceUsd, recipe, flavors, sortOrder, hidden, soldOut, deleted, createdAt, updatedAt]
+      required: [id, subcategoryDbId, name, shortName, description, priceLbp, priceUsd, recipe, flavors, calories, proteinGrams, carbsGrams, fatGrams, allergens, sortOrder, hidden, soldOut, deleted, createdAt, updatedAt]
       properties:
         id:
           type: integer
@@ -631,6 +631,18 @@ components:
         recipe:
           type: string
         flavors:
+          type: array
+          items:
+            type: string
+        calories:
+          type: integer
+        proteinGrams:
+          type: integer
+        carbsGrams:
+          type: integer
+        fatGrams:
+          type: integer
+        allergens:
           type: array
           items:
             type: string
@@ -831,6 +843,22 @@ components:
         recipe:
           type: string
         flavors:
+          type: array
+          items:
+            type: string
+        calories:
+          type: integer
+          minimum: 0
+        proteinGrams:
+          type: integer
+          minimum: 0
+        carbsGrams:
+          type: integer
+          minimum: 0
+        fatGrams:
+          type: integer
+          minimum: 0
+        allergens:
           type: array
           items:
             type: string

@@ -60,6 +60,11 @@ export const GetPublishedContentResponse = zod.object({
   "imageUrl": zod.string().nullish(),
   "recipe": zod.string(),
   "flavors": zod.array(zod.string()),
+  "calories": zod.number(),
+  "proteinGrams": zod.number(),
+  "carbsGrams": zod.number(),
+  "fatGrams": zod.number(),
+  "allergens": zod.array(zod.string()),
   "sortOrder": zod.number(),
   "hidden": zod.boolean(),
   "soldOut": zod.boolean(),
@@ -152,6 +157,11 @@ export const ListAdminSectionsResponseItem = zod.object({
   "imageUrl": zod.string().nullish(),
   "recipe": zod.string(),
   "flavors": zod.array(zod.string()),
+  "calories": zod.number(),
+  "proteinGrams": zod.number(),
+  "carbsGrams": zod.number(),
+  "fatGrams": zod.number(),
+  "allergens": zod.array(zod.string()),
   "sortOrder": zod.number(),
   "hidden": zod.boolean(),
   "soldOut": zod.boolean(),
@@ -211,6 +221,11 @@ export const UpdateAdminSectionResponse = zod.object({
   "imageUrl": zod.string().nullish(),
   "recipe": zod.string(),
   "flavors": zod.array(zod.string()),
+  "calories": zod.number(),
+  "proteinGrams": zod.number(),
+  "carbsGrams": zod.number(),
+  "fatGrams": zod.number(),
+  "allergens": zod.array(zod.string()),
   "sortOrder": zod.number(),
   "hidden": zod.boolean(),
   "soldOut": zod.boolean(),
@@ -263,6 +278,11 @@ export const CreateAdminSubcategoryResponse = zod.object({
   "imageUrl": zod.string().nullish(),
   "recipe": zod.string(),
   "flavors": zod.array(zod.string()),
+  "calories": zod.number(),
+  "proteinGrams": zod.number(),
+  "carbsGrams": zod.number(),
+  "fatGrams": zod.number(),
+  "allergens": zod.array(zod.string()),
   "sortOrder": zod.number(),
   "hidden": zod.boolean(),
   "soldOut": zod.boolean(),
@@ -315,6 +335,11 @@ export const UpdateAdminSubcategoryResponse = zod.object({
   "imageUrl": zod.string().nullish(),
   "recipe": zod.string(),
   "flavors": zod.array(zod.string()),
+  "calories": zod.number(),
+  "proteinGrams": zod.number(),
+  "carbsGrams": zod.number(),
+  "fatGrams": zod.number(),
+  "allergens": zod.array(zod.string()),
   "sortOrder": zod.number(),
   "hidden": zod.boolean(),
   "soldOut": zod.boolean(),
@@ -367,6 +392,11 @@ export const RestoreAdminSubcategoryResponse = zod.object({
   "imageUrl": zod.string().nullish(),
   "recipe": zod.string(),
   "flavors": zod.array(zod.string()),
+  "calories": zod.number(),
+  "proteinGrams": zod.number(),
+  "carbsGrams": zod.number(),
+  "fatGrams": zod.number(),
+  "allergens": zod.array(zod.string()),
   "sortOrder": zod.number(),
   "hidden": zod.boolean(),
   "soldOut": zod.boolean(),
@@ -386,6 +416,16 @@ export const CreateAdminProductParams = zod.object({
   "subcategoryId": zod.coerce.number()
 })
 
+export const createAdminProductBodyCaloriesMin = 0;
+
+export const createAdminProductBodyProteinGramsMin = 0;
+
+export const createAdminProductBodyCarbsGramsMin = 0;
+
+export const createAdminProductBodyFatGramsMin = 0;
+
+
+
 export const CreateAdminProductBody = zod.object({
   "name": zod.string(),
   "shortName": zod.string().optional(),
@@ -393,7 +433,12 @@ export const CreateAdminProductBody = zod.object({
   "priceLbp": zod.number(),
   "imageUrl": zod.string().optional(),
   "recipe": zod.string().optional(),
-  "flavors": zod.array(zod.string()).optional()
+  "flavors": zod.array(zod.string()).optional(),
+  "calories": zod.number().min(createAdminProductBodyCaloriesMin).optional(),
+  "proteinGrams": zod.number().min(createAdminProductBodyProteinGramsMin).optional(),
+  "carbsGrams": zod.number().min(createAdminProductBodyCarbsGramsMin).optional(),
+  "fatGrams": zod.number().min(createAdminProductBodyFatGramsMin).optional(),
+  "allergens": zod.array(zod.string()).optional()
 })
 
 export const CreateAdminProductResponse = zod.object({
@@ -407,6 +452,11 @@ export const CreateAdminProductResponse = zod.object({
   "imageUrl": zod.string().nullish(),
   "recipe": zod.string(),
   "flavors": zod.array(zod.string()),
+  "calories": zod.number(),
+  "proteinGrams": zod.number(),
+  "carbsGrams": zod.number(),
+  "fatGrams": zod.number(),
+  "allergens": zod.array(zod.string()),
   "sortOrder": zod.number(),
   "hidden": zod.boolean(),
   "soldOut": zod.boolean(),
@@ -447,6 +497,11 @@ export const UpdateAdminProductResponse = zod.object({
   "imageUrl": zod.string().nullish(),
   "recipe": zod.string(),
   "flavors": zod.array(zod.string()),
+  "calories": zod.number(),
+  "proteinGrams": zod.number(),
+  "carbsGrams": zod.number(),
+  "fatGrams": zod.number(),
+  "allergens": zod.array(zod.string()),
   "sortOrder": zod.number(),
   "hidden": zod.boolean(),
   "soldOut": zod.boolean(),
@@ -484,6 +539,11 @@ export const RestoreAdminProductResponse = zod.object({
   "imageUrl": zod.string().nullish(),
   "recipe": zod.string(),
   "flavors": zod.array(zod.string()),
+  "calories": zod.number(),
+  "proteinGrams": zod.number(),
+  "carbsGrams": zod.number(),
+  "fatGrams": zod.number(),
+  "allergens": zod.array(zod.string()),
   "sortOrder": zod.number(),
   "hidden": zod.boolean(),
   "soldOut": zod.boolean(),
@@ -511,6 +571,11 @@ export const DuplicateAdminProductResponse = zod.object({
   "imageUrl": zod.string().nullish(),
   "recipe": zod.string(),
   "flavors": zod.array(zod.string()),
+  "calories": zod.number(),
+  "proteinGrams": zod.number(),
+  "carbsGrams": zod.number(),
+  "fatGrams": zod.number(),
+  "allergens": zod.array(zod.string()),
   "sortOrder": zod.number(),
   "hidden": zod.boolean(),
   "soldOut": zod.boolean(),

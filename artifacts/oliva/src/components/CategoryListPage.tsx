@@ -230,8 +230,23 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
   const extraLbp = selectedExtras.reduce((sum, name) => sum + (getMenuExtra(name)?.priceLbp ?? 0), 0)
   const totalLbp = baseLbp + extraLbp
   const totalCalories = baseCalories + selectedExtras.reduce((sum, extra) => sum + (drink.extraCalories?.[extra] ?? DEFAULT_EXTRA_CALORIES[extra] ?? 0), 0)
+  const nutritionItems = [
+    { label: 'Protein', value: drink.proteinGrams ? `${drink.proteinGrams}g` : 'Not listed', icon: '💪', tone: '#DCE9C5' },
+    { label: 'Carbs', value: drink.carbsGrams ? `${drink.carbsGrams}g` : 'Not listed', icon: '⚡', tone: '#F6E6B4' },
+    { label: 'Fat', value: drink.fatGrams ? `${drink.fatGrams}g` : 'Not listed', icon: '🥑', tone: '#F2D9C8' },
+  ]
+  const allergens = drink.allergens ?? []
   const soldOut = Boolean(drink.soldOut)
-  const hasDetails = Boolean(drink.recipe || baseCalories || extras.length || soldOut)
+  const hasDetails = Boolean(
+    drink.recipe ||
+    baseCalories ||
+    extras.length ||
+    soldOut ||
+    drink.proteinGrams ||
+    drink.carbsGrams ||
+    drink.fatGrams ||
+    drink.allergens?.length,
+  )
 
   return (
     <motion.div
@@ -334,6 +349,32 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
                        </motion.div>
                      </div>
                      <span style={{ width: 40, height: 40, borderRadius: '50%', display: 'grid', placeItems: 'center', background: 'rgba(255,255,255,0.13)', fontSize: 20 }}>◒</span>
+                   </div>
+                   {/* Nutrition + allergen callouts */}
+                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 7, marginBottom: 15 }}>
+                     {nutritionItems.map((item) => (
+                       <div key={item.label} style={{
+                         minWidth: 0, padding: '9px 7px', borderRadius: 12, background: item.tone,
+                         border: '1px solid rgba(89,107,61,0.12)', textAlign: 'center',
+                       }}>
+                         <div style={{ fontSize: 15, lineHeight: 1 }}>{item.icon}</div>
+                         <div style={{ marginTop: 5, color: '#596B3D', fontFamily: '"Manrope", sans-serif', fontSize: 9, fontWeight: 900, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{item.label}</div>
+                         <div style={{ marginTop: 2, color: item.value === 'Not listed' ? 'rgba(52,65,42,0.5)' : '#27331f', fontFamily: '"Manrope", sans-serif', fontSize: 11, fontWeight: 850, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.value}</div>
+                       </div>
+                     ))}
+                   </div>
+                   <div style={{
+                     display: 'flex', alignItems: 'center', gap: 9, marginBottom: 16, padding: '10px 12px',
+                     borderRadius: 13, background: allergens.length ? '#FFF0D9' : 'rgba(255,255,255,0.66)',
+                     border: allergens.length ? '1px solid #D89A3D' : '1px dashed rgba(89,107,61,0.25)',
+                   }}>
+                     <span style={{ width: 26, height: 26, flexShrink: 0, display: 'grid', placeItems: 'center', borderRadius: 9, background: allergens.length ? '#D89A3D' : 'rgba(89,107,61,0.12)', color: allergens.length ? '#fff' : '#596B3D', fontSize: 14 }}>!</span>
+                     <div style={{ minWidth: 0 }}>
+                       <div style={{ color: allergens.length ? '#8A5516' : '#596B3D', fontFamily: '"Manrope", sans-serif', fontSize: 10, fontWeight: 900, letterSpacing: '0.13em', textTransform: 'uppercase' }}>Allergens</div>
+                       <div style={{ marginTop: 2, color: allergens.length ? '#6C4317' : 'rgba(52,65,42,0.58)', fontFamily: '"Manrope", sans-serif', fontSize: 12, fontWeight: 750, lineHeight: 1.3 }}>
+                         {allergens.length ? allergens.join(' · ') : 'Not listed — please ask our team'}
+                       </div>
+                     </div>
                    </div>
                   {/* Ingredients */}
                   <p style={{

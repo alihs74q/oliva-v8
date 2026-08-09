@@ -14,4 +14,13 @@ export interface ProductInput {
   imageUrl?: string;
   recipe?: string;
   flavors?: string[];
+  /** @minimum 0 */
+  calories?: number;
+  /** @minimum 0 */
+  proteinGrams?: number;
+  /** @minimum 0 */
+  carbsGrams?: number;
+  /** @minimum 0 */
+  fatGrams?: number;
+  allergens?: string[];
 }

@@ -12,7 +12,7 @@ export const adminUsersTable = pgTable("admin_users", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 }, (table) => [
-  unique("admin_users_email_key").on(table.email),
+   unique("admin_users_email_unique").on(table.email),
 ]);
 
 export const insertAdminUserSchema = createInsertSchema(adminUsersTable).omit({ id: true, createdAt: true, updatedAt: true });

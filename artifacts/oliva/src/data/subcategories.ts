@@ -7,6 +7,10 @@ export interface SubcategoryDrink {
   recipe?: string
   calories?: number
   extraCalories?: Record<string, number>
+  proteinGrams?: number
+  carbsGrams?: number
+  fatGrams?: number
+  allergens?: string[]
   extras?: string[]
   priceLbp?: number
   soldOut?: boolean

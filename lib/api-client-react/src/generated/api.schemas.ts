@@ -36,6 +36,11 @@ export interface AdminProduct {
   imageUrl?: string | null;
   recipe: string;
   flavors: string[];
+  calories: number;
+  proteinGrams: number;
+  carbsGrams: number;
+  fatGrams: number;
+  allergens: string[];
   sortOrder: number;
   hidden: boolean;
   soldOut: boolean;
@@ -144,6 +149,15 @@ export interface ProductInput {
   imageUrl?: string;
   recipe?: string;
   flavors?: string[];
+  /** @minimum 0 */
+  calories?: number;
+  /** @minimum 0 */
+  proteinGrams?: number;
+  /** @minimum 0 */
+  carbsGrams?: number;
+  /** @minimum 0 */
+  fatGrams?: number;
+  allergens?: string[];
 }
 
 export interface ProductUpdate {

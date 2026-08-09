@@ -37,6 +37,9 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
     (product?.extras ?? []).filter((extra): extra is MenuExtraName => Boolean(getMenuExtra(extra))),
   );
   const [calories, setCalories] = useState(String(product?.calories ?? getStaticCalories(product?.name ?? '')));
+  const [proteinGrams, setProteinGrams] = useState(String(product?.proteinGrams ?? ''));
+  const [carbsGrams, setCarbsGrams] = useState(String(product?.carbsGrams ?? ''));
+  const [fatGrams, setFatGrams] = useState(String(product?.fatGrams ?? ''));
   const [extraCaloriesText, setExtraCaloriesText] = useState(
     Object.entries(product?.extraCalories ?? {}).map(([name, value]) => `${name}: ${value}`).join('\n'),
   );
@@ -78,6 +81,9 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
         flavors: flavorsText.split(',').map((f) => f.trim()).filter(Boolean),
          extras: selectedExtras,
         calories: Math.max(0, parseInt(calories, 10) || 0),
+        proteinGrams: Math.max(0, parseInt(proteinGrams, 10) || 0),
+        carbsGrams: Math.max(0, parseInt(carbsGrams, 10) || 0),
+        fatGrams: Math.max(0, parseInt(fatGrams, 10) || 0),
         extraCalories,
         tags: tagsText.split(',').map((f) => f.trim()).filter(Boolean),
         allergens: allergensText.split(',').map((f) => f.trim()).filter(Boolean),
@@ -149,6 +155,17 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
             <Field label="Base calories">
               <input type="number" min="0" value={calories} onChange={(e) => setCalories(e.target.value)} style={inputStyle} placeholder="e.g. 280" />
             </Field>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10, marginTop: 10 }}>
+              <Field label="Protein (g)">
+                <input type="number" min="0" step="1" value={proteinGrams} onChange={(e) => setProteinGrams(e.target.value)} style={inputStyle} placeholder="e.g. 12" />
+              </Field>
+              <Field label="Carbs (g)">
+                <input type="number" min="0" step="1" value={carbsGrams} onChange={(e) => setCarbsGrams(e.target.value)} style={inputStyle} placeholder="e.g. 28" />
+              </Field>
+              <Field label="Fat (g)">
+                <input type="number" min="0" step="1" value={fatGrams} onChange={(e) => setFatGrams(e.target.value)} style={inputStyle} placeholder="e.g. 8" />
+              </Field>
+            </div>
             <div style={{ height: 10 }} />
             <Field label="Extra calories (one per line: Name: calories)">
               <textarea
