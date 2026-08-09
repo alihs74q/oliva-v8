@@ -141,8 +141,8 @@ export default function HomepageExperience({
         </motion.button>
       </div>
 
-      {/* Buttons row */}
-      <motion.div
+      {/* Removed WhatsApp booking CTA */}
+      {false && <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: EASE, delay: 0.5 }}
@@ -192,7 +192,7 @@ export default function HomepageExperience({
             Click to view the courts available now on Oliva Padel website
           </p>
         </a>
-      </motion.div>
+      </motion.div>}
     </section>
   )
 }

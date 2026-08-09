@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import type { CategoryTheme } from './CategoryListPage'
 import CurrencyToggle from './CurrencyToggle'
 import { useCurrency } from '../hooks/useCurrency'
@@ -6,6 +6,8 @@ import { imageAssets } from '../utils/imageAssets'
 import { useState } from 'react'
 
 const EASE = [0.25, 0.46, 0.45, 0.94] as const
+const PADEL_WHATSAPP_NUMBER = '96170647506'
+const PADEL_WHATSAPP_MESSAGE = 'mar7aba shou hiye law2at lfine 2e7joz fiha lyom'
 
 interface PadelItem {
   title: string
@@ -56,8 +58,18 @@ export default function PadelPage({
   items?: PadelItem[]
 }) {
   const { currency, toggle } = useCurrency('USD')
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const displayItems = items.length > 0 ? items : PADEL_ITEMS
+  const selectedItem = selectedIndex === null ? null : displayItems[selectedIndex]
+
+  function openPadelWhatsApp() {
+    if (!selectedItem) return
+    window.open(
+      `https://wa.me/${PADEL_WHATSAPP_NUMBER}?text=${encodeURIComponent(PADEL_WHATSAPP_MESSAGE)}`,
+      '_blank',
+      'noopener,noreferrer',
+    )
+  }
 
   return (
     <div className="padel-page">
@@ -182,6 +194,43 @@ export default function PadelPage({
           </div>
         </main>
       </div>
+
+      <AnimatePresence>
+        {selectedItem && (
+          <motion.div
+            className="padel-booking-sheet"
+            initial={{ opacity: 0, y: 120 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 120 }}
+            transition={{ duration: 0.42, ease: [0.34, 1.56, 0.64, 1] }}
+            role="dialog"
+            aria-label={`Book ${selectedItem.title}`}
+          >
+            <div className="padel-booking-sheet__copy">
+              <span className="padel-booking-sheet__status"><CheckIcon /> Ready to play</span>
+              <strong>{selectedItem.title}</strong>
+              <span>{currency === 'USD' ? selectedItem.price : selectedItem.lbpPrice}</span>
+            </div>
+            <div className="padel-booking-sheet__actions">
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                className="padel-booking-sheet__accept"
+                onClick={openPadelWhatsApp}
+              >
+                Accept &amp; Book Now
+                <ArrowRight />
+              </motion.button>
+              <button
+                className="padel-booking-sheet__close"
+                onClick={() => setSelectedIndex(null)}
+                aria-label="Close booking action"
+              >
+                ×
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

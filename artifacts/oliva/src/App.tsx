@@ -17,7 +17,6 @@ import Menu, { type MenuCard } from './components/Menu';
 import PromoGallery from './components/PromoGallery';
 import GalleryPage from './components/GalleryPage';
 import SiteFooter from './components/SiteFooter';
-import WhatsAppButton from './components/WhatsAppButton';
 import ColdDrinksPage from './components/ColdDrinksPage';
 import DessertsPage from './components/DessertsPage';
 import HotDrinksPage from './components/HotDrinksPage';
@@ -201,7 +200,6 @@ export default function App() {
             />
           </main>
           <SiteFooter navigate={navigateMenu} onBook={navigateMenu} />
-          <WhatsAppButton />
         </div>
       </>
     );
@@ -222,7 +220,6 @@ export default function App() {
                title: drink.name, description: drink.description, price: drink.price, lbpPrice: drink.lbpPrice, image: drink.image,
              }))}
           />
-          <WhatsAppButton />
         </>
       );
     }
@@ -254,7 +251,6 @@ export default function App() {
           onBack={navigateMenu}
           heroImages={HERO_IMAGES[route.category]}
         />
-        <WhatsAppButton />
       </>
     );
   }
@@ -263,16 +259,16 @@ export default function App() {
   if (route.name === 'detail') {
     const back = () => navigateList(route.category);
     if (route.category === 'cold-drinks') {
-      return (<><ColdDrinksPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} /><WhatsAppButton /></>);
+      return <ColdDrinksPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} />;
     }
     if (route.category === 'hot-drinks') {
-      return (<><HotDrinksPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} /><WhatsAppButton /></>);
+      return <HotDrinksPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} />;
     }
     if (route.category === 'desserts') {
-      return (<><DessertsPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} /><WhatsAppButton /></>);
+      return <DessertsPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} />;
     }
     if (route.category === 'shisha') {
-      return (<><ShishaPage navigate={navigateMenu} onBack={back} /><WhatsAppButton /></>);
+      return <ShishaPage navigate={navigateMenu} onBack={back} />;
     }
   }
 
@@ -288,7 +284,6 @@ export default function App() {
         <div className="relative min-h-screen" style={{ background: '#0A0F06' }}>
           <Navbar navigate={(to) => { if (to === 'home') navigateHome(); else navigateMenu(); }} route={'home'} />
           <GalleryPage onViewMenu={navigateMenu} onBack={navigateHome} />
-          <WhatsAppButton />
         </div>
       </>
     );
@@ -442,7 +437,6 @@ export default function App() {
         />
       </div>
 
-      <WhatsAppButton />
     </div>
   );
 }

@@ -2,9 +2,6 @@ import { useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 
 const CONTACT = {
-  whatsappNumber: '961XXXXXXXX',
-  whatsappDisplay: '+961 XX XXX XXX',
-  whatsappMessage: 'Hello, I would like to ask about the café and padel court.',
   phone: '+961 71 234 567',
   email: 'hello@oliva.com',
   address: 'Beirut, Lebanon',
@@ -165,10 +162,7 @@ const IG_ICON = (
   </svg>
 )
 
-const waHref = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(CONTACT.whatsappMessage)}`
-
 const CARDS: CardData[] = [
-  { label: 'WhatsApp',      value: CONTACT.whatsappDisplay,   href: waHref,                                           delay: 0,    accent: '#25D366', glow: 'rgba(37,211,102,0.4)',   icon: WA_ICON    },
   { label: 'Phone',         value: CONTACT.phone,             href: `tel:${CONTACT.phone.replace(/\s/g, '')}`,        delay: 0.07, accent: '#7dd3fc', glow: 'rgba(125,211,252,0.35)', icon: PHONE_ICON },
   { label: 'Email',         value: CONTACT.email,             href: `mailto:${CONTACT.email}`,                        delay: 0.14, accent: '#CCA478', glow: 'rgba(204,164,120,0.4)',  icon: MAIL_ICON  },
   { label: 'Location',      value: CONTACT.address,                                                                   delay: 0.21, accent: '#f9a8d4', glow: 'rgba(249,168,212,0.35)', icon: PIN_ICON   },

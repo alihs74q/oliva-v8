@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import PadelMap from './PadelMap'
 
-const WA_NUMBER = '972500000000'
 const PRICE_PER_PERSON = 6
 const PRICE_PER_MATCH = 24
 
@@ -48,25 +47,7 @@ export default function BookingModal({ onClose }: { onClose: () => void }) {
     return false
   }
 
-  function buildMessage() {
-    const slot = TIME_SLOTS.find(s => s.start === form.time)
-    const timeRange = slot ? `${slot.start} – ${slot.end}` : form.time
-    const total = form.guests ? form.guests * PRICE_PER_PERSON : 0
-    return encodeURIComponent(
-      `🎾 *Padel Court Booking*\n\n` +
-      `👤 Name: ${form.name}\n` +
-      `📅 Date: ${form.date}\n` +
-      `🕐 Time: ${timeRange} (90 min)\n` +
-      `👥 Players: ${form.guests}\n` +
-      `🎾 Court: Court ${form.court}\n` +
-      `💳 Payment: ${form.payment === 'cash' ? 'Cash on arrival' : 'Card on arrival'}\n\n` +
-      `💰 *Total: $${total}* ($${PRICE_PER_PERSON}/person)\n\n` +
-      `Please confirm my booking. Thank you!`
-    )
-  }
-
   function handleBook() {
-    window.open(`https://wa.me/${WA_NUMBER}?text=${buildMessage()}`, '_blank')
     handleClose()
   }
   function handleClose() { setVisible(false); setTimeout(onClose, 280) }
@@ -306,8 +287,7 @@ export default function BookingModal({ onClose }: { onClose: () => void }) {
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
               transition: 'all 0.2s ease',
             }}>
-              <span>Book via WhatsApp</span>
-              <span style={{ fontSize: 18 }}>💬</span>
+              <span>Submit booking request</span>
             </button>
           )}
         </div>

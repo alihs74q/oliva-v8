@@ -1,5 +1,4 @@
 import GlassyMenuButton from './GlassyMenuButton';
-import WhatsAppBookButton from './WhatsAppBookButton';
 
 export default function Hero({ onViewMenu }: { onViewMenu: () => void }) {
   const scrollToIntro = () => {
@@ -19,7 +18,6 @@ export default function Hero({ onViewMenu }: { onViewMenu: () => void }) {
 
           <div className="flex flex-col items-center" style={{ gap: '16px' }}>
             <GlassyMenuButton onClick={onViewMenu} />
-            <WhatsAppBookButton />
           </div>
 
           <button

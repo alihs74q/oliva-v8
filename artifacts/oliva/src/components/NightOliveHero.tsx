@@ -505,7 +505,7 @@ export default function NightOliveHero({ onViewMenu, introDone }: Props) {
         </button>
 
         {/* 2. Combined PADEL + WHATSAPP split button */}
-        <a
+        {false && <a
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
@@ -572,7 +572,7 @@ export default function NightOliveHero({ onViewMenu, introDone }: Props) {
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </span>
-        </a>
+        </a>}
 
         {/* 3. SCROLL FOR MORE — transparent capsule */}
         <button
