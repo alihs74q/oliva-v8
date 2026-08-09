@@ -133,7 +133,7 @@ export default function App() {
   const { subcategories: publishedSubcategories } = usePublishedContent();
   const { promoGallery, sections, settings } = useContent();
   const menuCards = sections.length > 0
-    ? sections.map((section) => {
+    ? sections.filter((section) => section.slug !== 'padel').map((section) => {
       const key = section.slug.replace(/-drinks$/, '').replace('desserts', 'dessert')
       const fallback = ({
         hot: { gradient: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#fed7aa', image: 'https://images.pexels.com/photos/15851583/pexels-photo-15851583/free-photo-of-cappuccino-in-cup-on-table.jpeg?auto=compress&cs=tinysrgb&w=400' },
@@ -389,6 +389,33 @@ export default function App() {
           {/* Our Place */}
           <OurPlaceButton onClick={navigateOurPlace} />
         </div>
+        <button
+          onClick={() => navigateList('padel')}
+          style={{
+            marginTop: 22,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '13px 24px',
+            borderRadius: 999,
+            border: '1px solid rgba(125,211,252,0.48)',
+            background: 'linear-gradient(135deg, rgba(14,165,233,0.22), rgba(79,130,197,0.12))',
+            boxShadow: '0 8px 28px rgba(14,165,233,0.16), inset 0 1px 0 rgba(255,255,255,0.14)',
+            color: '#dff7ff',
+            fontSize: 13,
+            fontWeight: 800,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            backdropFilter: 'blur(12px)',
+          }}
+        >
+          <span style={{ fontSize: 16, lineHeight: 1 }}>✦</span>
+          Explore Padel
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </button>
       </section>
 
       {/* ── Menu ── */}

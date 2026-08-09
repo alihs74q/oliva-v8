@@ -35,7 +35,6 @@ const CARDS: CatCard[] = [
   { id: 'shisha', label: 'Shisha', desc: 'Premium flavors — fresh mint, double apple & classic blends', gradient: 'linear-gradient(135deg,#eab308,#a16207)', accent: '#fef08a', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-awRUXZgCUaSRd5LnoYKBVKhnE9Z36Z.png' },
   { id: 'sandwiches', label: 'Sandwiches', desc: 'Fresh & delicious — tuna, turkey, halloumi & more', gradient: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#fed7aa', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Sandwich%20PNG-ALWYL1Ttrugnx7fPbCpNyn3mu4AcTN.jpg' },
   { id: 'yogurt', label: 'Yogurt', desc: 'Creamy & refreshing — Greek yogurt with fresh toppings', gradient: 'linear-gradient(135deg,#d946ef,#be185d)', accent: '#f9a8d4', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/14988611256100392-VcfSLudrmQ98JzCToSTWUmeOANUBaV.jpg' },
-  { id: 'padel', label: 'Padel', desc: 'Rackets, coaching & gear for your game', gradient: 'linear-gradient(135deg,#06b6d4,#0891b2)', accent: '#06f6d4', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-0a6RZwqQSo38UmBftouiTQtlg9C8Rc.png' },
 ]
 
 // Solid background per category type
