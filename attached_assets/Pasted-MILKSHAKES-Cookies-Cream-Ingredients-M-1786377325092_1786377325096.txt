@@ -1,0 +1,939 @@
+MILKSHAKES
+==================================================
+
+Cookies & Cream
+Ingredients:
+- Milk
+- Vanilla ice cream
+- Oreo cookies
+Calories: 600 Cal
+Protein: 10g
+Carbs: 85g
+Fat: 24g
+Allergens: Dairy, Gluten, Soy
+Extras:
+- Cream
+- Ice Cream
+- Flavor
+
+Strawberry Whip
+Ingredients:
+- Milk
+- Vanilla ice cream
+- Strawberry
+- Whipped cream
+Calories: 450 Cal
+Protein: 9g
+Carbs: 65g
+Fat: 17g
+Allergens: Dairy
+Extras:
+- Cream
+- Ice Cream
+- Flavor
+
+Choco-Nut Milkshake
+Ingredients:
+- Milk
+- Vanilla ice cream
+- Chocolate
+- Hazelnut
+Calories: 550 Cal
+Protein: 10g
+Carbs: 70g
+Fat: 26g
+Allergens: Dairy, Tree Nuts, Soy
+Extras:
+- Cream
+- Ice Cream
+- Flavor
+
+Vanilla Milkshake
+Ingredients:
+- Milk
+- Vanilla ice cream
+- Vanilla
+Calories: 450 Cal
+Protein: 9g
+Carbs: 65g
+Fat: 17g
+Allergens: Dairy
+Extras:
+- Cream
+- Ice Cream
+- Flavor
+
+Lotus Milkshake
+Ingredients:
+- Milk
+- Vanilla ice cream
+- Lotus spread
+- Lotus biscuits
+Calories: 600 Cal
+Protein: 9g
+Carbs: 78g
+Fat: 28g
+Allergens: Dairy, Gluten, Soy
+Extras:
+- Cream
+- Ice Cream
+- Flavor
+
+Oliva Milkshake
+Ingredients:
+- Milk
+- Ice cream
+- Oliva special flavor
+Calories: 500 Cal
+Protein: 9g
+Carbs: 67g
+Fat: 22g
+Allergens: Dairy, Check flavor label
+Extras:
+- Cream
+- Ice Cream
+- Flavor
+
+
+SMOOTHIES
+==================================================
+
+Floral Fusion
+Ingredients:
+- Mixed fruits
+- Fruit juice
+- Floral flavor
+Calories: 280 Cal
+Protein: 2g
+Carbs: 68g
+Fat: 0g
+Allergens: None
+Extras:
+- Cream
+- Flavor
+
+Mango
+Ingredients:
+- Mango
+- Fruit juice
+- Ice
+Calories: 300 Cal
+Protein: 2g
+Carbs: 73g
+Fat: 0g
+Allergens: None
+Extras:
+- Cream
+- Flavor
+
+Strawberry
+Ingredients:
+- Strawberry
+- Fruit juice
+- Ice
+Calories: 280 Cal
+Protein: 2g
+Carbs: 68g
+Fat: 0g
+Allergens: None
+Extras:
+- Cream
+- Flavor
+
+Passion Fruit
+Ingredients:
+- Passion fruit
+- Fruit juice
+- Ice
+Calories: 280 Cal
+Protein: 2g
+Carbs: 68g
+Fat: 0g
+Allergens: None
+Extras:
+- Cream
+- Flavor
+
+
+REFRESHERS
+==================================================
+
+Razzlychee Iced Tea
+Ingredients:
+- Black tea
+- Raspberry
+- Lychee
+- Ice
+Calories: 150 Cal
+Protein: 0g
+Carbs: 38g
+Fat: 0g
+Allergens: None
+Extras:
+- Flavor
+
+Tropical Iced Tea
+Ingredients:
+- Black tea
+- Tropical fruits
+- Ice
+Calories: 160 Cal
+Protein: 0g
+Carbs: 40g
+Fat: 0g
+Allergens: None
+Extras:
+- Flavor
+
+Peach Iced Tea
+Ingredients:
+- Black tea
+- Peach
+- Ice
+Calories: 160 Cal
+Protein: 0g
+Carbs: 40g
+Fat: 0g
+Allergens: None
+Extras:
+- Flavor
+
+Kiwi Mojito
+Ingredients:
+- Kiwi
+- Lime
+- Mint
+- Soda water
+Calories: 120 Cal
+Protein: 1g
+Carbs: 29g
+Fat: 0g
+Allergens: None
+Extras:
+- Flavor
+
+Passion Crush
+Ingredients:
+- Passion fruit
+- Lime
+- Soda water
+- Ice
+Calories: 130 Cal
+Protein: 1g
+Carbs: 32g
+Fat: 0g
+Allergens: None
+Extras:
+- Flavor
+
+Summer Mix
+Ingredients:
+- Mixed fruits
+- Fruit juice
+- Soda water
+- Ice
+Calories: 150 Cal
+Protein: 1g
+Carbs: 37g
+Fat: 0g
+Allergens: None
+Extras:
+- Flavor
+
+
+COFFEE FRAPPES
+==================================================
+
+Mocha Frappe
+Ingredients:
+- Coffee
+- Milk
+- Chocolate
+- Ice
+Calories: 280 Cal
+Protein: 7g
+Carbs: 45g
+Fat: 8g
+Allergens: Dairy
+Extras:
+- Cream
+- Ice Cream
+- Extra Shot
+- Flavor
+
+Caramel Frappe
+Ingredients:
+- Coffee
+- Milk
+- Caramel
+- Ice
+Calories: 280 Cal
+Protein: 7g
+Carbs: 45g
+Fat: 8g
+Allergens: Dairy
+Extras:
+- Cream
+- Ice Cream
+- Extra Shot
+- Flavor
+
+Vanilla Frappe
+Ingredients:
+- Coffee
+- Milk
+- Vanilla
+- Ice
+Calories: 260 Cal
+Protein: 7g
+Carbs: 42g
+Fat: 7g
+Allergens: Dairy
+Extras:
+- Cream
+- Ice Cream
+- Extra Shot
+- Flavor
+
+Toffee Nut Frappe
+Ingredients:
+- Coffee
+- Milk
+- Toffee-nut flavor
+- Ice
+Calories: 300 Cal
+Protein: 7g
+Carbs: 49g
+Fat: 8g
+Allergens: Dairy, Check syrup label
+Extras:
+- Cream
+- Ice Cream
+- Extra Shot
+- Flavor
+
+Oliva Frappe
+Ingredients:
+- Coffee
+- Milk
+- Oliva special flavor
+- Ice
+Calories: 280 Cal
+Protein: 7g
+Carbs: 45g
+Fat: 8g
+Allergens: Dairy, Check flavor label
+Extras:
+- Cream
+- Ice Cream
+- Extra Shot
+- Flavor
+
+
+ICED LATTES
+==================================================
+
+Iced Spanish Latte
+Ingredients:
+- Espresso
+- Milk
+- Sweet condensed milk
+- Ice
+Calories: 240 Cal
+Protein: 8g
+Carbs: 36g
+Fat: 7g
+Allergens: Dairy
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+Iced Mocha Latte
+Ingredients:
+- Espresso
+- Milk
+- Chocolate
+- Ice
+Calories: 260 Cal
+Protein: 8g
+Carbs: 40g
+Fat: 8g
+Allergens: Dairy
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+Iced Vanilla Latte
+Ingredients:
+- Espresso
+- Milk
+- Vanilla
+- Ice
+Calories: 190 Cal
+Protein: 7g
+Carbs: 28g
+Fat: 6g
+Allergens: Dairy
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+Iced Hazelnut Latte
+Ingredients:
+- Espresso
+- Milk
+- Hazelnut flavor
+- Ice
+Calories: 190 Cal
+Protein: 7g
+Carbs: 28g
+Fat: 6g
+Allergens: Dairy, Check syrup label
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+Iced Salted Caramel Latte
+Ingredients:
+- Espresso
+- Milk
+- Salted caramel
+- Ice
+Calories: 210 Cal
+Protein: 7g
+Carbs: 32g
+Fat: 6g
+Allergens: Dairy
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+Irish Cream Latte
+Ingredients:
+- Espresso
+- Milk
+- Irish cream flavor
+- Ice
+Calories: 200 Cal
+Protein: 7g
+Carbs: 30g
+Fat: 6g
+Allergens: Dairy, Check syrup label
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+Caramel Macchiato
+Ingredients:
+- Espresso
+- Milk
+- Vanilla
+- Caramel
+Calories: 250 Cal
+Protein: 10g
+Carbs: 35g
+Fat: 7g
+Allergens: Dairy
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+Iced Matcha Latte
+Ingredients:
+- Matcha green tea
+- Milk
+- Ice
+Calories: 190 Cal
+Protein: 9g
+Carbs: 27g
+Fat: 5g
+Allergens: Dairy
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+
+HOT DRINKS
+==================================================
+
+Café Latte
+Ingredients:
+- Espresso
+- Steamed milk
+- Light milk foam
+Calories: 190 Cal
+Protein: 13g
+Carbs: 19g
+Fat: 7g
+Allergens: Dairy
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+Vanilla Café Latte
+Ingredients:
+- Espresso
+- Steamed milk
+- Vanilla
+Calories: 250 Cal
+Protein: 13g
+Carbs: 34g
+Fat: 7g
+Allergens: Dairy
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+Hazelnut Café Latte
+Ingredients:
+- Espresso
+- Steamed milk
+- Hazelnut flavor
+Calories: 250 Cal
+Protein: 13g
+Carbs: 34g
+Fat: 7g
+Allergens: Dairy, Check syrup label
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+Hot Chocolate
+Ingredients:
+- Milk
+- Chocolate
+Calories: 290 Cal
+Protein: 10g
+Carbs: 45g
+Fat: 8g
+Allergens: Dairy, Soy
+Extras:
+- Cream
+- Extra Shot
+- Flavor
+
+Cappuccino
+Ingredients:
+- Espresso
+- Steamed milk
+- Thick milk foam
+Calories: 140 Cal
+Protein: 9g
+Carbs: 14g
+Fat: 5g
+Allergens: Dairy
+Extras:
+- Extra Shot
+- Flavor
+
+Espresso
+Ingredients:
+- Espresso coffee
+Calories: 5 Cal
+Protein: 0.5g
+Carbs: 1g
+Fat: 0g
+Allergens: None
+Extras:
+- Cream
+- Ice Cream
+- Extra Shot
+- Flavor
+
+Americano
+Ingredients:
+- Espresso
+- Hot water
+- No milk
+Calories: 10 Cal
+Protein: 1g
+Carbs: 2g
+Fat: 0g
+Allergens: None
+
+American Coffee
+Ingredients:
+- Brewed black coffee
+- No milk
+Calories: 2 Cal
+Protein: 0.3g
+Carbs: 0g
+Fat: 0.1g
+Allergens: None
+
+Turkish Coffee
+Ingredients:
+- Finely ground coffee
+- Hot water
+Calories: 5 Cal
+Protein: 0.3g
+Carbs: 1g
+Fat: 0.1g
+Allergens: None
+
+Tea
+Ingredients:
+- Black tea
+- Hot water
+Calories: 2 Cal
+Protein: 0g
+Carbs: 0g
+Fat: 0g
+Allergens: None
+Extras:
+- Flavor
+
+Ginger and Honey
+Ingredients:
+- Ginger
+- Honey
+- Hot water
+Calories: 70 Cal
+Protein: 0g
+Carbs: 18g
+Fat: 0g
+Allergens: None
+Extras:
+- None
+
+Chamomile
+Ingredients:
+- Chamomile flowers
+- Hot water
+Calories: 2 Cal
+Protein: 0g
+Carbs: 0g
+Fat: 0g
+Allergens: None
+Extras:
+- Flavor
+
+Green Tea
+Ingredients:
+- Green tea
+- Hot water
+Calories: 2 Cal
+Protein: 0g
+Carbs: 0g
+Fat: 0g
+Allergens: None
+Extras:
+- Flavor
+
+
+COLD BEVERAGES
+==================================================
+
+Water
+Ingredients:
+- Still water
+Calories: 0 Cal
+Protein: 0g
+Carbs: 0g
+Fat: 0g
+Allergens: None
+Extras:
+- None
+
+Sparkling Water
+Ingredients:
+- Carbonated water
+Calories: 0 Cal
+Protein: 0g
+Carbs: 0g
+Fat: 0g
+Allergens: None
+Extras:
+- Flavor
+
+
+DESSERTS
+==================================================
+
+Lazy Cake
+Ingredients:
+- Chocolate
+- Biscuits
+- Butter
+Calories: 400 Cal
+Protein: 5g
+Carbs: 45g
+Fat: 22g
+Allergens: Dairy, Gluten, Soy
+Extras:
+- Cream
+- Ice Cream
+
+Chocolate Fondant
+Ingredients:
+- Chocolate cake
+- Melted chocolate center
+Calories: 500 Cal
+Protein: 9g
+Carbs: 47g
+Fat: 31g
+Allergens: Dairy, Gluten, Eggs, Soy
+Extras:
+- Cream
+- Ice Cream
+
+Oreo Cheesecake
+Ingredients:
+- Cream cheese
+- Oreo biscuits
+- Biscuit base
+Calories: 390 Cal
+Protein: 5g
+Carbs: 34g
+Fat: 26g
+Allergens: Dairy, Gluten, Soy
+Extras:
+- Cream
+- Ice Cream
+
+Raspberry Cheesecake
+Ingredients:
+- Cream cheese
+- Raspberry
+- Biscuit base
+Calories: 400 Cal
+Protein: 8g
+Carbs: 42g
+Fat: 22g
+Allergens: Dairy, Gluten, Eggs
+Extras:
+- Cream
+- Ice Cream
+
+Chocolate Cake
+Ingredients:
+- Chocolate
+- Cocoa
+- Soft cake
+Calories: 530 Cal
+Protein: 5g
+Carbs: 73g
+Fat: 24g
+Allergens: Dairy, Gluten, Eggs, Soy
+Extras:
+- Cream
+- Ice Cream
+
+Vanilla Mushroom Muffin
+Ingredients:
+- Vanilla cake
+- Milk
+- Eggs
+Calories: 380 Cal
+Protein: 6g
+Carbs: 52g
+Fat: 17g
+Allergens: Dairy, Gluten, Eggs
+Extras:
+- Cream
+- Ice Cream
+
+Chocolate Mushroom Muffin
+Ingredients:
+- Chocolate cake
+- Cocoa
+- Eggs
+Calories: 450 Cal
+Protein: 6g
+Carbs: 58g
+Fat: 22g
+Allergens: Dairy, Gluten, Eggs, Soy
+Extras:
+- Cream
+- Ice Cream
+
+Croissant
+Ingredients:
+- Buttery croissant
+- Flaky pastry
+Calories: 280 Cal
+Protein: 6g
+Carbs: 28g
+Fat: 16g
+Allergens: Dairy, Gluten, Eggs
+Extras:
+- Cream
+- Ice Cream
+
+Croissant Cheese
+Ingredients:
+- Buttery croissant
+- Cheese filling
+Calories: 330 Cal
+Protein: 10g
+Carbs: 32g
+Fat: 18g
+Allergens: Dairy, Gluten, Eggs
+
+Croissant Zaatar
+Ingredients:
+- Buttery croissant
+- Zaatar
+Calories: 280 Cal
+Protein: 5g
+Carbs: 34g
+Fat: 14g
+Allergens: Dairy, Gluten, Eggs, Sesame
+
+Croissant Chocolate
+Ingredients:
+- Buttery croissant
+- Chocolate filling
+Calories: 350 Cal
+Protein: 6g
+Carbs: 33g
+Fat: 21g
+Allergens: Dairy, Gluten, Eggs, Soy
+
+
+SANDWICHES
+==================================================
+
+Tuna Cado
+Ingredients:
+- Tuna
+- Avocado
+- Vegetables
+- Bread
+Calories: 460 Cal
+Protein: 25g
+Carbs: 42g
+Fat: 21g
+Allergens: Fish, Gluten
+
+Turkey and Cheese
+Ingredients:
+- Turkey
+- Cheese
+- Vegetables
+- Bread
+Calories: 450 Cal
+Protein: 28g
+Carbs: 40g
+Fat: 20g
+Allergens: Dairy, Gluten
+
+Halloumi Pesto
+Ingredients:
+- Halloumi cheese
+- Pesto
+- Vegetables
+- Bread
+Calories: 500 Cal
+Protein: 22g
+Carbs: 40g
+Fat: 28g
+Allergens: Dairy, Gluten, Tree Nuts
+
+Chicken Caesar
+Ingredients:
+- Grilled chicken
+- Lettuce
+- Parmesan cheese
+- Caesar sauce
+Calories: 550 Cal
+Protein: 38g
+Carbs: 22g
+Fat: 34g
+Allergens: Dairy, Eggs, Fish
+
+
+NUTS
+==================================================
+
+Mixed Nuts
+Ingredients:
+- Roasted mixed nuts
+- Salt
+Calories: 300 Cal
+Protein: 10g
+Carbs: 11g
+Fat: 25g
+Allergens: Tree Nuts, Peanuts
+
+
+YOGURT
+==================================================
+
+Greek Yogurt
+Ingredients:
+- Thick plain yogurt
+Calories: 170 Cal
+Protein: 15g
+Carbs: 7g
+Fat: 9g
+Allergens: Dairy
+
+Mango Greek Yogurt
+Ingredients:
+- Greek yogurt
+- Mango
+Calories: 230 Cal
+Protein: 14g
+Carbs: 24g
+Fat: 9g
+Allergens: Dairy
+
+Toppings
+Ingredients:
+- Granola
+- Honey
+- Fruit
+- Nuts
+Calories: 100 Cal
+Protein: 2g
+Carbs: 15g
+Fat: 4g
+Allergens: Depends on topping
+
+
+EXTRAS
+==================================================
+
+Cream
+Price: 50,000 LBP
+Calories: 25 Cal
+Protein: 0g
+Carbs: 0g
+Fat: 2.5g
+Allergens: Dairy
+
+Ice Cream
+Price: 50,000 LBP
+Calories: 140 Cal
+Protein: 3g
+Carbs: 16g
+Fat: 7g
+Allergens: Dairy
+
+Flavor
+Price: 50,000 LBP
+Calories: 50 Cal
+Protein: 0g
+Carbs: 12g
+Fat: 0g
+Allergens: Depends on flavor
+
+Extra Shot
+Price: 100,000 LBP
+Calories: 5 Cal
+Protein: 0.5g
+Carbs: 1g
+Fat: 0g
+Allergens: None
