@@ -14,3 +14,4 @@
 - [Nutrition precision](nutrition-precision.md) — macro fields use one-decimal numeric storage; imported nutrition lists must match existing CMS products before updates.
 - [Vercel nutrition fallback](vercel-nutrition-fallback.md) — bundled frontend nutrition values protect GitHub/Vercel builds from legacy API snapshots missing macro fields.
 - [Vercel admin edits](vercel-admin-edits.md) — separately deployed admin API can reject browser millisecond revisions with 409; client retries once without the stale token.
+- [Vercel product images](vercel-product-images.md) — product image selection is browser-compressed into the CMS image field, avoiding a separate upload/storage deployment.
