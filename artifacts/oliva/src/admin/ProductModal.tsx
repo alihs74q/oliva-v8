@@ -88,7 +88,6 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
         tags: tagsText.split(',').map((f) => f.trim()).filter(Boolean),
         allergens: allergensText.split(',').map((f) => f.trim()).filter(Boolean),
         featured, hidden, soldOut,
-        ...(product?.updatedAt ? { expectedUpdatedAt: product.updatedAt } : {}),
       });
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Save failed');

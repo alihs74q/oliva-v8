@@ -143,21 +143,15 @@ export async function apiCreateProduct(subcategoryId: number, data: Record<strin
 }
 
 export async function apiUpdateProduct(id: number, data: Record<string, unknown>) {
-  const path = `/admin/products/${id}`;
-  const send = (body: Record<string, unknown>) => apiFetch(path, {
+  // Product editing is a direct authenticated CMS operation. Do not send
+  // browser timestamps here: separately deployed Vercel/API builds can
+  // serialize PostgreSQL microseconds differently and reject valid edits as
+  // stale with a misleading 409 conflict.
+  const { expectedUpdatedAt: _ignoredRevision, ...saveData } = data;
+  const res = await apiFetch(`/admin/products/${id}`, {
     method: 'PATCH',
-    body: JSON.stringify(body),
+    body: JSON.stringify(saveData),
   });
-
-  let res = await send(data);
-  if (res.status === 409 && data.expectedUpdatedAt !== undefined) {
-    // Some separately deployed API builds compare PostgreSQL microseconds
-    // against the browser's millisecond ISO timestamp too strictly. Retry
-    // once without the optional optimistic token so Vercel admin edits still
-    // work; the server remains the source of truth for the saved fields.
-    const { expectedUpdatedAt: _ignoredRevision, ...retryData } = data;
-    res = await send(retryData);
-  }
   if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error ?? 'Failed'); }
   return res.json();
 }

@@ -13,3 +13,4 @@
 - [Instant publish refresh](instant-publish-refresh.md) — publish and rollback broadcast a same-tab event so public content refetches without a page reload.
 - [Nutrition precision](nutrition-precision.md) — macro fields use one-decimal numeric storage; imported nutrition lists must match existing CMS products before updates.
 - [Vercel nutrition fallback](vercel-nutrition-fallback.md) — bundled frontend nutrition values protect GitHub/Vercel builds from legacy API snapshots missing macro fields.
+- [Vercel admin edits](vercel-admin-edits.md) — separately deployed admin API can reject browser millisecond revisions with 409; client retries once without the stale token.
