@@ -46,10 +46,9 @@ function revisionMatches(
   revision: Date,
 ) {
   // PostgreSQL timestamps can retain microseconds, while JavaScript ISO
-  // strings only round-trip milliseconds. Match the serialized millisecond
-  // window instead of requiring impossible exact Date equality.
-  const nextMillisecond = new Date(revision.getTime() + 1);
-  return sql`${updatedAt} >= ${revision} AND ${updatedAt} < ${nextMillisecond}`;
+  // strings only round-trip milliseconds. Compare the serialized millisecond
+  // value rather than requiring impossible exact Date equality.
+  return sql`date_trunc('milliseconds', ${updatedAt}) = date_trunc('milliseconds', ${revision})`;
 }
 
 async function getRate(): Promise<{ ratePerUsd: number; roundingTo: number }> {
