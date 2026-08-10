@@ -231,9 +231,9 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
   const totalLbp = baseLbp + extraLbp
   const totalCalories = baseCalories + selectedExtras.reduce((sum, extra) => sum + (drink.extraCalories?.[extra] ?? DEFAULT_EXTRA_CALORIES[extra] ?? 0), 0)
   const nutritionItems = [
-    { label: 'Protein', value: drink.proteinGrams ? `${drink.proteinGrams}g` : 'Not listed', icon: '💪', tone: '#DCE9C5' },
-    { label: 'Carbs', value: drink.carbsGrams ? `${drink.carbsGrams}g` : 'Not listed', icon: '⚡', tone: '#F6E6B4' },
-    { label: 'Fat', value: drink.fatGrams ? `${drink.fatGrams}g` : 'Not listed', icon: '🥑', tone: '#F2D9C8' },
+    { label: 'Protein', value: `${drink.proteinGrams ?? 0}g`, icon: '💪', tone: '#DCE9C5' },
+    { label: 'Carbs', value: `${drink.carbsGrams ?? 0}g`, icon: '⚡', tone: '#F6E6B4' },
+    { label: 'Fat', value: `${drink.fatGrams ?? 0}g`, icon: '🥑', tone: '#F2D9C8' },
   ]
   const soldOut = Boolean(drink.soldOut)
   const hasDetails = Boolean(

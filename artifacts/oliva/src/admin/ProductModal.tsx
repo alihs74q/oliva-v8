@@ -81,9 +81,9 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
         flavors: flavorsText.split(',').map((f) => f.trim()).filter(Boolean),
          extras: selectedExtras,
         calories: Math.max(0, parseInt(calories, 10) || 0),
-        proteinGrams: Math.max(0, parseInt(proteinGrams, 10) || 0),
-        carbsGrams: Math.max(0, parseInt(carbsGrams, 10) || 0),
-        fatGrams: Math.max(0, parseInt(fatGrams, 10) || 0),
+        proteinGrams: Math.max(0, parseFloat(proteinGrams) || 0),
+        carbsGrams: Math.max(0, parseFloat(carbsGrams) || 0),
+        fatGrams: Math.max(0, parseFloat(fatGrams) || 0),
         extraCalories,
         tags: tagsText.split(',').map((f) => f.trim()).filter(Boolean),
         allergens: allergensText.split(',').map((f) => f.trim()).filter(Boolean),
@@ -157,13 +157,13 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
             </Field>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10, marginTop: 10 }}>
               <Field label="Protein (g)">
-                <input type="number" min="0" step="1" value={proteinGrams} onChange={(e) => setProteinGrams(e.target.value)} style={inputStyle} placeholder="e.g. 12" />
+                <input type="number" min="0" step="0.1" value={proteinGrams} onChange={(e) => setProteinGrams(e.target.value)} style={inputStyle} placeholder="e.g. 12 or 0.5" />
               </Field>
               <Field label="Carbs (g)">
-                <input type="number" min="0" step="1" value={carbsGrams} onChange={(e) => setCarbsGrams(e.target.value)} style={inputStyle} placeholder="e.g. 28" />
+                <input type="number" min="0" step="0.1" value={carbsGrams} onChange={(e) => setCarbsGrams(e.target.value)} style={inputStyle} placeholder="e.g. 28" />
               </Field>
               <Field label="Fat (g)">
-                <input type="number" min="0" step="1" value={fatGrams} onChange={(e) => setFatGrams(e.target.value)} style={inputStyle} placeholder="e.g. 8" />
+                <input type="number" min="0" step="0.1" value={fatGrams} onChange={(e) => setFatGrams(e.target.value)} style={inputStyle} placeholder="e.g. 8" />
               </Field>
             </div>
             <div style={{ height: 10 }} />

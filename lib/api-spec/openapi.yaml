@@ -637,11 +637,14 @@ components:
         calories:
           type: integer
         proteinGrams:
-          type: integer
+          type: number
+          format: double
         carbsGrams:
-          type: integer
+          type: number
+          format: double
         fatGrams:
-          type: integer
+          type: number
+          format: double
         allergens:
           type: array
           items:
@@ -850,13 +853,16 @@ components:
           type: integer
           minimum: 0
         proteinGrams:
-          type: integer
+          type: number
+          format: double
           minimum: 0
         carbsGrams:
-          type: integer
+          type: number
+          format: double
           minimum: 0
         fatGrams:
-          type: integer
+          type: number
+          format: double
           minimum: 0
         allergens:
           type: array
