@@ -6,6 +6,7 @@ import {
 } from './useAdminApi';
 import type { ApiSection } from '../hooks/usePublishedContent';
 import SectionModal from './SectionModal';
+import { notifyPublishedContentChanged } from '../utils/contentRefresh';
 
 interface Props {
   session: AdminSession;
@@ -44,6 +45,7 @@ export default function AdminHome({ session, onLogout, onNavigate }: Props) {
     setPublishing(true); setPublishMsg('');
     try {
       await apiPublish();
+      notifyPublishedContentChanged();
       setPublishMsg('✅ Published! Live site updated.');
     } catch {
       setPublishMsg('❌ Publish failed. Please try again.');

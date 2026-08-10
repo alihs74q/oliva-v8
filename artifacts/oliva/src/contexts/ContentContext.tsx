@@ -22,6 +22,7 @@ import type { PromoGallerySlide } from '../components/PromoGallery';
 import { getStaticCalories } from '../data/nutrition';
 import { getDefaultProductExtras } from '../data/menuExtras';
 import { API_BASE } from '../config/api';
+import { subscribeToPublishedContentChanges } from '../utils/contentRefresh';
 
 // ─── Context shape ─────────────────────────────────────────────────────────────
 export interface ContentContextValue {
@@ -226,7 +227,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
+    const load = async () => {
       try {
         const res = await fetch(API_URL, { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -239,8 +240,14 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           setValue((prev) => ({ ...prev, status: 'fallback' }));
         }
       }
-    })();
-    return () => { cancelled = true; };
+    };
+
+    void load();
+    const unsubscribe = subscribeToPublishedContentChanges(() => { void load(); });
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;

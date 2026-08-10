@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiListReleases, apiPublish, apiRollback } from './useAdminApi';
+import { notifyPublishedContentChanged } from '../utils/contentRefresh';
 
 const GOLD = '#D4A843';
 
@@ -36,6 +37,7 @@ export default function AdminReleases({ onBack }: Props) {
     setMsg('');
     try {
       await apiPublish(label);
+      notifyPublishedContentChanged();
       setMsg('✅ Published successfully!');
       setLabel('');
       await reload();
@@ -52,6 +54,7 @@ export default function AdminReleases({ onBack }: Props) {
     setMsg('');
     try {
       await apiRollback(id);
+      notifyPublishedContentChanged();
       setMsg('✅ Rolled back successfully!');
       await reload();
     } catch {

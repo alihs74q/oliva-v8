@@ -10,3 +10,4 @@
 - [Padel visual direction](padel-visual-direction.md) — Padel uses warm Oliva olive/gold styling with preserved CMS content, imagery, and responsive playful motion.
 - [Padel booking flow](padel-booking-flow.md) — selecting an offer reveals a mobile-friendly booking sheet with WhatsApp actions and the selected service prefilled.
 - [CMS revision timestamps](cms-revision-timestamps.md) — compare serialized admin timestamps by millisecond window because PostgreSQL can retain microseconds.
+- [Instant publish refresh](instant-publish-refresh.md) — publish and rollback broadcast a same-tab event so public content refetches without a page reload.

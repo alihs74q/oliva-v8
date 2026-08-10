@@ -12,6 +12,7 @@ import type { PromoGallerySlide } from '../components/PromoGallery';
 import { getStaticCalories } from '../data/nutrition';
 import { getDefaultProductExtras } from '../data/menuExtras';
 import { API_BASE } from '../config/api';
+import { subscribeToPublishedContentChanges } from '../utils/contentRefresh';
 
 // ─── API content shapes (mirrors server output) ────────────────────────────────
 export interface ApiProduct {
@@ -148,7 +149,7 @@ export function usePublishedContent() {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
+    const load = async () => {
       try {
         const res = await fetch(API_URL, { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -160,8 +161,14 @@ export function usePublishedContent() {
       } catch {
         if (!cancelled) setStatus('fallback');
       }
-    })();
-    return () => { cancelled = true; };
+    };
+
+    void load();
+    const unsubscribe = subscribeToPublishedContentChanges(() => { void load(); });
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   return { subcategories, snapshot, status };

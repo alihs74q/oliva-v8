@@ -22,7 +22,7 @@ router.get("/public/content", async (req, res): Promise<void> => {
     return;
   }
 
-  res.set("Cache-Control", "public, max-age=30");
+  res.set("Cache-Control", "no-store");
   res.json(current.snapshot);
 });
 
