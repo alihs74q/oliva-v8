@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
+import type { SQLWrapper } from "drizzle-orm";
 import {
   cmsSectionsTable,
   cmsSubcategoriesTable,
@@ -40,6 +41,17 @@ function expectedRevision(body: unknown): Date | undefined {
   return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
+function revisionMatches(
+  updatedAt: SQLWrapper,
+  revision: Date,
+) {
+  // PostgreSQL timestamps can retain microseconds, while JavaScript ISO
+  // strings only round-trip milliseconds. Match the serialized millisecond
+  // window instead of requiring impossible exact Date equality.
+  const nextMillisecond = new Date(revision.getTime() + 1);
+  return sql`${updatedAt} >= ${revision} AND ${updatedAt} < ${nextMillisecond}`;
+}
+
 async function getRate(): Promise<{ ratePerUsd: number; roundingTo: number }> {
   const rows = await db.select().from(cmsSiteSettingsTable);
   const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
@@ -66,7 +78,7 @@ router.patch("/admin/sections/:sectionSlug", async (req, res): Promise<void> => 
   if (parsed.data.theme !== undefined) updates.theme = parsed.data.theme;
   const revision = expectedRevision(req.body);
   const where = revision
-    ? and(eq(cmsSectionsTable.slug, sectionSlug), eq(cmsSectionsTable.updatedAt, revision))
+    ? and(eq(cmsSectionsTable.slug, sectionSlug), revisionMatches(cmsSectionsTable.updatedAt, revision))
     : eq(cmsSectionsTable.slug, sectionSlug);
   const [updated] = await db.update(cmsSectionsTable).set(updates).where(where).returning();
   if (!updated && revision) { res.status(409).json({ error: "This section changed since you opened it. Reload and try again." }); return; }
@@ -137,7 +149,7 @@ router.patch("/admin/subcategories/:id", async (req, res): Promise<void> => {
   if (parsed.data.sortOrder !== undefined) updates.sortOrder = parsed.data.sortOrder;
   const revision = expectedRevision(req.body);
   const where = revision
-    ? and(eq(cmsSubcategoriesTable.id, id), eq(cmsSubcategoriesTable.updatedAt, revision))
+    ? and(eq(cmsSubcategoriesTable.id, id), revisionMatches(cmsSubcategoriesTable.updatedAt, revision))
     : eq(cmsSubcategoriesTable.id, id);
   const [updated] = await db.update(cmsSubcategoriesTable).set(updates).where(where).returning();
   if (!updated && revision) { res.status(409).json({ error: "This subcategory changed since you opened it. Reload and try again." }); return; }
@@ -262,7 +274,7 @@ router.patch("/admin/products/:id", async (req, res): Promise<void> => {
   }
   const revision = expectedRevision(req.body);
   const where = revision
-    ? and(eq(cmsProductsTable.id, id), eq(cmsProductsTable.updatedAt, revision))
+    ? and(eq(cmsProductsTable.id, id), revisionMatches(cmsProductsTable.updatedAt, revision))
     : eq(cmsProductsTable.id, id);
   const [updated] = await db.update(cmsProductsTable).set(updates).where(where).returning();
   if (!updated && revision) { res.status(409).json({ error: "This product changed since you opened it. Reload and try again." }); return; }

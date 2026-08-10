@@ -9,3 +9,4 @@
 - [Vercel API deployment](vercel-api-deployment.md) — Vercel hosts only the static frontend; admin auth and CMS require a separately deployed API/database.
 - [Padel visual direction](padel-visual-direction.md) — Padel uses warm Oliva olive/gold styling with preserved CMS content, imagery, and responsive playful motion.
 - [Padel booking flow](padel-booking-flow.md) — selecting an offer reveals a mobile-friendly booking sheet with WhatsApp actions and the selected service prefilled.
+- [CMS revision timestamps](cms-revision-timestamps.md) — compare serialized admin timestamps by millisecond window because PostgreSQL can retain microseconds.
