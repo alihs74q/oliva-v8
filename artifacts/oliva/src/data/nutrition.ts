@@ -73,6 +73,82 @@ const calories: Record<string, number> = {
   Nuts: 300,
 }
 
+export interface StaticNutrition {
+  proteinGrams: number
+  carbsGrams: number
+  fatGrams: number
+}
+
+// Verified CMS nutrition values used when a separately deployed API still
+// returns a legacy snapshot without the macro fields.
+const macros: Record<string, StaticNutrition> = {
+  'Café Latte': { proteinGrams: 13, carbsGrams: 19, fatGrams: 7 },
+  Cappuccino: { proteinGrams: 9, carbsGrams: 14, fatGrams: 5 },
+  'Caramel Frappe': { proteinGrams: 7, carbsGrams: 45, fatGrams: 8 },
+  'Caramel Macchiato': { proteinGrams: 10, carbsGrams: 35, fatGrams: 7 },
+  'Chicken Cesar Salad': { proteinGrams: 38, carbsGrams: 22, fatGrams: 34 },
+  'Choco-Nut Milkshake': { proteinGrams: 10, carbsGrams: 70, fatGrams: 26 },
+  'Chocolate Cake': { proteinGrams: 5, carbsGrams: 73, fatGrams: 24 },
+  'Chocolate Mushroom Muffin': { proteinGrams: 6, carbsGrams: 58, fatGrams: 22 },
+  'Cookies & Cream': { proteinGrams: 10, carbsGrams: 85, fatGrams: 24 },
+  Croissant: { proteinGrams: 6, carbsGrams: 28, fatGrams: 16 },
+  Espresso: { proteinGrams: 0.5, carbsGrams: 1, fatGrams: 0 },
+  Fondant: { proteinGrams: 9, carbsGrams: 47, fatGrams: 31 },
+  'Foral Fusion': { proteinGrams: 2, carbsGrams: 68, fatGrams: 0 },
+  'Ginger and Honey': { proteinGrams: 0, carbsGrams: 18, fatGrams: 0 },
+  'Greek Yogurt': { proteinGrams: 15, carbsGrams: 7, fatGrams: 9 },
+  'Hallum Pesto': { proteinGrams: 22, carbsGrams: 40, fatGrams: 28 },
+  'Hazelnut Café Latte': { proteinGrams: 13, carbsGrams: 34, fatGrams: 7 },
+  'Hot Chocolate': { proteinGrams: 10, carbsGrams: 45, fatGrams: 8 },
+  'Iced Hazelnut Latte': { proteinGrams: 7, carbsGrams: 28, fatGrams: 6 },
+  'Iced Matcha Latte': { proteinGrams: 9, carbsGrams: 27, fatGrams: 5 },
+  'Iced Mocha Latte': { proteinGrams: 8, carbsGrams: 40, fatGrams: 8 },
+  'Iced Salted Caramel Latte': { proteinGrams: 7, carbsGrams: 32, fatGrams: 6 },
+  'Iced Spanish Latte': { proteinGrams: 8, carbsGrams: 36, fatGrams: 7 },
+  'Iced Vanilla Latte': { proteinGrams: 7, carbsGrams: 28, fatGrams: 6 },
+  'Irish Cream Latte': { proteinGrams: 7, carbsGrams: 30, fatGrams: 6 },
+  'Kiwi Mojito': { proteinGrams: 1, carbsGrams: 29, fatGrams: 0 },
+  'Lazy Cake': { proteinGrams: 5, carbsGrams: 45, fatGrams: 22 },
+  'Lotus Milkshake': { proteinGrams: 9, carbsGrams: 78, fatGrams: 28 },
+  Mango: { proteinGrams: 2, carbsGrams: 73, fatGrams: 0 },
+  'Mango Greek Yogurt': { proteinGrams: 14, carbsGrams: 24, fatGrams: 9 },
+  'Mocha Frappe': { proteinGrams: 7, carbsGrams: 45, fatGrams: 8 },
+  Nuts: { proteinGrams: 10, carbsGrams: 11, fatGrams: 25 },
+  'Oliva Frappe': { proteinGrams: 7, carbsGrams: 45, fatGrams: 8 },
+  'Oliva Milkshake': { proteinGrams: 9, carbsGrams: 67, fatGrams: 22 },
+  'Oreo Cheesecake': { proteinGrams: 5, carbsGrams: 34, fatGrams: 26 },
+  'Passion Crush': { proteinGrams: 1, carbsGrams: 32, fatGrams: 0 },
+  'Passion Fruit': { proteinGrams: 2, carbsGrams: 68, fatGrams: 0 },
+  'Peach Iced Tea': { proteinGrams: 0, carbsGrams: 40, fatGrams: 0 },
+  'Raspberry Cheesecake': { proteinGrams: 8, carbsGrams: 42, fatGrams: 22 },
+  'Razzlychee Iced Tea': { proteinGrams: 0, carbsGrams: 38, fatGrams: 0 },
+  Strawberry: { proteinGrams: 2, carbsGrams: 68, fatGrams: 0 },
+  'Strawberry Whip': { proteinGrams: 9, carbsGrams: 65, fatGrams: 17 },
+  'Summer Mix': { proteinGrams: 1, carbsGrams: 37, fatGrams: 0 },
+  Tea: { proteinGrams: 0, carbsGrams: 0, fatGrams: 0 },
+  'Toffee Nut Frappe': { proteinGrams: 7, carbsGrams: 49, fatGrams: 8 },
+  Toppings: { proteinGrams: 2, carbsGrams: 15, fatGrams: 4 },
+  'Tropical Iced Tea': { proteinGrams: 0, carbsGrams: 40, fatGrams: 0 },
+  'Tuna Cado': { proteinGrams: 25, carbsGrams: 42, fatGrams: 21 },
+  'Turkey and Cheese': { proteinGrams: 28, carbsGrams: 40, fatGrams: 20 },
+  'Vanilla Café Latte': { proteinGrams: 13, carbsGrams: 34, fatGrams: 7 },
+  'Vanilla Frappe': { proteinGrams: 7, carbsGrams: 42, fatGrams: 7 },
+  'Vanilla Milkshake': { proteinGrams: 9, carbsGrams: 65, fatGrams: 17 },
+  'Vanilla Mushroom Muffin': { proteinGrams: 6, carbsGrams: 52, fatGrams: 17 },
+}
+
+const macroAliases: Record<string, string> = {
+  'Floral Fusion': 'Foral Fusion',
+  'Halloumi Pesto': 'Hallum Pesto',
+  'Chicken Caesar Salad': 'Chicken Cesar Salad',
+  'Turkey & Cheese': 'Turkey and Cheese',
+  'Mixed Nuts': 'Nuts',
+}
+
 export function getStaticCalories(name: string): number {
   return calories[name] ?? 0
+}
+
+export function getStaticNutrition(name: string): StaticNutrition {
+  return macros[macroAliases[name] ?? name] ?? { proteinGrams: 0, carbsGrams: 0, fatGrams: 0 }
 }

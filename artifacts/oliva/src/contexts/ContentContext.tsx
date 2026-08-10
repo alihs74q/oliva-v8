@@ -19,7 +19,7 @@ import { shishaItems as staticShishaItems } from '../data/shisha';
 import { subcategoryData, type Subcategory } from '../data/subcategories';
 import type { ContentSnapshot, ApiSection, ApiProduct } from '../hooks/usePublishedContent';
 import type { PromoGallerySlide } from '../components/PromoGallery';
-import { getStaticCalories } from '../data/nutrition';
+import { getStaticCalories, getStaticNutrition } from '../data/nutrition';
 import { getDefaultProductExtras } from '../data/menuExtras';
 import { API_BASE } from '../config/api';
 import { subscribeToPublishedContentChanges } from '../utils/contentRefresh';
@@ -143,9 +143,9 @@ function apiToSubcategoryData(sections: ApiSection[]): Record<string, Subcategor
             recipe: p.recipe || undefined,
             calories: p.calories ?? getStaticCalories(p.name),
             extraCalories: p.extraCalories ?? {},
-             proteinGrams: p.proteinGrams ?? 0,
-             carbsGrams: p.carbsGrams ?? 0,
-             fatGrams: p.fatGrams ?? 0,
+             proteinGrams: p.proteinGrams ?? getStaticNutrition(p.name).proteinGrams,
+             carbsGrams: p.carbsGrams ?? getStaticNutrition(p.name).carbsGrams,
+             fatGrams: p.fatGrams ?? getStaticNutrition(p.name).fatGrams,
              allergens: p.allergens ?? [],
              extras: p.extras ?? getDefaultProductExtras(p.name, sub.subcategoryId),
              priceLbp: p.priceLbp,

@@ -9,7 +9,7 @@
 import { useState, useEffect } from 'react';
 import { subcategoryData, type Subcategory } from '../data/subcategories';
 import type { PromoGallerySlide } from '../components/PromoGallery';
-import { getStaticCalories } from '../data/nutrition';
+import { getStaticCalories, getStaticNutrition } from '../data/nutrition';
 import { getDefaultProductExtras } from '../data/menuExtras';
 import { API_BASE } from '../config/api';
 import { subscribeToPublishedContentChanges } from '../utils/contentRefresh';
@@ -28,9 +28,9 @@ export interface ApiProduct {
   flavors: string[];
   calories: number;
   extraCalories: Record<string, number>;
-  proteinGrams: number;
-  carbsGrams: number;
-  fatGrams: number;
+  proteinGrams?: number;
+  carbsGrams?: number;
+  fatGrams?: number;
   sortOrder: number;
   hidden: boolean;
   soldOut: boolean;
@@ -95,9 +95,9 @@ function apiProductToSubcategoryDrink(p: ApiProduct) {
     recipe: p.recipe || undefined,
     calories: p.calories || getStaticCalories(p.name),
     extraCalories: p.extraCalories ?? {},
-    proteinGrams: p.proteinGrams ?? 0,
-    carbsGrams: p.carbsGrams ?? 0,
-    fatGrams: p.fatGrams ?? 0,
+    proteinGrams: p.proteinGrams ?? getStaticNutrition(p.name).proteinGrams,
+    carbsGrams: p.carbsGrams ?? getStaticNutrition(p.name).carbsGrams,
+    fatGrams: p.fatGrams ?? getStaticNutrition(p.name).fatGrams,
     allergens: p.allergens ?? [],
     extras: p.extras ?? [],
     priceLbp: p.priceLbp,
