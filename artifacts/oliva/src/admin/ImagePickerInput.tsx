@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { apiUploadMedia } from './useAdminApi';
 
 interface Props {
   value: string;
@@ -16,8 +15,7 @@ export default function ImagePickerInput({ value, onChange, label = 'Image' }: P
     setUploading(true);
     setError('');
     try {
-      const result = await apiUploadMedia(file);
-      onChange(result.url);
+      onChange(await imageFileToDataUrl(file));
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Upload failed');
     } finally {
@@ -43,7 +41,7 @@ export default function ImagePickerInput({ value, onChange, label = 'Image' }: P
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder="https://... or /images/..."
+            placeholder="Image URL or choose a file"
             style={inputStyle}
           />
           <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
@@ -62,7 +60,7 @@ export default function ImagePickerInput({ value, onChange, label = 'Image' }: P
                 cursor: uploading ? 'default' : 'pointer',
               }}
             >
-              {uploading ? 'Uploading…' : '📎 Upload'}
+              {uploading ? 'Preparing…' : '📎 Choose image'}
             </button>
             {value && (
               <button
@@ -86,6 +84,50 @@ export default function ImagePickerInput({ value, onChange, label = 'Image' }: P
       />
     </div>
   );
+}
+
+const MAX_IMAGE_DATA_URL_LENGTH = 70_000;
+const MAX_IMAGE_DIMENSION = 1200;
+
+async function imageFileToDataUrl(file: File): Promise<string> {
+  if (!file.type.startsWith('image/')) {
+    throw new Error('Please choose an image file.');
+  }
+  if (file.size > 12 * 1024 * 1024) {
+    throw new Error('Image is too large. Please choose an image under 12 MB.');
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const image = new Image();
+    image.src = objectUrl;
+    await image.decode();
+
+    const scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(image.naturalWidth, image.naturalHeight));
+    let width = Math.max(1, Math.round(image.naturalWidth * scale));
+    let height = Math.max(1, Math.round(image.naturalHeight * scale));
+    let quality = 0.8;
+
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext('2d');
+      if (!context) throw new Error('Your browser cannot prepare this image.');
+      context.drawImage(image, 0, 0, width, height);
+
+      const dataUrl = canvas.toDataURL('image/webp', quality);
+      if (dataUrl.length <= MAX_IMAGE_DATA_URL_LENGTH) return dataUrl;
+
+      quality = Math.max(0.5, quality - 0.06);
+      width = Math.max(480, Math.round(width * 0.82));
+      height = Math.max(480, Math.round(height * 0.82));
+    }
+
+    throw new Error('This image is too detailed. Please choose a simpler image.');
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
 }
 
 const labelStyle: React.CSSProperties = {
