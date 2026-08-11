@@ -10,6 +10,13 @@ export interface PromoGallerySlide {
   description?: string;
   link?: string;
   visible: boolean;
+  textVisible?: boolean;
+  titleVisible?: boolean;
+  descriptionVisible?: boolean;
+  titleColor?: string;
+  descriptionColor?: string;
+  titleFontFamily?: string;
+  descriptionFontFamily?: string;
 }
 
 interface Props {
@@ -32,46 +39,34 @@ export default function PromoGallery({ slides }: Props) {
     return () => window.clearInterval(timer);
   }, [activeSlides.length]);
 
+  useEffect(() => {
+    const families = activeSlides.flatMap((slide) => [slide.titleFontFamily, slide.descriptionFontFamily]).filter(Boolean);
+    families.forEach((family) => loadGoogleFont(family as string));
+  }, [activeSlides]);
+
   if (activeSlides.length === 0) return null;
 
   const slide = activeSlides[activeIndex];
-  const hasCopy = Boolean(slide.eyebrow || slide.title || slide.description);
+  const showText = slide.textVisible !== false;
+  const showTitle = showText && slide.titleVisible !== false;
+  const showDescription = showText && slide.descriptionVisible !== false;
+  const hasCopy = showText && Boolean(slide.eyebrow || (showTitle && slide.title) || (showDescription && slide.description));
   const content = (
     <>
       <img
         src={slide.imageUrl}
         alt={slide.alt || 'Oliva promotion'}
         style={{
-          position: 'absolute', inset: 0, width: '100%', height: '100%',
+          display: 'block', width: '100%', height: '100%',
           objectFit: 'cover',
         }}
       />
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: hasCopy
-          ? 'linear-gradient(90deg, rgba(15,29,14,0.84) 0%, rgba(15,29,14,0.26) 58%, rgba(15,29,14,0.05) 100%)'
-          : 'linear-gradient(180deg, rgba(15,29,14,0.04), rgba(15,29,14,0.2))',
-      }} />
-      {hasCopy && (
-        <div style={{
-          position: 'absolute', left: 'clamp(20px,5vw,60px)', bottom: 'clamp(24px,5vw,54px)',
-          maxWidth: 'min(70%, 520px)', color: '#fff',
-          textAlign: 'left', textShadow: '0 2px 18px rgba(0,0,0,0.25)',
-        }}>
-          {slide.eyebrow && <div style={{ color: '#e2c477', fontSize: 'clamp(10px,1.4vw,13px)', fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 8 }}>{slide.eyebrow}</div>}
-          {slide.title && <div style={{ fontSize: 'clamp(24px,5vw,54px)', fontWeight: 900, lineHeight: 0.98, letterSpacing: '-0.04em' }}>{slide.title}</div>}
-          {slide.description && <div style={{ marginTop: 10, fontSize: 'clamp(12px,1.7vw,16px)', fontWeight: 600, lineHeight: 1.4, color: 'rgba(255,255,255,0.86)' }}>{slide.description}</div>}
-        </div>
-      )}
-      <div style={{ position: 'absolute', top: 16, right: 18, padding: '7px 11px', borderRadius: 999, background: 'rgba(15,29,14,0.48)', color: 'rgba(255,255,255,0.82)', fontSize: 10, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', backdropFilter: 'blur(8px)' }}>
-        Oliva
-      </div>
     </>
   );
 
   return (
     <div style={{ width: '100%', maxWidth: 960, margin: '0 auto clamp(28px,5vw,52px)', position: 'relative', zIndex: 10 }}>
-      <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 7', minHeight: 220, maxHeight: 500, overflow: 'hidden', borderRadius: 'clamp(18px,3vw,30px)', border: '1px solid rgba(74,103,65,0.28)', boxShadow: '0 18px 48px rgba(35,54,27,0.22)', background: '#253923' }}>
+      <div style={{ overflow: 'hidden', borderRadius: 'clamp(18px,3vw,30px)', border: '1px solid rgba(74,103,65,0.28)', boxShadow: '0 18px 48px rgba(35,54,27,0.22)', background: '#253923' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={slide.id}
@@ -79,9 +74,22 @@ export default function PromoGallery({ slides }: Props) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-            style={{ position: 'absolute', inset: 0 }}
+            style={{ position: 'relative' }}
           >
-            {slide.link ? <a href={slide.link} target="_blank" rel="noreferrer" aria-label={slide.title || 'Open promotion'} style={{ display: 'block', width: '100%', height: '100%' }}>{content}</a> : content}
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', background: '#253923' }}>
+              {slide.link ? <a href={slide.link} target="_blank" rel="noreferrer" aria-label={slide.title || 'Open promotion'} style={{ display: 'block', width: '100%', height: '100%' }}>{content}</a> : content}
+            </div>
+            {hasCopy && (
+              <div style={{
+                padding: 'clamp(18px,3vw,30px) clamp(20px,5vw,58px) clamp(20px,3vw,32px)',
+                background: 'linear-gradient(135deg, #f8f5eb 0%, #eee9d9 100%)',
+                textAlign: 'left',
+              }}>
+                {showText && slide.eyebrow && <div style={{ color: '#71864d', fontSize: 'clamp(10px,1.4vw,13px)', fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 8 }}>{slide.eyebrow}</div>}
+                {showTitle && slide.title && <div style={{ color: slide.titleColor || '#24351e', fontFamily: slide.titleFontFamily || 'inherit', fontSize: 'clamp(24px,4vw,48px)', fontWeight: 900, lineHeight: 1, letterSpacing: '-0.04em' }}>{slide.title}</div>}
+                {showDescription && slide.description && <div style={{ marginTop: 10, color: slide.descriptionColor || '#52604a', fontFamily: slide.descriptionFontFamily || 'inherit', fontSize: 'clamp(13px,1.7vw,17px)', fontWeight: 600, lineHeight: 1.5, maxWidth: 700 }}>{slide.description}</div>}
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
         {activeSlides.length > 1 && (
@@ -98,6 +106,18 @@ export default function PromoGallery({ slides }: Props) {
       </div>
     </div>
   );
+}
+
+function loadGoogleFont(family: string) {
+  const name = family.split(',')[0].trim().replace(/^['"]|['"]$/g, '');
+  if (!name || /^(inherit|initial|unset|serif|sans-serif|monospace|system-ui)$/i.test(name)) return;
+  const id = `oliva-font-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+  if (document.getElementById(id)) return;
+  const link = document.createElement('link');
+  link.id = id;
+  link.rel = 'stylesheet';
+  link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(name).replace(/%20/g, '+')}:wght@400;500;600;700;800;900&display=swap`;
+  document.head.appendChild(link);
 }
 
 function arrowStyle(side: 'left' | 'right'): React.CSSProperties {

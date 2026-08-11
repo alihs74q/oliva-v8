@@ -117,7 +117,7 @@ export function PromoGalleryEditor({ gallery, setGallery }: { gallery: PromoGall
     const id = typeof crypto !== 'undefined' && 'randomUUID' in crypto
       ? crypto.randomUUID()
       : `promo-${Date.now()}`;
-    setGallery([...gallery, {
+      setGallery([...gallery, {
       id,
       imageUrl: '',
       alt: 'Oliva promotion',
@@ -126,6 +126,13 @@ export function PromoGalleryEditor({ gallery, setGallery }: { gallery: PromoGall
       description: '',
       link: '',
       visible: true,
+        textVisible: true,
+        titleVisible: true,
+        descriptionVisible: true,
+        titleColor: '#24351e',
+        descriptionColor: '#52604a',
+        titleFontFamily: 'DM Sans, sans-serif',
+        descriptionFontFamily: 'DM Sans, sans-serif',
     }]);
   };
 
@@ -168,6 +175,26 @@ export function PromoGalleryEditor({ gallery, setGallery }: { gallery: PromoGall
           <Field label="Description">
             <input value={slide.description ?? ''} onChange={(e) => update(slide.id, { description: e.target.value })} style={inputStyle} placeholder="Optional supporting text" />
           </Field>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <Toggle label="Show text" checked={slide.textVisible !== false} onChange={(textVisible) => update(slide.id, { textVisible })} />
+            <Toggle label="Show title" checked={slide.titleVisible !== false} onChange={(titleVisible) => update(slide.id, { titleVisible })} />
+            <Toggle label="Show description" checked={slide.descriptionVisible !== false} onChange={(descriptionVisible) => update(slide.id, { descriptionVisible })} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <Field label="Title color">
+              <ColorInput value={slide.titleColor || '#24351e'} onChange={(titleColor) => update(slide.id, { titleColor })} />
+            </Field>
+            <Field label="Description color">
+              <ColorInput value={slide.descriptionColor || '#52604a'} onChange={(descriptionColor) => update(slide.id, { descriptionColor })} />
+            </Field>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <FontPicker label="Title font" value={slide.titleFontFamily || 'DM Sans, sans-serif'} onChange={(titleFontFamily) => update(slide.id, { titleFontFamily })} />
+            <FontPicker label="Description font" value={slide.descriptionFontFamily || 'DM Sans, sans-serif'} onChange={(descriptionFontFamily) => update(slide.id, { descriptionFontFamily })} />
+          </div>
+          <p style={{ margin: '-2px 0 0', color: 'rgba(245,242,232,0.4)', fontSize: 11, lineHeight: 1.5 }}>
+            Type any Google Font name, including Italian-style, handwritten, serif, or Canva-inspired fonts. It loads automatically on the public site.
+          </p>
           <Field label="Optional link">
             <input value={slide.link ?? ''} onChange={(e) => update(slide.id, { link: e.target.value })} style={inputStyle} placeholder="https://instagram.com/..." />
           </Field>
@@ -177,6 +204,43 @@ export function PromoGalleryEditor({ gallery, setGallery }: { gallery: PromoGall
         + Add promotion image
       </button>
     </Section>
+  );
+}
+
+function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (value: boolean) => void }) {
+  return (
+    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '7px 9px', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 7, color: checked ? '#f5f2e8' : 'rgba(245,242,232,0.45)', fontSize: 11, cursor: 'pointer' }}>
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+      {label}
+    </label>
+  );
+}
+
+function ColorInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  return (
+    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      <input type="color" value={/^#[0-9a-f]{6}$/i.test(value) ? value : '#24351e'} onChange={(e) => onChange(e.target.value)} style={{ width: 38, height: 34, padding: 2, border: 0, background: 'transparent' }} />
+      <input value={value} onChange={(e) => onChange(e.target.value)} style={inputStyle} placeholder="#24351e" />
+    </div>
+  );
+}
+
+const FONT_PRESETS = [
+  'DM Sans, sans-serif', 'Inter, sans-serif', 'Manrope, sans-serif', 'Poppins, sans-serif', 'Montserrat, sans-serif',
+  'Playfair Display, serif', 'Cormorant Garamond, serif', 'Libre Baskerville, serif', 'Lora, serif', 'Merriweather, serif',
+  'Bodoni Moda, serif', 'Abril Fatface, serif', 'Bebas Neue, sans-serif', 'Oswald, sans-serif', 'Roboto, sans-serif',
+  'Open Sans, sans-serif', 'Raleway, sans-serif', 'Nunito, sans-serif', 'Quicksand, sans-serif', 'Comfortaa, sans-serif',
+  'Dancing Script, cursive', 'Pacifico, cursive', 'Great Vibes, cursive', 'Satisfy, cursive', 'Lobster, cursive',
+  'Caveat, cursive', 'Amatic SC, cursive', 'Sacramento, cursive', 'Italianno, cursive', 'Marck Script, cursive',
+];
+
+function FontPicker({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+  const listId = `font-options-${label.replace(/\W/g, '-')}`;
+  return (
+    <Field label={label}>
+      <input list={listId} value={value} onChange={(e) => onChange(e.target.value)} style={inputStyle} placeholder="Type any font name…" />
+      <datalist id={listId}>{FONT_PRESETS.map((font) => <option key={font} value={font} />)}</datalist>
+    </Field>
   );
 }
 
