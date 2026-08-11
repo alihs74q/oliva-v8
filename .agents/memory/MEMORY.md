@@ -16,3 +16,4 @@
 - [Vercel admin edits](vercel-admin-edits.md) — separately deployed admin API can reject browser millisecond revisions with 409; client retries once without the stale token.
 - [Vercel product images](vercel-product-images.md) — product image selection is browser-compressed into the CMS image field, avoiding a separate upload/storage deployment.
 - [Promotion presentation](promotion-presentation.md) — promotion slides keep legacy defaults while allowing CMS-controlled visibility, colors, and Google Font families.
+- [Promotion script typography](promotion-presentation.md) — promotion headlines use a large editable brush-script default inspired by the supplied calligraphy reference.
