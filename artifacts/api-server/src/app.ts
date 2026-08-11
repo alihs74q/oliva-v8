@@ -73,7 +73,9 @@ app.use(
   }),
 );
 
-app.use(express.json({ limit: "5mb" }));
+// CMS promotion images are stored as compressed data URLs in the draft settings.
+// Allow a gallery with several images to be saved in one authenticated request.
+app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 if (!process.env.SESSION_SECRET && process.env.NODE_ENV === "production") {

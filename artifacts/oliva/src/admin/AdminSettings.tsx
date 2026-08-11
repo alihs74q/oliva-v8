@@ -48,8 +48,8 @@ function SiteSettingsForm() {
       await apiUpdateSettings({ ...settings, menu_promo_gallery: JSON.stringify(gallery) });
       await apiUpdateExchangeRate(parseInt(ratePerUsd, 10), parseInt(roundingTo, 10));
       setMsg('Settings saved.');
-    } catch {
-      setMsg('Save failed. Please try again.');
+    } catch (error) {
+      setMsg(error instanceof Error ? error.message : 'Save failed. Please try again.');
     } finally {
       setSaving(false);
     }

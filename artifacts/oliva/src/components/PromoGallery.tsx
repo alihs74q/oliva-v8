@@ -84,6 +84,32 @@ export default function PromoGallery({ slides }: Props) {
       }}
     >
       <div style={galleryFrame}>
+        {showTitle && (
+          <div style={copyPanel}>
+            <AnimatePresence initial={false} mode="wait">
+              <motion.div
+                key={`${slide.id}-copy`}
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                transition={{ duration: 0.5, ease: 'easeInOut' }}
+                style={{
+                  color: slide.titleColor || '#24351e',
+                  fontFamily: resolveTitleFont(slide.titleFontFamily),
+                  fontSize: 'clamp(50px,8vw,108px)',
+                  fontWeight: 400,
+                  lineHeight: 0.82,
+                  letterSpacing: '-0.015em',
+                  textAlign: 'center',
+                  width: '100%',
+                }}
+              >
+                {slide.title}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        )}
+
         <div style={imageFrame}>
           <AnimatePresence initial={false} mode="wait">
           <motion.div
@@ -110,32 +136,6 @@ export default function PromoGallery({ slides }: Props) {
           </motion.div>
           </AnimatePresence>
         </div>
-
-        {showTitle && (
-          <div style={copyPanel}>
-            <AnimatePresence initial={false} mode="wait">
-              <motion.div
-                key={`${slide.id}-copy`}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.5, ease: 'easeInOut' }}
-                style={{
-                  color: slide.titleColor || '#24351e',
-                  fontFamily: resolveTitleFont(slide.titleFontFamily),
-                  fontSize: 'clamp(50px,8vw,108px)',
-                  fontWeight: 400,
-                  lineHeight: 0.82,
-                  letterSpacing: '-0.015em',
-                  textAlign: 'center',
-                  width: '100%',
-                }}
-              >
-                {slide.title}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        )}
       </div>
     </section>
   );

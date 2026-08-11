@@ -208,7 +208,10 @@ export async function apiGetSettings(): Promise<Record<string, string>> {
 
 export async function apiUpdateSettings(data: Record<string, string>) {
   const res = await apiFetch('/admin/settings', { method: 'PATCH', body: JSON.stringify(data) });
-  if (!res.ok) throw new Error('Failed');
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || `Save failed (${res.status})`);
+  }
   return res.json();
 }
 
