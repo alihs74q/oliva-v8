@@ -131,7 +131,7 @@ export function PromoGalleryEditor({ gallery, setGallery }: { gallery: PromoGall
       descriptionVisible: true,
       titleColor: '#24351e',
       descriptionColor: '#52604a',
-      titleFontFamily: 'Bricolage Grotesque, sans-serif',
+      titleFontFamily: 'Alex Brush, cursive',
       descriptionFontFamily: 'DM Sans, sans-serif',
       introVisible: true,
       introKicker: 'The Oliva edit',
@@ -224,7 +224,7 @@ export function PromoGalleryEditor({ gallery, setGallery }: { gallery: PromoGall
             </Field>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <FontPicker label="Title font" value={slide.titleFontFamily || 'DM Sans, sans-serif'} onChange={(titleFontFamily) => update(slide.id, { titleFontFamily })} />
+            <FontPicker label="Title font" value={!slide.titleFontFamily || slide.titleFontFamily === 'Bricolage Grotesque, sans-serif' || slide.titleFontFamily === 'DM Sans, sans-serif' ? 'Alex Brush, cursive' : slide.titleFontFamily} onChange={(titleFontFamily) => update(slide.id, { titleFontFamily })} />
             <FontPicker label="Description font" value={slide.descriptionFontFamily || 'DM Sans, sans-serif'} onChange={(descriptionFontFamily) => update(slide.id, { descriptionFontFamily })} />
           </div>
           <p style={{ margin: '-2px 0 0', color: 'rgba(245,242,232,0.4)', fontSize: 11, lineHeight: 1.5 }}>
@@ -261,7 +261,7 @@ function ColorInput({ value, onChange }: { value: string; onChange: (value: stri
 }
 
 const FONT_PRESETS = [
-  'Bricolage Grotesque, sans-serif', 'DM Sans, sans-serif', 'Manrope, sans-serif', 'Poppins, sans-serif', 'Montserrat, sans-serif',
+  'Alex Brush, cursive', 'Italianno, cursive', 'Allura, cursive', 'Great Vibes, cursive', 'Dancing Script, cursive', 'DM Sans, sans-serif', 'Manrope, sans-serif', 'Poppins, sans-serif', 'Montserrat, sans-serif',
   'Playfair Display, serif', 'Cormorant Garamond, serif', 'Libre Baskerville, serif', 'Lora, serif', 'Merriweather, serif',
   'Bodoni Moda, serif', 'Abril Fatface, serif', 'Bebas Neue, sans-serif', 'Oswald, sans-serif', 'Roboto, sans-serif',
   'Open Sans, sans-serif', 'Raleway, sans-serif', 'Nunito, sans-serif', 'Quicksand, sans-serif', 'Comfortaa, sans-serif',

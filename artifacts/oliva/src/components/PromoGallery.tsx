@@ -33,6 +33,13 @@ interface Props {
   slides: PromoGallerySlide[];
 }
 
+const SCRIPT_TITLE_FONT = 'Alex Brush, cursive';
+
+function resolveTitleFont(font?: string) {
+  if (!font || font === 'Bricolage Grotesque, sans-serif' || font === 'DM Sans, sans-serif') return SCRIPT_TITLE_FONT;
+  return font;
+}
+
 export default function PromoGallery({ slides }: Props) {
   const activeSlides = useMemo(() => slides
     .filter((slide) => slide?.visible && slide.imageUrl)
@@ -57,7 +64,7 @@ export default function PromoGallery({ slides }: Props) {
   }, [activeSlides.length, isPaused]);
 
   useEffect(() => {
-    const families = ['Bricolage Grotesque, sans-serif', 'Space Mono, monospace', ...activeSlides
+    const families = [SCRIPT_TITLE_FONT, 'Italianno, cursive', 'Allura, cursive', 'Space Mono, monospace', ...activeSlides
       .flatMap((slide) => [slide.titleFontFamily, slide.descriptionFontFamily])
       .filter(Boolean)];
     families.forEach((family) => loadGoogleFont(family as string));
@@ -179,12 +186,14 @@ export default function PromoGallery({ slides }: Props) {
                 {showTitle && slide.title && (
                   <div style={{
                     color: slide.titleColor || '#24351e',
-                    fontFamily: slide.titleFontFamily || 'Bricolage Grotesque, sans-serif',
-                    fontSize: 'clamp(29px,5vw,64px)',
-                    fontWeight: 800,
-                    lineHeight: 0.94,
-                    letterSpacing: '-0.055em',
-                    maxWidth: 760,
+                    fontFamily: resolveTitleFont(slide.titleFontFamily),
+                    fontSize: 'clamp(50px,8vw,108px)',
+                    fontWeight: 400,
+                    lineHeight: 0.82,
+                    letterSpacing: '-0.015em',
+                    maxWidth: 920,
+                    transform: 'rotate(-1deg)',
+                    transformOrigin: 'left center',
                   }}>{slide.title}</div>
                 )}
                 {showDescription && slide.description && (
