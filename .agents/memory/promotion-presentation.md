@@ -7,6 +7,8 @@ Promotion slides are intentionally backward-compatible: older JSON entries shoul
 
 Promotion headlines use a large editable brush-script default inspired by the supplied calligraphy reference; users can choose other script or display fonts in Admin, while legacy sans-serif defaults are mapped to the new script treatment. The public gallery intentionally hides all other editorial copy and controls.
 
+Promotion image uploads are compressed into CMS data URLs, so saving several slides sends one larger settings request and requires the API JSON body limit to accommodate the whole gallery.
+
 **Why:** Existing published releases and draft settings can contain older slide objects, so style expansion must not invalidate or hide legacy promotions.
 
-**How to apply:** Add new slide fields as optional, keep safe rendering defaults, preserve the title visibility control, and keep the headline font editable. Do not reintroduce public descriptions, labels, counters, dots, arrows, overlays, or hover-paused rotation unless explicitly requested.
+**How to apply:** Add new slide fields as optional, keep safe rendering defaults, preserve the title visibility control, and keep the headline font editable. Keep the server body limit aligned with the maximum gallery payload. Do not reintroduce public descriptions, labels, counters, dots, arrows, overlays, or hover-paused rotation unless explicitly requested.
