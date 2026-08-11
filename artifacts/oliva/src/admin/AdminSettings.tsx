@@ -47,9 +47,9 @@ function SiteSettingsForm() {
     try {
       await apiUpdateSettings({ ...settings, menu_promo_gallery: JSON.stringify(gallery) });
       await apiUpdateExchangeRate(parseInt(ratePerUsd, 10), parseInt(roundingTo, 10));
-      setMsg('✅ Settings saved!');
+      setMsg('Settings saved.');
     } catch {
-      setMsg('❌ Save failed');
+      setMsg('Save failed. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -99,7 +99,7 @@ function SiteSettingsForm() {
 
       <PromoGalleryEditor gallery={gallery} setGallery={setGallery} />
 
-      {msg && <div style={{ margin: '16px 0', padding: '10px 14px', background: msg.startsWith('✅') ? 'rgba(22,163,74,0.12)' : 'rgba(220,38,38,0.12)', border: `1px solid ${msg.startsWith('✅') ? 'rgba(22,163,74,0.3)' : 'rgba(220,38,38,0.3)'}`, borderRadius: 8, fontSize: 13, color: msg.startsWith('✅') ? '#86efac' : '#fca5a5' }}>{msg}</div>}
+      {msg && <div style={{ margin: '16px 0', padding: '10px 14px', background: msg === 'Settings saved.' ? 'rgba(22,163,74,0.12)' : 'rgba(220,38,38,0.12)', border: `1px solid ${msg === 'Settings saved.' ? 'rgba(22,163,74,0.3)' : 'rgba(220,38,38,0.3)'}`, borderRadius: 8, fontSize: 13, color: msg === 'Settings saved.' ? '#86efac' : '#fca5a5' }}>{msg}</div>}
 
       <button onClick={handleSave} disabled={saving} style={{ padding: '14px 28px', background: saving ? 'rgba(212,168,67,0.4)' : GOLD, border: 'none', borderRadius: 10, color: '#1a1a0a', fontSize: 14, fontWeight: 800, cursor: saving ? 'default' : 'pointer' }}>
         {saving ? 'Saving…' : 'Save Settings'}
@@ -117,7 +117,7 @@ export function PromoGalleryEditor({ gallery, setGallery }: { gallery: PromoGall
     const id = typeof crypto !== 'undefined' && 'randomUUID' in crypto
       ? crypto.randomUUID()
       : `promo-${Date.now()}`;
-      setGallery([...gallery, {
+    setGallery([...gallery, {
       id,
       imageUrl: '',
       alt: 'Oliva promotion',
@@ -126,13 +126,13 @@ export function PromoGalleryEditor({ gallery, setGallery }: { gallery: PromoGall
       description: '',
       link: '',
       visible: true,
-        textVisible: true,
-        titleVisible: true,
-        descriptionVisible: true,
-        titleColor: '#24351e',
-        descriptionColor: '#52604a',
-        titleFontFamily: 'DM Sans, sans-serif',
-        descriptionFontFamily: 'DM Sans, sans-serif',
+      textVisible: true,
+      titleVisible: true,
+      descriptionVisible: true,
+      titleColor: '#24351e',
+      descriptionColor: '#52604a',
+      titleFontFamily: 'Bricolage Grotesque, sans-serif',
+      descriptionFontFamily: 'DM Sans, sans-serif',
     }]);
   };
 
@@ -226,7 +226,7 @@ function ColorInput({ value, onChange }: { value: string; onChange: (value: stri
 }
 
 const FONT_PRESETS = [
-  'DM Sans, sans-serif', 'Inter, sans-serif', 'Manrope, sans-serif', 'Poppins, sans-serif', 'Montserrat, sans-serif',
+  'Bricolage Grotesque, sans-serif', 'DM Sans, sans-serif', 'Manrope, sans-serif', 'Poppins, sans-serif', 'Montserrat, sans-serif',
   'Playfair Display, serif', 'Cormorant Garamond, serif', 'Libre Baskerville, serif', 'Lora, serif', 'Merriweather, serif',
   'Bodoni Moda, serif', 'Abril Fatface, serif', 'Bebas Neue, sans-serif', 'Oswald, sans-serif', 'Roboto, sans-serif',
   'Open Sans, sans-serif', 'Raleway, sans-serif', 'Nunito, sans-serif', 'Quicksand, sans-serif', 'Comfortaa, sans-serif',
