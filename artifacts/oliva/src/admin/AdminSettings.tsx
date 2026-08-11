@@ -133,6 +133,16 @@ export function PromoGalleryEditor({ gallery, setGallery }: { gallery: PromoGall
       descriptionColor: '#52604a',
       titleFontFamily: 'Bricolage Grotesque, sans-serif',
       descriptionFontFamily: 'DM Sans, sans-serif',
+      introVisible: true,
+      introKicker: 'The Oliva edit',
+      introKickerVisible: true,
+      introTitle: 'A little extra\nbefore the menu.',
+      introTitleVisible: true,
+      introMeta: 'Fresh from the grove',
+      introMetaVisible: true,
+      slideCounterVisible: true,
+      copyStamp: 'OLIVA / EDIT',
+      copyStampVisible: true,
     }]);
   };
 
@@ -175,6 +185,31 @@ export function PromoGalleryEditor({ gallery, setGallery }: { gallery: PromoGall
           <Field label="Description">
             <input value={slide.description ?? ''} onChange={(e) => update(slide.id, { description: e.target.value })} style={inputStyle} placeholder="Optional supporting text" />
           </Field>
+          <div style={{ marginTop: 4, padding: 12, border: '1px solid rgba(212,168,67,0.2)', borderRadius: 9, background: 'rgba(212,168,67,0.05)' }}>
+            <div style={{ marginBottom: 10, color: '#D4A843', fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Gallery text</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+              <Toggle label="Show gallery intro" checked={slide.introVisible !== false} onChange={(introVisible) => update(slide.id, { introVisible })} />
+              <Toggle label="Show intro label" checked={slide.introKickerVisible !== false} onChange={(introKickerVisible) => update(slide.id, { introKickerVisible })} />
+              <Toggle label="Show intro headline" checked={slide.introTitleVisible !== false} onChange={(introTitleVisible) => update(slide.id, { introTitleVisible })} />
+              <Toggle label="Show meta text" checked={slide.introMetaVisible !== false} onChange={(introMetaVisible) => update(slide.id, { introMetaVisible })} />
+              <Toggle label="Show slide counter" checked={slide.slideCounterVisible !== false} onChange={(slideCounterVisible) => update(slide.id, { slideCounterVisible })} />
+              <Toggle label="Show edit stamp" checked={slide.copyStampVisible !== false} onChange={(copyStampVisible) => update(slide.id, { copyStampVisible })} />
+            </div>
+            <Field label="Intro label">
+              <input value={slide.introKicker ?? 'The Oliva edit'} onChange={(e) => update(slide.id, { introKicker: e.target.value })} style={inputStyle} placeholder="The Oliva edit" />
+            </Field>
+            <Field label="Intro headline">
+              <textarea value={slide.introTitle ?? 'A little extra\nbefore the menu.'} onChange={(e) => update(slide.id, { introTitle: e.target.value })} style={{ ...inputStyle, minHeight: 64, resize: 'vertical' }} placeholder={'A little extra\nbefore the menu.'} />
+            </Field>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <Field label="Intro meta">
+                <input value={slide.introMeta ?? 'Fresh from the grove'} onChange={(e) => update(slide.id, { introMeta: e.target.value })} style={inputStyle} placeholder="Fresh from the grove" />
+              </Field>
+              <Field label="Edit stamp">
+                <input value={slide.copyStamp ?? 'OLIVA / EDIT'} onChange={(e) => update(slide.id, { copyStamp: e.target.value })} style={inputStyle} placeholder="OLIVA / EDIT" />
+              </Field>
+            </div>
+          </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             <Toggle label="Show text" checked={slide.textVisible !== false} onChange={(textVisible) => update(slide.id, { textVisible })} />
             <Toggle label="Show title" checked={slide.titleVisible !== false} onChange={(titleVisible) => update(slide.id, { titleVisible })} />

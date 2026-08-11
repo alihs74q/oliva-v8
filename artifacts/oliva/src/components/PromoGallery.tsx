@@ -17,6 +17,16 @@ export interface PromoGallerySlide {
   descriptionColor?: string;
   titleFontFamily?: string;
   descriptionFontFamily?: string;
+  introVisible?: boolean;
+  introKicker?: string;
+  introKickerVisible?: boolean;
+  introTitle?: string;
+  introTitleVisible?: boolean;
+  introMeta?: string;
+  introMetaVisible?: boolean;
+  slideCounterVisible?: boolean;
+  copyStamp?: string;
+  copyStampVisible?: boolean;
 }
 
 interface Props {
@@ -60,6 +70,14 @@ export default function PromoGallery({ slides }: Props) {
   const showTitle = showText && slide.titleVisible !== false;
   const showDescription = showText && slide.descriptionVisible !== false;
   const hasCopy = showText && Boolean(slide.eyebrow || (showTitle && slide.title) || (showDescription && slide.description));
+  const showIntro = slide.introVisible !== false;
+  const showIntroKicker = showIntro && slide.introKickerVisible !== false;
+  const showIntroTitle = showIntro && slide.introTitleVisible !== false;
+  const showIntroMeta = showIntro && slide.introMetaVisible !== false;
+  const showSlideCounter = showIntro && slide.slideCounterVisible !== false;
+  const hasIntroMeta = showIntroMeta && slide.introMeta !== '';
+  const hasIntroContent = showIntroKicker && slide.introKicker !== '' || showIntroTitle && slide.introTitle !== '' || hasIntroMeta || showSlideCounter;
+  const showCopyStamp = slide.copyStampVisible !== false;
   const previous = () => setActiveIndex((activeIndex - 1 + activeSlides.length) % activeSlides.length);
   const next = () => setActiveIndex((activeIndex + 1) % activeSlides.length);
 
@@ -93,16 +111,20 @@ export default function PromoGallery({ slides }: Props) {
         outline: 'none',
       }}
     >
-      <div style={galleryIntro}>
-        <div>
-          <div style={introKicker}><span style={introRule} /> The Oliva edit</div>
-          <div style={introTitle}>A little extra<br />before the menu.</div>
+      {showIntro && hasIntroContent && (
+        <div style={galleryIntro}>
+          <div>
+            {showIntroKicker && slide.introKicker !== '' && <div style={introKicker}><span style={introRule} /> {slide.introKicker || 'The Oliva edit'}</div>}
+            {showIntroTitle && slide.introTitle !== '' && <div style={introTitle}>{(slide.introTitle || 'A little extra\nbefore the menu.').split('\n').map((line, index) => <span key={`${line}-${index}`} style={{ display: 'block' }}>{line}</span>)}</div>}
+          </div>
+          {(hasIntroMeta || showSlideCounter) && (
+            <div style={introMeta}>
+              {hasIntroMeta && <span>{slide.introMeta || 'Fresh from the grove'}</span>}
+              {showSlideCounter && <strong>{String(activeIndex + 1).padStart(2, '0')} <i>/</i> {String(activeSlides.length).padStart(2, '0')}</strong>}
+            </div>
+          )}
         </div>
-        <div style={introMeta}>
-          <span>Fresh from the grove</span>
-          <strong>{String(activeIndex + 1).padStart(2, '0')} <i>/</i> {String(activeSlides.length).padStart(2, '0')}</strong>
-        </div>
-      </div>
+      )}
 
       <div style={galleryFrame}>
         <div style={imageFrame}>
@@ -177,7 +199,7 @@ export default function PromoGallery({ slides }: Props) {
                 )}
               </motion.div>
             </AnimatePresence>
-            <span style={copyStamp} aria-hidden="true">OLIVA / EDIT</span>
+            {showCopyStamp && <span style={copyStamp} aria-hidden="true">{slide.copyStamp || 'OLIVA / EDIT'}</span>}
           </div>
         )}
 
