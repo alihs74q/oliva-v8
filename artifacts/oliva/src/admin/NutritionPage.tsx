@@ -58,7 +58,7 @@ export default function NutritionPage({ onBack }: Props) {
       ) {
         throw new Error('Nutrition could not be verified after saving. Please retry.');
       }
-      setMessage(`${product.name} saved as a draft.`);
+      setMessage(`${product.name} saved and is live.`);
       await reload();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Save failed.');
@@ -74,7 +74,7 @@ export default function NutritionPage({ onBack }: Props) {
           <p style={{ margin: '0 0 6px', color: GOLD, fontSize: 11, fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase' }}>Menu intelligence</p>
           <h2 style={{ margin: 0, color: '#f5f2e8', fontSize: 'clamp(24px,4vw,36px)', fontWeight: 900, letterSpacing: '-0.03em' }}>Nutrition, made editable.</h2>
           <p style={{ margin: '8px 0 0', maxWidth: 540, color: 'rgba(245,242,232,0.48)', fontSize: 13, lineHeight: 1.6 }}>
-            Set calories, protein, carbs, fat, and optional extra calories for every menu item. Changes stay in draft until you publish.
+            Set calories, protein, carbs, fat, and optional extra calories for every menu item. Successful changes go live automatically.
           </p>
         </div>
         <div style={{ minWidth: 220 }}>
@@ -133,7 +133,7 @@ function NutritionCard({ sectionName, subcategoryName, product, saving, onSave }
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px, 1fr) auto', gap: 12, alignItems: 'end', marginTop: 12 }}>
         <div><label style={labelStyle}>Extra calories · one per line</label><textarea value={extraText} onChange={(event) => setExtraText(event.target.value)} placeholder={`Cream: ${DEFAULT_EXTRA_CALORIES.Cream}\nIce Cream: ${DEFAULT_EXTRA_CALORIES['Ice Cream']}`} style={{ ...inputStyle, minHeight: 42, resize: 'vertical', fontFamily: '"JetBrains Mono", monospace' }} /></div>
-        <button disabled={saving} onClick={() => onSave(product, calories, proteinGrams, carbsGrams, fatGrams, extraText)} style={{ ...saveButton, opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving…' : 'Save draft'}</button>
+        <button disabled={saving} onClick={() => onSave(product, calories, proteinGrams, carbsGrams, fatGrams, extraText)} style={{ ...saveButton, opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving…' : 'Save & go live'}</button>
       </div>
     </section>
   );

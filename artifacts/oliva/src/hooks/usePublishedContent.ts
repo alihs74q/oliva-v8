@@ -151,17 +151,22 @@ export function usePublishedContent() {
 
   useEffect(() => {
     let cancelled = false;
+    let latestRequest = 0;
     const load = async () => {
+      const requestId = ++latestRequest;
       try {
-        const res = await fetch(API_URL, { cache: 'no-store' });
+        const res = await fetch(`${API_URL}?v=${Date.now()}`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data: ContentSnapshot = await res.json();
-        if (cancelled) return;
+        if (cancelled || requestId !== latestRequest) return;
         setSnapshot(data);
         setSubcategories(apiToSubcategoryData(data.sections));
         setStatus('api');
       } catch {
-        if (!cancelled) setStatus('fallback');
+        if (!cancelled && requestId === latestRequest) setStatus('fallback');
       }
     };
 

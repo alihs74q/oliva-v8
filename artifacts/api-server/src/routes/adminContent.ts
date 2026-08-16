@@ -1,4 +1,5 @@
 import { Router, type IRouter } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { db } from "@workspace/db";
 import type { SQLWrapper } from "drizzle-orm";
 import {
@@ -29,9 +30,67 @@ import { loadFullContent, computeUsd } from "../lib/cmsHelpers.js";
 const router: IRouter = Router();
 router.use(requireAdminAuth);
 
+let autoPublishQueue = Promise.resolve();
+
 function callerEmail(req: Parameters<typeof requireAdminAuth>[0]): string {
   return ((req.session as AdminSession).adminEmail) ?? "unknown";
 }
+
+function shouldAutoPublish(req: Parameters<typeof requireAdminAuth>[0]): boolean {
+  if (req.method === "GET" || req.path.startsWith("/admin/releases")) return false;
+  return ["/admin/sections", "/admin/subcategories", "/admin/products", "/admin/settings", "/admin/exchange-rate"]
+    .some((prefix) => req.path === prefix || req.path.startsWith(`${prefix}/`));
+}
+
+async function publishCurrentSnapshot(email: string, label: string) {
+  const sections = await loadFullContent(false);
+  const settingsRows = await db.select().from(cmsSiteSettingsTable);
+  const snapshot = {
+    sections,
+    settings: Object.fromEntries(settingsRows.map((r) => [r.key, r.value])),
+    publishedAt: new Date().toISOString(),
+  };
+
+  return db.transaction(async (tx) => {
+    await tx.update(cmsReleasesTable).set({ isCurrent: false });
+    const [release] = await tx.insert(cmsReleasesTable)
+      .values({ label, snapshot, publishedBy: email, isCurrent: true })
+      .returning();
+    await tx.insert(cmsAuditLogTable).values({
+      userEmail: email,
+      action: "publish",
+      entityType: "release",
+      entityId: String(release.id),
+      details: { label, automatic: true },
+    });
+    return release;
+  });
+}
+
+function queueAutomaticPublish(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  if (!shouldAutoPublish(req)) {
+    next();
+    return;
+  }
+
+  res.once("finish", () => {
+    if (res.statusCode < 200 || res.statusCode >= 300) return;
+    autoPublishQueue = autoPublishQueue
+      .then(async () => {
+        await publishCurrentSnapshot(callerEmail(req), "Automatic live update");
+      })
+      .catch((error: unknown) => {
+        req.log.error({ err: error }, "Automatic content publish failed");
+      });
+  });
+  next();
+}
+
+router.use(queueAutomaticPublish);
 
 function expectedRevision(body: unknown): Date | undefined {
   if (!body || typeof body !== "object") return undefined;
@@ -409,18 +468,8 @@ router.get("/admin/releases", async (_req, res): Promise<void> => {
 router.post("/admin/releases", async (req, res): Promise<void> => {
   const parsed = PublishInput.safeParse(req.body);
   const label = parsed.success ? (parsed.data.label ?? "") : "";
-  const sections = await loadFullContent(false);
-  const settingsRows = await db.select().from(cmsSiteSettingsTable);
-  const snapshot = { sections, settings: Object.fromEntries(settingsRows.map((r) => [r.key, r.value])), publishedAt: new Date().toISOString() };
   const email = callerEmail(req);
-
-  // Atomic: clear current flag and insert new release in one transaction
-  const release = await db.transaction(async (tx) => {
-    await tx.update(cmsReleasesTable).set({ isCurrent: false });
-    const [r] = await tx.insert(cmsReleasesTable).values({ label, snapshot, publishedBy: email, isCurrent: true }).returning();
-    await tx.insert(cmsAuditLogTable).values({ userEmail: email, action: "publish", entityType: "release", entityId: String(r.id), details: { label } });
-    return r;
-  });
+  const release = await publishCurrentSnapshot(email, label);
 
   res.status(201).json({ ...release, publishedAt: release.publishedAt.toISOString() });
 });

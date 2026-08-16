@@ -21,8 +21,19 @@ export function subscribeToPublishedContentChanges(onChange: () => void): () => 
 
   window.addEventListener(CONTENT_PUBLISHED_EVENT, onChange);
   window.addEventListener('storage', handleStorage);
+  const handleFocus = () => onChange();
+  const handleVisibility = () => {
+    if (document.visibilityState === 'visible') onChange();
+  };
+  window.addEventListener('focus', handleFocus);
+  document.addEventListener('visibilitychange', handleVisibility);
+  const poll = window.setInterval(onChange, 5000);
+
   return () => {
+    window.clearInterval(poll);
     window.removeEventListener(CONTENT_PUBLISHED_EVENT, onChange);
     window.removeEventListener('storage', handleStorage);
+    window.removeEventListener('focus', handleFocus);
+    document.removeEventListener('visibilitychange', handleVisibility);
   };
 }

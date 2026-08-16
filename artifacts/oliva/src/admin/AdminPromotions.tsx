@@ -30,7 +30,7 @@ export default function AdminPromotions({ onBack }: Props) {
     setMessage('');
     try {
       await apiUpdateSettings({ menu_promo_gallery: JSON.stringify(gallery) });
-      setMessage('✅ Saved as a draft. Click Publish Live on the dashboard to show it publicly.');
+      setMessage('✅ Saved and published. The live site will update automatically.');
     } catch (error) {
       setMessage(`❌ ${error instanceof Error ? error.message : 'Save failed'}`);
     } finally {

@@ -97,7 +97,7 @@ export default function AdminHome({ session, onLogout, onNavigate }: Props) {
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 40 }}>
           <div>
             <h2 style={{ margin: '0 0 6px', fontSize: 'clamp(22px,3vw,30px)', fontWeight: 900, color: '#f5f2e8', letterSpacing: '-0.02em' }}>Content Manager</h2>
-            <p style={{ margin: 0, fontSize: 14, color: 'rgba(245,242,232,0.45)' }}>Edit menu sections, products, and site content below.</p>
+            <p style={{ margin: 0, fontSize: 14, color: 'rgba(245,242,232,0.45)' }}>Edit menu sections, products, and site content below. Successful changes go live automatically.</p>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
             <button onClick={handlePublish} disabled={publishing} style={{

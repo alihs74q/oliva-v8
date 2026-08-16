@@ -226,16 +226,21 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
+    let latestRequest = 0;
     const load = async () => {
+      const requestId = ++latestRequest;
       try {
-        const res = await fetch(API_URL, { cache: 'no-store' });
+        const res = await fetch(`${API_URL}?v=${Date.now()}`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const snapshot: ContentSnapshot = await res.json();
-        if (cancelled) return;
+        if (cancelled || requestId !== latestRequest) return;
         const derived = snapshotToContextValue(snapshot);
         setValue({ ...derived, status: 'api' });
       } catch {
-        if (!cancelled) {
+        if (!cancelled && requestId === latestRequest) {
           setValue((prev) => ({ ...prev, status: 'fallback' }));
         }
       }

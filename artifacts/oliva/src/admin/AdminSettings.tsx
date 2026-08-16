@@ -157,7 +157,7 @@ export function PromoGalleryEditor({ gallery, setGallery }: { gallery: PromoGall
   return (
     <Section title="Menu Promotions">
       <p style={{ margin: 0, fontSize: 13, color: 'rgba(245,242,232,0.5)', lineHeight: 1.6 }}>
-        Add wide promotional images above the public menu. Slides change automatically every 3.5 seconds on phones and desktop. Save this page, then click <strong style={{ color: '#D4A843' }}>Publish Live</strong> on the admin home.
+        Add wide promotional images above the public menu. Slides change automatically every 3.5 seconds on phones and desktop. Successful changes go live automatically.
       </p>
       {gallery.map((slide, index) => (
         <div key={slide.id} style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 14, border: `1px solid ${slide.visible ? 'rgba(212,168,67,0.25)' : 'rgba(255,255,255,0.1)'}`, borderRadius: 12, background: 'rgba(0,0,0,0.12)' }}>
