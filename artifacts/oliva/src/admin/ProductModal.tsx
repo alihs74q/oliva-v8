@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { ApiProduct } from '../hooks/usePublishedContent';
 import ImagePickerInput from './ImagePickerInput';
-import { DEFAULT_EXTRA_CALORIES, getStaticCalories } from '../data/nutrition';
 import { MENU_EXTRAS, getMenuExtra, type MenuExtraName } from '../data/menuExtras';
 
 const GOLD = '#D4A843';
@@ -36,13 +35,6 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
   const [selectedExtras, setSelectedExtras] = useState<MenuExtraName[]>(
     (product?.extras ?? []).filter((extra): extra is MenuExtraName => Boolean(getMenuExtra(extra))),
   );
-  const [calories, setCalories] = useState(String(product?.calories ?? getStaticCalories(product?.name ?? '')));
-  const [proteinGrams, setProteinGrams] = useState(String(product?.proteinGrams ?? ''));
-  const [carbsGrams, setCarbsGrams] = useState(String(product?.carbsGrams ?? ''));
-  const [fatGrams, setFatGrams] = useState(String(product?.fatGrams ?? ''));
-  const [extraCaloriesText, setExtraCaloriesText] = useState(
-    Object.entries(product?.extraCalories ?? {}).map(([name, value]) => `${name}: ${value}`).join('\n'),
-  );
   const [tagsText, setTagsText] = useState((product?.tags ?? []).join(', '));
   const [allergensText, setAllergensText] = useState((product?.allergens ?? []).join(', '));
   const [featured, setFeatured] = useState(product?.featured ?? false);
@@ -60,13 +52,6 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
     setSaving(true);
     setError('');
     try {
-      const extraCalories = Object.fromEntries(
-        extraCaloriesText
-          .split('\n')
-          .map((line) => line.split(':'))
-          .map(([key, value]) => [key?.trim(), Number(value?.trim())])
-          .filter(([key, value]) => Boolean(key) && Number.isFinite(value) && Number(value) >= 0),
-      );
       await onSave({
         name: name.trim(),
         slug: slug.trim() || name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
@@ -80,11 +65,6 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
         recipe: recipe.trim(),
         flavors: flavorsText.split(',').map((f) => f.trim()).filter(Boolean),
          extras: selectedExtras,
-        calories: Math.max(0, parseInt(calories, 10) || 0),
-        proteinGrams: parseMacro(proteinGrams),
-        carbsGrams: parseMacro(carbsGrams),
-        fatGrams: parseMacro(fatGrams),
-        extraCalories,
         tags: tagsText.split(',').map((f) => f.trim()).filter(Boolean),
         allergens: allergensText.split(',').map((f) => f.trim()).filter(Boolean),
         featured, hidden, soldOut,
@@ -142,39 +122,6 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
           <Field label="Recipe / Ingredients (separate with ·)">
             <textarea value={recipe} onChange={(e) => setRecipe(e.target.value)} style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} placeholder="Milk · Ice · Vanilla · ..." />
           </Field>
-
-          <div style={{ padding: '14px', borderRadius: 12, background: 'rgba(212,168,67,0.07)', border: '1px solid rgba(212,168,67,0.2)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-              <span style={{ width: 28, height: 28, display: 'grid', placeItems: 'center', borderRadius: 9, background: 'rgba(212,168,67,0.16)', color: GOLD }}>◒</span>
-              <div>
-                <div style={{ color: '#f5f2e8', fontWeight: 800, fontSize: 13 }}>Nutrition</div>
-                <div style={{ color: 'rgba(245,242,232,0.42)', fontSize: 11 }}>Shown in the public ingredients panel after publishing.</div>
-              </div>
-            </div>
-            <Field label="Base calories">
-              <input type="number" min="0" value={calories} onChange={(e) => setCalories(e.target.value)} style={inputStyle} placeholder="e.g. 280" />
-            </Field>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10, marginTop: 10 }}>
-              <Field label="Protein (g)">
-                <input type="number" min="0" step="0.1" value={proteinGrams} onChange={(e) => setProteinGrams(e.target.value)} style={inputStyle} placeholder="e.g. 12 or 0.5" />
-              </Field>
-              <Field label="Carbs (g)">
-                <input type="number" min="0" step="0.1" value={carbsGrams} onChange={(e) => setCarbsGrams(e.target.value)} style={inputStyle} placeholder="e.g. 28" />
-              </Field>
-              <Field label="Fat (g)">
-                <input type="number" min="0" step="0.1" value={fatGrams} onChange={(e) => setFatGrams(e.target.value)} style={inputStyle} placeholder="e.g. 8" />
-              </Field>
-            </div>
-            <div style={{ height: 10 }} />
-            <Field label="Extra calories (one per line: Name: calories)">
-              <textarea
-                value={extraCaloriesText}
-                onChange={(e) => setExtraCaloriesText(e.target.value)}
-                style={{ ...inputStyle, minHeight: 82, resize: 'vertical', fontFamily: '"JetBrains Mono", monospace' }}
-                placeholder={`Cream: ${DEFAULT_EXTRA_CALORIES.Cream}\nIce Cream: ${DEFAULT_EXTRA_CALORIES['Ice Cream']}\nFlavor: ${DEFAULT_EXTRA_CALORIES.Flavor}`}
-              />
-            </Field>
-          </div>
 
           <Field label="Flavor options (comma-separated)">
             <input value={flavorsText} onChange={(e) => setFlavorsText(e.target.value)} style={inputStyle} placeholder="Classic, Vanilla, Hazelnut" />
@@ -234,12 +181,6 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
       </div>
     </Overlay>
   );
-}
-
-function parseMacro(value: string): number {
-  const parsed = Number.parseFloat(value);
-  if (!Number.isFinite(parsed) || parsed < 0) return 0;
-  return Math.round(parsed * 10) / 10;
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {

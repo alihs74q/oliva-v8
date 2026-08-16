@@ -37,13 +37,25 @@ export default function NutritionPage({ onBack }: Props) {
     setSavingId(product.id);
     setMessage('');
     try {
-      await apiUpdateProduct(product.id, {
+      const updated = await apiUpdateProduct(product.id, {
         calories: Math.max(0, parseInt(calories, 10) || 0),
         proteinGrams: parseMacro(proteinGrams),
         carbsGrams: parseMacro(carbsGrams),
         fatGrams: parseMacro(fatGrams),
         extraCalories,
       });
+      const savedMacros = {
+        proteinGrams: parseMacro(proteinGrams),
+        carbsGrams: parseMacro(carbsGrams),
+        fatGrams: parseMacro(fatGrams),
+      };
+      if (
+        !sameMacro(updated?.proteinGrams, savedMacros.proteinGrams)
+        || !sameMacro(updated?.carbsGrams, savedMacros.carbsGrams)
+        || !sameMacro(updated?.fatGrams, savedMacros.fatGrams)
+      ) {
+        throw new Error('The API did not return the saved nutrition values. Publish the latest API/database schema, then try again.');
+      }
       setMessage(`${product.name} saved as a draft.`);
       await reload();
     } catch (error) {
@@ -127,6 +139,11 @@ function parseMacro(value: string): number {
   const parsed = Number.parseFloat(value);
   if (!Number.isFinite(parsed) || parsed < 0) return 0;
   return Math.round(parsed * 10) / 10;
+}
+
+function sameMacro(value: unknown, expected: number): boolean {
+  const actual = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(actual) && Math.abs(actual - expected) < 0.05;
 }
 
 function AdminShell({ children, onBack, title }: { children: React.ReactNode; onBack: () => void; title: string }) {
