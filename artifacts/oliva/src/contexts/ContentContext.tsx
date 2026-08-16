@@ -9,11 +9,11 @@
  */
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { ColdDrink } from '../data/coldDrinks';
-import type { HotDrink } from '../data/hotDrinks';
-import type { Dessert } from '../data/desserts';
-import type { ShishaItem } from '../data/shisha';
-import type { Subcategory } from '../data/subcategories';
+import { coldDrinks, type ColdDrink } from '../data/coldDrinks';
+import { hotDrinks, type HotDrink } from '../data/hotDrinks';
+import { desserts, type Dessert } from '../data/desserts';
+import { shishaItems, type ShishaItem } from '../data/shisha';
+import { subcategoryData, type Subcategory } from '../data/subcategories';
 import type { ContentSnapshot, ApiSection, ApiProduct } from '../hooks/usePublishedContent';
 import type { PromoGallerySlide } from '../components/PromoGallery';
 import { getStaticCalories, getStaticNutrition } from '../data/nutrition';
@@ -207,24 +207,56 @@ function snapshotToContextValue(snapshot: ContentSnapshot): Omit<ContentContextV
 
 // ─── Provider ──────────────────────────────────────────────────────────────────
 const API_URL = `${API_BASE}/public/content`;
+const CONTENT_CACHE_KEY = 'oliva:published-content:v1';
+
+const BUNDLED_CONTEXT_VALUE: Omit<ContentContextValue, 'status'> = {
+  coldDrinks,
+  hotDrinks,
+  desserts,
+  shishaItems,
+  subcategories: subcategoryData,
+  settings: {},
+  sections: [],
+  promoGallery: [],
+};
+
+function readCachedSnapshot(): ContentSnapshot | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(CONTENT_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as ContentSnapshot;
+    if (!Array.isArray(parsed.sections) || !parsed.settings || typeof parsed.settings !== 'object') {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedSnapshot(snapshot: ContentSnapshot): void {
+  try {
+    window.localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(snapshot));
+  } catch {
+    // The public site still works with bundled content when storage is unavailable.
+  }
+}
+
+function getInitialContextValue(): ContentContextValue {
+  const cachedSnapshot = readCachedSnapshot();
+  if (cachedSnapshot) {
+    return { ...snapshotToContextValue(cachedSnapshot), status: 'api' };
+  }
+  return { ...BUNDLED_CONTEXT_VALUE, status: 'api' };
+}
 
 export function ContentProvider({ children }: { children: ReactNode }) {
-  const [value, setValue] = useState<ContentContextValue>({
-    coldDrinks: [],
-    hotDrinks: [],
-    desserts: [],
-    shishaItems: [],
-    subcategories: {},
-    settings: {},
-    sections: [],
-    promoGallery: [],
-    status: 'loading',
-  });
+  const [value, setValue] = useState<ContentContextValue>(getInitialContextValue);
 
   useEffect(() => {
     let cancelled = false;
     let latestRequest = 0;
-    let loadedOnce = false;
     let requestInFlight = false;
     let refreshQueued = false;
     const load = async () => {
@@ -243,12 +275,12 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         const snapshot: ContentSnapshot = await res.json();
         if (cancelled || requestId !== latestRequest) return;
         const derived = snapshotToContextValue(snapshot);
+        writeCachedSnapshot(snapshot);
         setValue({ ...derived, status: 'api' });
-        loadedOnce = true;
       } catch {
-        if (!cancelled && requestId === latestRequest && !loadedOnce) {
-          setValue((prev) => ({ ...prev, status: 'error' }));
-        }
+        // Never replace visible content with a loading or error screen.
+        // The cached/bundled snapshot remains available while the next
+        // background refresh retries.
       } finally {
         requestInFlight = false;
         if (!cancelled && refreshQueued) {
