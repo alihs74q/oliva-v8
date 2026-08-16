@@ -27,6 +27,7 @@ import {
 } from "../lib/validation.js";
 import { loadFullContent, computeUsd } from "../lib/cmsHelpers.js";
 import { contentEvents } from "../lib/contentEvents.js";
+import { invalidatePublishedRelease } from "../lib/publicContentCache.js";
 
 const router: IRouter = Router();
 router.use(requireAdminAuth);
@@ -66,6 +67,7 @@ async function publishCurrentSnapshot(email: string, label: string) {
     });
     return release;
   });
+  invalidatePublishedRelease();
   contentEvents.emit("published", {
     version: release.version,
     publishedAt: release.publishedAt.toISOString(),
@@ -528,6 +530,7 @@ router.post("/admin/releases/:id/rollback", async (req, res): Promise<void> => {
   });
 
   if (!updated) { res.status(404).json({ error: "Release not found" }); return; }
+  invalidatePublishedRelease();
   contentEvents.emit("published", {
     version: updated.version,
     publishedAt: updated.publishedAt.toISOString(),

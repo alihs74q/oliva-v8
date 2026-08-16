@@ -1,21 +1,14 @@
 import { Router, type IRouter } from "express";
 import { Readable } from "node:stream";
-import { db } from "@workspace/db";
-import { cmsReleasesTable } from "@workspace/db";
-import { eq, sql } from "drizzle-orm";
 import { downloadPromotionImage } from "../lib/objectStorageLite.js";
 import { contentEvents, type PublishedContentEvent } from "../lib/contentEvents.js";
+import { getPublishedRelease } from "../lib/publicContentCache.js";
 
 const router: IRouter = Router();
 
 // GET /public/content — serve the currently published release snapshot
 router.get("/public/content", async (req, res): Promise<void> => {
-  const [current] = await db
-    .select()
-    .from(cmsReleasesTable)
-    .where(eq(cmsReleasesTable.isCurrent, true))
-    .orderBy(sql`${cmsReleasesTable.publishedAt} DESC`)
-    .limit(1);
+  const current = await getPublishedRelease();
 
   if (!current) {
     req.log.info("No published content found");
