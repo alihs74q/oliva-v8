@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { apiGetSections, apiUpdateProduct } from './useAdminApi';
 import type { ApiProduct, ApiSection } from '../hooks/usePublishedContent';
-import { DEFAULT_EXTRA_CALORIES, getStaticCalories } from '../data/nutrition';
+import { DEFAULT_EXTRA_CALORIES, getStaticCalories, getStaticNutrition } from '../data/nutrition';
+import { hasStoredNutrition, readNutrition, visibleExtraCalories, withNutritionStorage } from './nutritionStorage';
 
 const GOLD = '#D4A843';
 
@@ -30,31 +31,32 @@ export default function NutritionPage({ onBack }: Props) {
     fatGrams: string,
     extraText: string,
   ) => {
-    const extraCalories = Object.fromEntries(
+    const parsedExtraCalories = Object.fromEntries(
       extraText.split('\n').map((line) => line.split(':')).map(([name, value]) => [name?.trim(), Number(value?.trim())])
         .filter(([name, value]) => Boolean(name) && Number.isFinite(value) && Number(value) >= 0),
     );
+    const nutrition = {
+      proteinGrams: parseMacro(proteinGrams),
+      carbsGrams: parseMacro(carbsGrams),
+      fatGrams: parseMacro(fatGrams),
+    };
     setSavingId(product.id);
     setMessage('');
     try {
       const updated = await apiUpdateProduct(product.id, {
         calories: Math.max(0, parseInt(calories, 10) || 0),
-        proteinGrams: parseMacro(proteinGrams),
-        carbsGrams: parseMacro(carbsGrams),
-        fatGrams: parseMacro(fatGrams),
-        extraCalories,
+        ...nutrition,
+        extraCalories: withNutritionStorage(parsedExtraCalories, nutrition),
       });
-      const savedMacros = {
-        proteinGrams: parseMacro(proteinGrams),
-        carbsGrams: parseMacro(carbsGrams),
-        fatGrams: parseMacro(fatGrams),
-      };
+      const savedMacros = readNutrition(updated);
       if (
-        !sameMacro(updated?.proteinGrams, savedMacros.proteinGrams)
-        || !sameMacro(updated?.carbsGrams, savedMacros.carbsGrams)
-        || !sameMacro(updated?.fatGrams, savedMacros.fatGrams)
+        !hasStoredNutrition(updated)
+        ||
+        !sameMacro(savedMacros.proteinGrams, nutrition.proteinGrams)
+        || !sameMacro(savedMacros.carbsGrams, nutrition.carbsGrams)
+        || !sameMacro(savedMacros.fatGrams, nutrition.fatGrams)
       ) {
-        throw new Error('The API did not return the saved nutrition values. Publish the latest API/database schema, then try again.');
+        throw new Error('Nutrition could not be verified after saving. Please retry.');
       }
       setMessage(`${product.name} saved as a draft.`);
       await reload();
@@ -97,18 +99,20 @@ function NutritionCard({ sectionName, subcategoryName, product, saving, onSave }
   sectionName: string; subcategoryName: string; product: ApiProduct; saving: boolean;
   onSave: (product: ApiProduct, calories: string, proteinGrams: string, carbsGrams: string, fatGrams: string, extraText: string) => Promise<void>;
 }) {
+  const nutrition = readNutrition(product, getStaticNutrition(product.name));
   const [calories, setCalories] = useState(String(product.calories ?? getStaticCalories(product.name)));
-  const [proteinGrams, setProteinGrams] = useState(String(product.proteinGrams ?? ''));
-  const [carbsGrams, setCarbsGrams] = useState(String(product.carbsGrams ?? ''));
-  const [fatGrams, setFatGrams] = useState(String(product.fatGrams ?? ''));
-  const initialExtras = Object.entries(product.extraCalories ?? {}).map(([name, value]) => `${name}: ${value}`).join('\n');
+  const [proteinGrams, setProteinGrams] = useState(String(nutrition.proteinGrams));
+  const [carbsGrams, setCarbsGrams] = useState(String(nutrition.carbsGrams));
+  const [fatGrams, setFatGrams] = useState(String(nutrition.fatGrams));
+  const initialExtras = Object.entries(visibleExtraCalories(product.extraCalories)).map(([name, value]) => `${name}: ${value}`).join('\n');
   const [extraText, setExtraText] = useState(initialExtras);
   useEffect(() => {
+    const nextNutrition = readNutrition(product, getStaticNutrition(product.name));
     setCalories(String(product.calories ?? getStaticCalories(product.name)));
-    setProteinGrams(String(product.proteinGrams ?? ''));
-    setCarbsGrams(String(product.carbsGrams ?? ''));
-    setFatGrams(String(product.fatGrams ?? ''));
-    setExtraText(Object.entries(product.extraCalories ?? {}).map(([name, value]) => `${name}: ${value}`).join('\n'));
+    setProteinGrams(String(nextNutrition.proteinGrams));
+    setCarbsGrams(String(nextNutrition.carbsGrams));
+    setFatGrams(String(nextNutrition.fatGrams));
+    setExtraText(Object.entries(visibleExtraCalories(product.extraCalories)).map(([name, value]) => `${name}: ${value}`).join('\n'));
   }, [product]);
 
   return (

@@ -23,6 +23,7 @@ import { getStaticCalories, getStaticNutrition } from '../data/nutrition';
 import { getDefaultProductExtras } from '../data/menuExtras';
 import { API_BASE } from '../config/api';
 import { subscribeToPublishedContentChanges } from '../utils/contentRefresh';
+import { readNutrition, visibleExtraCalories } from '../admin/nutritionStorage';
 
 // ─── Context shape ─────────────────────────────────────────────────────────────
 export interface ContentContextValue {
@@ -142,10 +143,8 @@ function apiToSubcategoryData(sections: ApiSection[]): Record<string, Subcategor
             image: p.imageUrl ?? null,
             recipe: p.recipe || undefined,
             calories: p.calories ?? getStaticCalories(p.name),
-            extraCalories: p.extraCalories ?? {},
-             proteinGrams: p.proteinGrams ?? getStaticNutrition(p.name).proteinGrams,
-             carbsGrams: p.carbsGrams ?? getStaticNutrition(p.name).carbsGrams,
-             fatGrams: p.fatGrams ?? getStaticNutrition(p.name).fatGrams,
+            extraCalories: visibleExtraCalories(p.extraCalories),
+            ...readNutrition(p, getStaticNutrition(p.name)),
              allergens: p.allergens ?? [],
              extras: p.extras ?? getDefaultProductExtras(p.name, sub.subcategoryId),
              priceLbp: p.priceLbp,
