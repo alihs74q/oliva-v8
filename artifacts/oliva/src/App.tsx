@@ -13,15 +13,14 @@ import coldDrinksUploadedImage from '@assets/image_1786233684800.png';
 import dessertsCategoryImage from '@assets/image_1786233947691.png';
 import Navbar from './components/Navbar';
 import SiteFooter from './components/SiteFooter';
-import type { MenuCard } from './components/Menu';
-import type { CategoryTheme } from './components/CategoryListPage';
+import Menu, { type MenuCard } from './components/Menu';
+import CategoryListPage, { type CategoryTheme } from './components/CategoryListPage';
 import { useOfflineSupport } from './hooks/useOfflineSupport';
 import { ContentProvider } from './contexts/ContentContext';
 import { useContent } from './contexts/ContentContext';
 
 // Keep the homepage in the first bundle. Menu and detail pages are loaded only
 // when a visitor opens them, which keeps the first paint fast on mobile data.
-const loadMenu = () => import('./components/Menu');
 const loadPromoGallery = () => import('./components/PromoGallery');
 const loadGalleryPage = () => import('./components/GalleryPage');
 const loadOurPlace = () => import('./components/OurPlace');
@@ -29,10 +28,8 @@ const loadColdDrinksPage = () => import('./components/ColdDrinksPage');
 const loadDessertsPage = () => import('./components/DessertsPage');
 const loadHotDrinksPage = () => import('./components/HotDrinksPage');
 const loadShishaPage = () => import('./components/ShishaPage');
-const loadCategoryListPage = () => import('./components/CategoryListPage');
 const loadPadelPage = () => import('./components/PadelPage');
 
-const Menu = lazy(loadMenu);
 const PromoGallery = lazy(loadPromoGallery);
 const GalleryPage = lazy(loadGalleryPage);
 const OurPlace = lazy(loadOurPlace);
@@ -40,7 +37,6 @@ const ColdDrinksPage = lazy(loadColdDrinksPage);
 const DessertsPage = lazy(loadDessertsPage);
 const HotDrinksPage = lazy(loadHotDrinksPage);
 const ShishaPage = lazy(loadShishaPage);
-const CategoryListPage = lazy(loadCategoryListPage);
 const PadelPage = lazy(loadPadelPage);
 const AdminApp = lazy(() => import('./admin/AdminApp'));
 
@@ -174,7 +170,7 @@ export default function App() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       if (route.name === 'home' || route.name === 'menu') {
-        void Promise.all([loadCategoryListPage(), loadPadelPage()]);
+        void loadPadelPage();
         [hotDrinksMenuBoard, icedLatteMenu].forEach((src) => {
           const image = new Image();
           image.decoding = 'async';
@@ -182,7 +178,7 @@ export default function App() {
         });
       } else if (route.name === 'list') {
         if (route.category === 'padel') {
-          void Promise.all([loadMenu(), loadCategoryListPage()]);
+          void loadPadelPage();
         } else if (route.category === 'cold-drinks') {
           void loadColdDrinksPage();
         } else if (route.category === 'hot-drinks') {
@@ -198,10 +194,10 @@ export default function App() {
   }, [route.name, route.name === 'list' ? route.category : '']);
 
   const navigateHome = () => { window.location.hash = '/'; };
-  const navigateMenu = () => { void loadMenu(); window.location.hash = '/menu'; };
+  const navigateMenu = () => { window.location.hash = '/menu'; };
   const navigateOurPlace = () => { void loadOurPlace(); window.location.hash = '/our-place'; };
   const navigateList = (cat: Category) => {
-    void (cat === 'padel' ? loadPadelPage() : loadCategoryListPage());
+    if (cat === 'padel') void loadPadelPage();
     window.location.hash = CATEGORY_DATA[cat].listHash;
   };
 
