@@ -22,10 +22,8 @@ import DessertsPage from './components/DessertsPage';
 import HotDrinksPage from './components/HotDrinksPage';
 import ShishaPage from './components/ShishaPage';
 import CategoryListPage, { type CategoryTheme } from './components/CategoryListPage';
-import { subcategoryData } from './data/subcategories';
 import PadelPage from './components/PadelPage';
 import { useOfflineSupport } from './hooks/useOfflineSupport';
-import { usePublishedContent } from './hooks/usePublishedContent';
 import { ContentProvider } from './contexts/ContentContext';
 import { useContent } from './contexts/ContentContext';
 
@@ -42,6 +40,65 @@ type ParsedRoute =
   | { name: 'admin' }
   | { name: 'list'; category: Category }
   | { name: 'detail'; category: Category; slug: string };
+
+function LiveContentState({ status }: { status: 'loading' | 'error' }) {
+  const isError = status === 'error';
+  return (
+    <main
+      aria-live="polite"
+      style={{
+        minHeight: '100svh',
+        display: 'grid',
+        placeItems: 'center',
+        padding: 24,
+        background: '#0d1509',
+        color: '#f5f2e8',
+        textAlign: 'center',
+      }}
+    >
+      <div>
+        <div
+          aria-hidden="true"
+          style={{
+            width: 42,
+            height: 42,
+            margin: '0 auto 18px',
+            border: '3px solid rgba(212,168,67,0.25)',
+            borderTopColor: '#D4A843',
+            borderRadius: '50%',
+            animation: 'oliva-live-content-spin 900ms linear infinite',
+          }}
+        />
+        <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800 }}>
+          {isError ? 'Live menu temporarily unavailable' : 'Loading the latest Oliva menu'}
+        </h1>
+        <p style={{ maxWidth: 420, margin: '10px auto 0', color: 'rgba(245,242,232,0.65)', lineHeight: 1.6 }}>
+          {isError
+            ? 'We could not reach the live content service. Please try again.'
+            : 'Fetching the latest published content. This page will not show an older version first.'}
+        </p>
+        {isError && (
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            style={{
+              marginTop: 22,
+              border: '1px solid rgba(212,168,67,0.55)',
+              borderRadius: 999,
+              padding: '11px 22px',
+              background: 'rgba(89,107,61,0.8)',
+              color: '#fff',
+              fontWeight: 800,
+              cursor: 'pointer',
+            }}
+          >
+            Try again
+          </button>
+        )}
+      </div>
+    </main>
+  );
+}
 
 function parseRoute(): ParsedRoute {
   if (typeof window === 'undefined') return { name: 'home' };
@@ -128,11 +185,10 @@ const CATEGORY_DATA: Record<Category, { title: string; subtitle: string; theme: 
 
 export default function App() {
   const [route, setRoute] = useState<ParsedRoute>(parseRoute);
-  // Load published content from API; falls back to static data if unavailable
-  const { subcategories: publishedSubcategories } = usePublishedContent();
-  const { promoGallery, sections, settings } = useContent();
-  const menuCards = sections.length > 0
-    ? sections.filter((section) => section.slug !== 'padel').map((section) => {
+  const { promoGallery, sections, settings, subcategories: publishedSubcategories, status } = useContent();
+  const menuCards = sections
+    .filter((section) => section.slug !== 'padel')
+    .map((section) => {
       const key = section.slug.replace(/-drinks$/, '').replace('desserts', 'dessert')
       const fallback = ({
         hot: { gradient: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#fed7aa', image: 'https://images.pexels.com/photos/15851583/pexels-photo-15851583/free-photo-of-cappuccino-in-cup-on-table.jpeg?auto=compress&cs=tinysrgb&w=400' },
@@ -145,8 +201,7 @@ export default function App() {
       } as Record<string, { gradient: string; accent: string; image: string }>)[key] ?? { gradient: 'linear-gradient(135deg,#596b3d,#2c3a24)', accent: '#d4a843', image: null };
       const theme = (section.theme || {}) as Record<string, string>;
        return { id: section.slug, label: section.name, desc: section.subtitle, gradient: theme.gradient || fallback.gradient, accent: theme.accent || fallback.accent, image: section.slug === 'cold-drinks' ? coldDrinksUploadedImage : section.slug === 'desserts' ? dessertsCategoryImage : theme.image || fallback.image };
-    })
-    : undefined;
+    });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const offlineStatus = useOfflineSupport();
   useEffect(() => {
@@ -176,6 +231,10 @@ export default function App() {
     );
   }
 
+  if (status === 'loading' || status === 'error') {
+    return <LiveContentState status={status} />;
+  }
+
   // Dedicated menu page
   if (route.name === 'menu') {
     return (
@@ -189,7 +248,7 @@ export default function App() {
             )}
             <Menu
               onBack={navigateHome}
-              cards={menuCards}
+             cards={menuCards}
               onHotDrinks={() => navigateList('hot-drinks')}
               onColdDrinks={() => navigateList('cold-drinks')}
               onDesserts={() => navigateList('desserts')}
@@ -246,7 +305,7 @@ export default function App() {
           title={data.title}
           subtitle={data.subtitle}
           theme={data.theme}
-          subcategories={publishedSubcategories[route.category] ?? subcategoryData[route.category]}
+             subcategories={publishedSubcategories[route.category] ?? []}
           navigate={() => navigateHome()}
           onBack={navigateMenu}
           heroImages={HERO_IMAGES[route.category]}

@@ -26,6 +26,7 @@ import {
   ExchangeRateUpdate,
 } from "../lib/validation.js";
 import { loadFullContent, computeUsd } from "../lib/cmsHelpers.js";
+import { contentEvents } from "../lib/contentEvents.js";
 
 const router: IRouter = Router();
 router.use(requireAdminAuth);
@@ -51,7 +52,7 @@ async function publishCurrentSnapshot(email: string, label: string) {
     publishedAt: new Date().toISOString(),
   };
 
-  return db.transaction(async (tx) => {
+  const release = await db.transaction(async (tx) => {
     await tx.update(cmsReleasesTable).set({ isCurrent: false });
     const [release] = await tx.insert(cmsReleasesTable)
       .values({ label, snapshot, publishedBy: email, isCurrent: true })
@@ -65,6 +66,11 @@ async function publishCurrentSnapshot(email: string, label: string) {
     });
     return release;
   });
+  contentEvents.emit("published", {
+    version: release.version,
+    publishedAt: release.publishedAt.toISOString(),
+  });
+  return release;
 }
 
 function queueAutomaticPublish(
@@ -77,16 +83,49 @@ function queueAutomaticPublish(
     return;
   }
 
-  res.once("finish", () => {
-    if (res.statusCode < 200 || res.statusCode >= 300) return;
-    autoPublishQueue = autoPublishQueue
-      .then(async () => {
+  const originalJson = res.json.bind(res);
+  const originalSendStatus = res.sendStatus.bind(res);
+  let responseStarted = false;
+
+  const publishBeforeResponse = async (send: () => void) => {
+    if (responseStarted) return;
+    responseStarted = true;
+    try {
+      const publishJob = autoPublishQueue.then(async () => {
         await publishCurrentSnapshot(callerEmail(req), "Automatic live update");
-      })
-      .catch((error: unknown) => {
-        req.log.error({ err: error }, "Automatic content publish failed");
       });
-  });
+      // Keep the shared queue usable after a failed publish while still
+      // letting this request return a non-success response.
+      autoPublishQueue = publishJob.catch(() => undefined);
+      await publishJob;
+      send();
+    } catch (error: unknown) {
+      req.log.error({ err: error }, "Automatic content publish failed");
+      if (!res.headersSent) {
+        res.status(503);
+        originalJson({ error: "The change was saved, but publishing the live content failed. Please retry." });
+      }
+    }
+  };
+
+  res.json = ((body: unknown) => {
+    if (res.statusCode < 200 || res.statusCode >= 300) {
+      originalJson(body);
+      return res;
+    }
+    void publishBeforeResponse(() => originalJson(body));
+    return res;
+  }) as typeof res.json;
+
+  res.sendStatus = ((statusCode: number) => {
+    if (statusCode < 200 || statusCode >= 300) {
+      originalSendStatus(statusCode);
+      return res;
+    }
+    void publishBeforeResponse(() => originalSendStatus(statusCode));
+    return res;
+  }) as typeof res.sendStatus;
+
   next();
 }
 
@@ -489,6 +528,10 @@ router.post("/admin/releases/:id/rollback", async (req, res): Promise<void> => {
   });
 
   if (!updated) { res.status(404).json({ error: "Release not found" }); return; }
+  contentEvents.emit("published", {
+    version: updated.version,
+    publishedAt: updated.publishedAt.toISOString(),
+  });
   res.json({ ...updated, publishedAt: updated.publishedAt.toISOString() });
 });
 

@@ -4,6 +4,7 @@ import { db } from "@workspace/db";
 import { cmsReleasesTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { downloadPromotionImage } from "../lib/objectStorageLite.js";
+import { contentEvents, type PublishedContentEvent } from "../lib/contentEvents.js";
 
 const router: IRouter = Router();
 
@@ -22,8 +23,35 @@ router.get("/public/content", async (req, res): Promise<void> => {
     return;
   }
 
-  res.set("Cache-Control", "no-store");
+  res.set({
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
+    "X-Oliva-Content-Version": String(current.version),
+  });
   res.json(current.snapshot);
+});
+
+// GET /public/content/events — notify open public pages as soon as a release changes.
+router.get("/public/content/events", (req, res): void => {
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache, no-transform",
+    Connection: "keep-alive",
+    "X-Accel-Buffering": "no",
+  });
+  res.write("event: ready\ndata: {}\n\n");
+
+  const handlePublished = (event: PublishedContentEvent) => {
+    res.write(`event: published\ndata: ${JSON.stringify(event)}\n\n`);
+  };
+  const keepAlive = setInterval(() => res.write(": keep-alive\n\n"), 25_000);
+
+  contentEvents.on("published", handlePublished);
+  req.on("close", () => {
+    clearInterval(keepAlive);
+    contentEvents.off("published", handlePublished);
+  });
 });
 
 // GET /public/media/:filename — serve durable promotion/product images publicly.

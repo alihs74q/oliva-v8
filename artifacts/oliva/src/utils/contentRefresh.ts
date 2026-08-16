@@ -1,3 +1,5 @@
+import { API_BASE } from '../config/api';
+
 export const CONTENT_PUBLISHED_EVENT = 'oliva:content-published';
 const CONTENT_PUBLISHED_STORAGE_KEY = 'oliva-content-published';
 
@@ -27,10 +29,13 @@ export function subscribeToPublishedContentChanges(onChange: () => void): () => 
   };
   window.addEventListener('focus', handleFocus);
   document.addEventListener('visibilitychange', handleVisibility);
+  const events = new EventSource(`${API_BASE}/public/content/events`);
+  events.addEventListener('published', onChange);
   const poll = window.setInterval(onChange, 5000);
 
   return () => {
     window.clearInterval(poll);
+    events.close();
     window.removeEventListener(CONTENT_PUBLISHED_EVENT, onChange);
     window.removeEventListener('storage', handleStorage);
     window.removeEventListener('focus', handleFocus);

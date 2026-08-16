@@ -2,21 +2,18 @@
  * ContentContext.tsx
  * ──────────────────
  * Provides published CMS content to all public-site components.
- * Falls back to bundled static data if the API is unavailable.
+ * The API is the source of truth for public content. Static data is used only
+ * for component types and presentation defaults, never to replace a snapshot.
  *
  * Usage: wrap the app in <ContentProvider>, then use useContent() in any component.
  */
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import type { ColdDrink } from '../data/coldDrinks';
-import { coldDrinks as staticColdDrinks } from '../data/coldDrinks';
 import type { HotDrink } from '../data/hotDrinks';
-import { hotDrinks as staticHotDrinks } from '../data/hotDrinks';
 import type { Dessert } from '../data/desserts';
-import { desserts as staticDesserts } from '../data/desserts';
 import type { ShishaItem } from '../data/shisha';
-import { shishaItems as staticShishaItems } from '../data/shisha';
-import { subcategoryData, type Subcategory } from '../data/subcategories';
+import type { Subcategory } from '../data/subcategories';
 import type { ContentSnapshot, ApiSection, ApiProduct } from '../hooks/usePublishedContent';
 import type { PromoGallerySlide } from '../components/PromoGallery';
 import { getStaticCalories, getStaticNutrition } from '../data/nutrition';
@@ -35,15 +32,15 @@ export interface ContentContextValue {
   settings: Record<string, string>;
   sections: ApiSection[];
   promoGallery: PromoGallerySlide[];
-  status: 'loading' | 'api' | 'fallback';
+  status: 'loading' | 'api' | 'error';
 }
 
 const ContentContext = createContext<ContentContextValue>({
-  coldDrinks: staticColdDrinks,
-  hotDrinks: staticHotDrinks,
-  desserts: staticDesserts,
-  shishaItems: staticShishaItems,
-  subcategories: subcategoryData,
+  coldDrinks: [],
+  hotDrinks: [],
+  desserts: [],
+  shishaItems: [],
+  subcategories: {},
   settings: {},
   sections: [],
   promoGallery: [],
@@ -166,22 +163,22 @@ function snapshotToContextValue(snapshot: ContentSnapshot): Omit<ContentContextV
   const apiColdDrinks: ColdDrink[] = coldSection
     ? coldSection.subcategories.filter((s) => !s.hidden && !s.deleted)
         .flatMap((sub) => sub.products.filter((p) => !p.hidden && !p.deleted).sort((a, b) => a.sortOrder - b.sortOrder).map((p) => apiProductToColdDrink(p, sub.themeColor)))
-    : staticColdDrinks;
+    : [];
 
   const apiHotDrinks: HotDrink[] = hotSection
     ? hotSection.subcategories.filter((s) => !s.hidden && !s.deleted)
         .flatMap((sub) => sub.products.filter((p) => !p.hidden && !p.deleted).sort((a, b) => a.sortOrder - b.sortOrder).map((p) => apiProductToHotDrink(p, sub.themeColor)))
-    : staticHotDrinks;
+    : [];
 
   const apiDesserts: Dessert[] = dessertSection
     ? dessertSection.subcategories.filter((s) => !s.hidden && !s.deleted)
         .flatMap((sub) => sub.products.filter((p) => !p.hidden && !p.deleted).sort((a, b) => a.sortOrder - b.sortOrder).map((p) => apiProductToDessert(p, sub.themeColor)))
-    : staticDesserts;
+    : [];
 
   const apiShishaItems: ShishaItem[] = shishaSection
     ? shishaSection.subcategories.filter((s) => !s.hidden && !s.deleted)
         .flatMap((sub) => sub.products.filter((p) => !p.hidden && !p.deleted).sort((a, b) => a.sortOrder - b.sortOrder).map((p) => apiProductToShishaItem(p, sub.themeColor)))
-    : staticShishaItems;
+    : [];
 
   let promoGallery: PromoGallerySlide[] = [];
   try {
@@ -197,10 +194,10 @@ function snapshotToContextValue(snapshot: ContentSnapshot): Omit<ContentContextV
   }
 
   return {
-    coldDrinks: apiColdDrinks.length > 0 ? apiColdDrinks : staticColdDrinks,
-    hotDrinks: apiHotDrinks.length > 0 ? apiHotDrinks : staticHotDrinks,
-    desserts: apiDesserts.length > 0 ? apiDesserts : staticDesserts,
-    shishaItems: apiShishaItems.length > 0 ? apiShishaItems : staticShishaItems,
+    coldDrinks: apiColdDrinks,
+    hotDrinks: apiHotDrinks,
+    desserts: apiDesserts,
+    shishaItems: apiShishaItems,
     subcategories: apiToSubcategoryData(sections),
     settings: snapshot.settings ?? {},
     sections: sections.filter((section) => !section.hidden && !section.deleted).sort((a, b) => a.sortOrder - b.sortOrder),
@@ -213,11 +210,11 @@ const API_URL = `${API_BASE}/public/content`;
 
 export function ContentProvider({ children }: { children: ReactNode }) {
   const [value, setValue] = useState<ContentContextValue>({
-    coldDrinks: staticColdDrinks,
-    hotDrinks: staticHotDrinks,
-    desserts: staticDesserts,
-    shishaItems: staticShishaItems,
-    subcategories: subcategoryData,
+    coldDrinks: [],
+    hotDrinks: [],
+    desserts: [],
+    shishaItems: [],
+    subcategories: {},
     settings: {},
     sections: [],
     promoGallery: [],
@@ -227,7 +224,15 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     let latestRequest = 0;
+    let loadedOnce = false;
+    let requestInFlight = false;
+    let refreshQueued = false;
     const load = async () => {
+      if (requestInFlight) {
+        refreshQueued = true;
+        return;
+      }
+      requestInFlight = true;
       const requestId = ++latestRequest;
       try {
         const res = await fetch(`${API_URL}?v=${Date.now()}`, {
@@ -239,9 +244,16 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         if (cancelled || requestId !== latestRequest) return;
         const derived = snapshotToContextValue(snapshot);
         setValue({ ...derived, status: 'api' });
+        loadedOnce = true;
       } catch {
-        if (!cancelled && requestId === latestRequest) {
-          setValue((prev) => ({ ...prev, status: 'fallback' }));
+        if (!cancelled && requestId === latestRequest && !loadedOnce) {
+          setValue((prev) => ({ ...prev, status: 'error' }));
+        }
+      } finally {
+        requestInFlight = false;
+        if (!cancelled && refreshQueued) {
+          refreshQueued = false;
+          void load();
         }
       }
     };
