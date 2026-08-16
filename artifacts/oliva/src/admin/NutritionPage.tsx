@@ -22,7 +22,14 @@ export default function NutritionPage({ onBack }: Props) {
       .map((product) => ({ section, sub, product })),
   )), [sections, query]);
 
-  const save = async (product: ApiProduct, calories: string, extraText: string) => {
+  const save = async (
+    product: ApiProduct,
+    calories: string,
+    proteinGrams: string,
+    carbsGrams: string,
+    fatGrams: string,
+    extraText: string,
+  ) => {
     const extraCalories = Object.fromEntries(
       extraText.split('\n').map((line) => line.split(':')).map(([name, value]) => [name?.trim(), Number(value?.trim())])
         .filter(([name, value]) => Boolean(name) && Number.isFinite(value) && Number(value) >= 0),
@@ -30,7 +37,13 @@ export default function NutritionPage({ onBack }: Props) {
     setSavingId(product.id);
     setMessage('');
     try {
-      await apiUpdateProduct(product.id, { calories: Math.max(0, parseInt(calories, 10) || 0), extraCalories });
+      await apiUpdateProduct(product.id, {
+        calories: Math.max(0, parseInt(calories, 10) || 0),
+        proteinGrams: parseMacro(proteinGrams),
+        carbsGrams: parseMacro(carbsGrams),
+        fatGrams: parseMacro(fatGrams),
+        extraCalories,
+      });
       setMessage(`${product.name} saved as a draft.`);
       await reload();
     } catch (error) {
@@ -45,9 +58,9 @@ export default function NutritionPage({ onBack }: Props) {
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap', marginBottom: 28 }}>
         <div>
           <p style={{ margin: '0 0 6px', color: GOLD, fontSize: 11, fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase' }}>Menu intelligence</p>
-          <h2 style={{ margin: 0, color: '#f5f2e8', fontSize: 'clamp(24px,4vw,36px)', fontWeight: 900, letterSpacing: '-0.03em' }}>Calories, made editable.</h2>
+          <h2 style={{ margin: 0, color: '#f5f2e8', fontSize: 'clamp(24px,4vw,36px)', fontWeight: 900, letterSpacing: '-0.03em' }}>Nutrition, made editable.</h2>
           <p style={{ margin: '8px 0 0', maxWidth: 540, color: 'rgba(245,242,232,0.48)', fontSize: 13, lineHeight: 1.6 }}>
-            Set the base calories for every menu item and the calories added by optional extras. Changes stay in draft until you publish.
+            Set calories, protein, carbs, fat, and optional extra calories for every menu item. Changes stay in draft until you publish.
           </p>
         </div>
         <div style={{ minWidth: 220 }}>
@@ -70,13 +83,19 @@ export default function NutritionPage({ onBack }: Props) {
 
 function NutritionCard({ sectionName, subcategoryName, product, saving, onSave }: {
   sectionName: string; subcategoryName: string; product: ApiProduct; saving: boolean;
-  onSave: (product: ApiProduct, calories: string, extraText: string) => Promise<void>;
+  onSave: (product: ApiProduct, calories: string, proteinGrams: string, carbsGrams: string, fatGrams: string, extraText: string) => Promise<void>;
 }) {
   const [calories, setCalories] = useState(String(product.calories ?? getStaticCalories(product.name)));
+  const [proteinGrams, setProteinGrams] = useState(String(product.proteinGrams ?? ''));
+  const [carbsGrams, setCarbsGrams] = useState(String(product.carbsGrams ?? ''));
+  const [fatGrams, setFatGrams] = useState(String(product.fatGrams ?? ''));
   const initialExtras = Object.entries(product.extraCalories ?? {}).map(([name, value]) => `${name}: ${value}`).join('\n');
   const [extraText, setExtraText] = useState(initialExtras);
   useEffect(() => {
     setCalories(String(product.calories ?? getStaticCalories(product.name)));
+    setProteinGrams(String(product.proteinGrams ?? ''));
+    setCarbsGrams(String(product.carbsGrams ?? ''));
+    setFatGrams(String(product.fatGrams ?? ''));
     setExtraText(Object.entries(product.extraCalories ?? {}).map(([name, value]) => `${name}: ${value}`).join('\n'));
   }, [product]);
 
@@ -90,13 +109,24 @@ function NutritionCard({ sectionName, subcategoryName, product, saving, onSave }
         </div>
         <div style={{ color: GOLD, fontSize: 12, fontWeight: 800 }}>CAL</div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 0.65fr) minmax(220px, 1.35fr) auto', gap: 12, alignItems: 'end' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: 12, alignItems: 'end' }}>
         <div><label style={labelStyle}>Base calories</label><input type="number" min="0" value={calories} onChange={(event) => setCalories(event.target.value)} style={inputStyle} /></div>
+        <div><label style={labelStyle}>Protein (g)</label><input type="number" min="0" step="0.1" value={proteinGrams} onChange={(event) => setProteinGrams(event.target.value)} style={inputStyle} placeholder="0" /></div>
+        <div><label style={labelStyle}>Carbs (g)</label><input type="number" min="0" step="0.1" value={carbsGrams} onChange={(event) => setCarbsGrams(event.target.value)} style={inputStyle} placeholder="0" /></div>
+        <div><label style={labelStyle}>Fat (g)</label><input type="number" min="0" step="0.1" value={fatGrams} onChange={(event) => setFatGrams(event.target.value)} style={inputStyle} placeholder="0" /></div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px, 1fr) auto', gap: 12, alignItems: 'end', marginTop: 12 }}>
         <div><label style={labelStyle}>Extra calories · one per line</label><textarea value={extraText} onChange={(event) => setExtraText(event.target.value)} placeholder={`Cream: ${DEFAULT_EXTRA_CALORIES.Cream}\nIce Cream: ${DEFAULT_EXTRA_CALORIES['Ice Cream']}`} style={{ ...inputStyle, minHeight: 42, resize: 'vertical', fontFamily: '"JetBrains Mono", monospace' }} /></div>
-        <button disabled={saving} onClick={() => onSave(product, calories, extraText)} style={{ ...saveButton, opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving…' : 'Save draft'}</button>
+        <button disabled={saving} onClick={() => onSave(product, calories, proteinGrams, carbsGrams, fatGrams, extraText)} style={{ ...saveButton, opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving…' : 'Save draft'}</button>
       </div>
     </section>
   );
+}
+
+function parseMacro(value: string): number {
+  const parsed = Number.parseFloat(value);
+  if (!Number.isFinite(parsed) || parsed < 0) return 0;
+  return Math.round(parsed * 10) / 10;
 }
 
 function AdminShell({ children, onBack, title }: { children: React.ReactNode; onBack: () => void; title: string }) {

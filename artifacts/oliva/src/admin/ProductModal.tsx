@@ -81,9 +81,9 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
         flavors: flavorsText.split(',').map((f) => f.trim()).filter(Boolean),
          extras: selectedExtras,
         calories: Math.max(0, parseInt(calories, 10) || 0),
-        proteinGrams: Math.max(0, parseFloat(proteinGrams) || 0),
-        carbsGrams: Math.max(0, parseFloat(carbsGrams) || 0),
-        fatGrams: Math.max(0, parseFloat(fatGrams) || 0),
+        proteinGrams: parseMacro(proteinGrams),
+        carbsGrams: parseMacro(carbsGrams),
+        fatGrams: parseMacro(fatGrams),
         extraCalories,
         tags: tagsText.split(',').map((f) => f.trim()).filter(Boolean),
         allergens: allergensText.split(',').map((f) => f.trim()).filter(Boolean),
@@ -234,6 +234,12 @@ export default function ProductModal({ product, onSave, onClose }: Props) {
       </div>
     </Overlay>
   );
+}
+
+function parseMacro(value: string): number {
+  const parsed = Number.parseFloat(value);
+  if (!Number.isFinite(parsed) || parsed < 0) return 0;
+  return Math.round(parsed * 10) / 10;
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
