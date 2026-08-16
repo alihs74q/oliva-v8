@@ -2,13 +2,15 @@
  * usePublishedContent.ts
  * ──────────────────────
  * Loads the published CMS content from the API.
- * The API is the only source of truth for public content.
- * While it is unavailable, consumers should keep the public site gated.
+ * Falls back to the bundled static data if the API is unreachable.
+ * Components should prefer this hook over importing static data directly.
  */
 
 import { useState, useEffect } from 'react';
-import type { Subcategory } from '../data/subcategories';
+import { subcategoryData, type Subcategory } from '../data/subcategories';
 import type { PromoGallerySlide } from '../components/PromoGallery';
+import { getStaticCalories, getStaticNutrition } from '../data/nutrition';
+import { getDefaultProductExtras } from '../data/menuExtras';
 import { API_BASE } from '../config/api';
 import { subscribeToPublishedContentChanges } from '../utils/contentRefresh';
 import { readNutrition, visibleExtraCalories } from '../admin/nutritionStorage';
@@ -85,7 +87,7 @@ export type { PromoGallerySlide };
 
 // ─── Convert API product → SubcategoryDrink shape ─────────────────────────────
 function apiProductToSubcategoryDrink(p: ApiProduct) {
-  const nutrition = readNutrition(p);
+  const nutrition = readNutrition(p, getStaticNutrition(p.name));
   return {
     name: p.name,
     description: p.description,
@@ -93,7 +95,7 @@ function apiProductToSubcategoryDrink(p: ApiProduct) {
     lbpPrice: formatLbp(p.priceLbp),
     image: p.imageUrl ?? null,
     recipe: p.recipe || undefined,
-    calories: p.calories ?? 0,
+    calories: p.calories || getStaticCalories(p.name),
     extraCalories: visibleExtraCalories(p.extraCalories),
     proteinGrams: nutrition.proteinGrams,
     carbsGrams: nutrition.carbsGrams,
@@ -129,7 +131,7 @@ function apiToSubcategoryData(sections: ApiSection[]): Record<string, Subcategor
           .sort((a, b) => a.sortOrder - b.sortOrder)
            .map((product) => ({
              ...apiProductToSubcategoryDrink(product),
-              extras: product.extras ?? [],
+             extras: product.extras ?? getDefaultProductExtras(product.name, sub.subcategoryId),
            })),
       } as Subcategory));
   }
@@ -140,10 +142,10 @@ function apiToSubcategoryData(sections: ApiSection[]): Record<string, Subcategor
 const API_URL = `${API_BASE}/public/content`;
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
-export type ContentStatus = 'loading' | 'api' | 'error';
+export type ContentStatus = 'loading' | 'api' | 'fallback';
 
 export function usePublishedContent() {
-  const [subcategories, setSubcategories] = useState<Record<string, Subcategory[]>>({});
+  const [subcategories, setSubcategories] = useState<Record<string, Subcategory[]>>(subcategoryData);
   const [snapshot, setSnapshot] = useState<ContentSnapshot | null>(null);
   const [status, setStatus] = useState<ContentStatus>('loading');
 
@@ -164,9 +166,7 @@ export function usePublishedContent() {
         setSubcategories(apiToSubcategoryData(data.sections));
         setStatus('api');
       } catch {
-        if (!cancelled && requestId === latestRequest) {
-          setStatus((current) => current === 'api' ? 'api' : 'error');
-        }
+        if (!cancelled && requestId === latestRequest) setStatus('fallback');
       }
     };
 

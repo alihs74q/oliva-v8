@@ -2,19 +2,25 @@
  * ContentContext.tsx
  * ──────────────────
  * Provides published CMS content to all public-site components.
- * The API is the only source of truth for public content.
+ * Falls back to bundled static data if the API is unavailable.
  *
  * Usage: wrap the app in <ContentProvider>, then use useContent() in any component.
  */
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import type { ColdDrink } from '../data/coldDrinks';
+import { coldDrinks as staticColdDrinks } from '../data/coldDrinks';
 import type { HotDrink } from '../data/hotDrinks';
+import { hotDrinks as staticHotDrinks } from '../data/hotDrinks';
 import type { Dessert } from '../data/desserts';
+import { desserts as staticDesserts } from '../data/desserts';
 import type { ShishaItem } from '../data/shisha';
-import type { Subcategory } from '../data/subcategories';
+import { shishaItems as staticShishaItems } from '../data/shisha';
+import { subcategoryData, type Subcategory } from '../data/subcategories';
 import type { ContentSnapshot, ApiSection, ApiProduct } from '../hooks/usePublishedContent';
 import type { PromoGallerySlide } from '../components/PromoGallery';
+import { getStaticCalories, getStaticNutrition } from '../data/nutrition';
+import { getDefaultProductExtras } from '../data/menuExtras';
 import { API_BASE } from '../config/api';
 import { subscribeToPublishedContentChanges } from '../utils/contentRefresh';
 import { readNutrition, visibleExtraCalories } from '../admin/nutritionStorage';
@@ -29,15 +35,15 @@ export interface ContentContextValue {
   settings: Record<string, string>;
   sections: ApiSection[];
   promoGallery: PromoGallerySlide[];
-  status: 'loading' | 'api' | 'error';
+  status: 'loading' | 'api' | 'fallback';
 }
 
 const ContentContext = createContext<ContentContextValue>({
-  coldDrinks: [],
-  hotDrinks: [],
-  desserts: [],
-  shishaItems: [],
-  subcategories: {},
+  coldDrinks: staticColdDrinks,
+  hotDrinks: staticHotDrinks,
+  desserts: staticDesserts,
+  shishaItems: staticShishaItems,
+  subcategories: subcategoryData,
   settings: {},
   sections: [],
   promoGallery: [],
@@ -136,13 +142,13 @@ function apiToSubcategoryData(sections: ApiSection[]): Record<string, Subcategor
             lbpPrice: formatLbp(p.priceLbp),
             image: p.imageUrl ?? null,
             recipe: p.recipe || undefined,
-            calories: p.calories ?? 0,
+            calories: p.calories ?? getStaticCalories(p.name),
             extraCalories: visibleExtraCalories(p.extraCalories),
-            ...readNutrition(p),
-            allergens: p.allergens ?? [],
-            extras: p.extras ?? [],
-            priceLbp: p.priceLbp,
-            soldOut: p.soldOut,
+            ...readNutrition(p, getStaticNutrition(p.name)),
+             allergens: p.allergens ?? [],
+             extras: p.extras ?? getDefaultProductExtras(p.name, sub.subcategoryId),
+             priceLbp: p.priceLbp,
+             soldOut: p.soldOut,
           })),
       } as Subcategory));
   }
@@ -160,22 +166,22 @@ function snapshotToContextValue(snapshot: ContentSnapshot): Omit<ContentContextV
   const apiColdDrinks: ColdDrink[] = coldSection
     ? coldSection.subcategories.filter((s) => !s.hidden && !s.deleted)
         .flatMap((sub) => sub.products.filter((p) => !p.hidden && !p.deleted).sort((a, b) => a.sortOrder - b.sortOrder).map((p) => apiProductToColdDrink(p, sub.themeColor)))
-    : [];
+    : staticColdDrinks;
 
   const apiHotDrinks: HotDrink[] = hotSection
     ? hotSection.subcategories.filter((s) => !s.hidden && !s.deleted)
         .flatMap((sub) => sub.products.filter((p) => !p.hidden && !p.deleted).sort((a, b) => a.sortOrder - b.sortOrder).map((p) => apiProductToHotDrink(p, sub.themeColor)))
-    : [];
+    : staticHotDrinks;
 
   const apiDesserts: Dessert[] = dessertSection
     ? dessertSection.subcategories.filter((s) => !s.hidden && !s.deleted)
         .flatMap((sub) => sub.products.filter((p) => !p.hidden && !p.deleted).sort((a, b) => a.sortOrder - b.sortOrder).map((p) => apiProductToDessert(p, sub.themeColor)))
-    : [];
+    : staticDesserts;
 
   const apiShishaItems: ShishaItem[] = shishaSection
     ? shishaSection.subcategories.filter((s) => !s.hidden && !s.deleted)
         .flatMap((sub) => sub.products.filter((p) => !p.hidden && !p.deleted).sort((a, b) => a.sortOrder - b.sortOrder).map((p) => apiProductToShishaItem(p, sub.themeColor)))
-    : [];
+    : staticShishaItems;
 
   let promoGallery: PromoGallerySlide[] = [];
   try {
@@ -191,10 +197,10 @@ function snapshotToContextValue(snapshot: ContentSnapshot): Omit<ContentContextV
   }
 
   return {
-    coldDrinks: apiColdDrinks,
-    hotDrinks: apiHotDrinks,
-    desserts: apiDesserts,
-    shishaItems: apiShishaItems,
+    coldDrinks: apiColdDrinks.length > 0 ? apiColdDrinks : staticColdDrinks,
+    hotDrinks: apiHotDrinks.length > 0 ? apiHotDrinks : staticHotDrinks,
+    desserts: apiDesserts.length > 0 ? apiDesserts : staticDesserts,
+    shishaItems: apiShishaItems.length > 0 ? apiShishaItems : staticShishaItems,
     subcategories: apiToSubcategoryData(sections),
     settings: snapshot.settings ?? {},
     sections: sections.filter((section) => !section.hidden && !section.deleted).sort((a, b) => a.sortOrder - b.sortOrder),
@@ -207,11 +213,11 @@ const API_URL = `${API_BASE}/public/content`;
 
 export function ContentProvider({ children }: { children: ReactNode }) {
   const [value, setValue] = useState<ContentContextValue>({
-    coldDrinks: [],
-    hotDrinks: [],
-    desserts: [],
-    shishaItems: [],
-    subcategories: {},
+    coldDrinks: staticColdDrinks,
+    hotDrinks: staticHotDrinks,
+    desserts: staticDesserts,
+    shishaItems: staticShishaItems,
+    subcategories: subcategoryData,
     settings: {},
     sections: [],
     promoGallery: [],
@@ -235,7 +241,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         setValue({ ...derived, status: 'api' });
       } catch {
         if (!cancelled && requestId === latestRequest) {
-          setValue((prev) => ({ ...prev, status: prev.status === 'api' ? 'api' : 'error' }));
+          setValue((prev) => ({ ...prev, status: 'fallback' }));
         }
       }
     };

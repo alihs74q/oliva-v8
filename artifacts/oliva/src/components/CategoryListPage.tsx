@@ -4,9 +4,11 @@ import type { Subcategory, SubcategoryDrink } from '../data/subcategories'
 import CurrencyToggle from './CurrencyToggle'
 import { useCurrency } from '../hooks/useCurrency'
 import type { Currency } from '../hooks/useCurrency'
+import { getImageForProduct } from '../utils/imageMatching'
 import { imageAssets } from '../utils/imageAssets'
 import { ViewRecipeButton } from './ViewRecipeButton'
-import { getMenuExtra, formatLbp, formatUsdFromLbp, type MenuExtraName } from '../data/menuExtras'
+import { DEFAULT_EXTRA_CALORIES, getStaticCalories } from '../data/nutrition'
+import { getDefaultProductExtras, getMenuExtra, formatLbp, formatUsdFromLbp, type MenuExtraName } from '../data/menuExtras'
 
 export interface CategoryTheme {
   bgGradient: string
@@ -220,14 +222,14 @@ function PriceStickyNote({ price, lbpPrice, totalLbp, currency }: { price: strin
 function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: SubcategoryDrink; sub: Subcategory; theme?: CategoryTheme; index: number; currency: Currency; isMobile: boolean }) {
   const [open, setOpen] = useState(false)
   const [selectedExtras, setSelectedExtras] = useState<MenuExtraName[]>([])
-  const displayImage = drink.image ?? null
-  const baseCalories = drink.calories ?? 0
-  const extras = (drink.extras ?? [])
+  const displayImage = getImageForProduct(drink.name, drink.image ?? undefined)
+  const baseCalories = drink.calories ?? getStaticCalories(drink.name)
+  const extras = (drink.extras ?? getDefaultProductExtras(drink.name, sub.id))
     .filter((name): name is MenuExtraName => Boolean(getMenuExtra(name)))
   const baseLbp = drink.priceLbp ?? (parseInt((drink.lbpPrice ?? '').replace(/[^0-9]/g, ''), 10) || 0)
   const extraLbp = selectedExtras.reduce((sum, name) => sum + (getMenuExtra(name)?.priceLbp ?? 0), 0)
   const totalLbp = baseLbp + extraLbp
-  const totalCalories = baseCalories + selectedExtras.reduce((sum, extra) => sum + (drink.extraCalories?.[extra] ?? 0), 0)
+  const totalCalories = baseCalories + selectedExtras.reduce((sum, extra) => sum + (drink.extraCalories?.[extra] ?? DEFAULT_EXTRA_CALORIES[extra] ?? 0), 0)
   const nutritionItems = [
     { label: 'Protein', value: `${drink.proteinGrams ?? 0}g`, icon: '💪', tone: '#DCE9C5' },
     { label: 'Carbs', value: `${drink.carbsGrams ?? 0}g`, icon: '⚡', tone: '#F6E6B4' },

@@ -10,6 +10,8 @@ import coffeeFrappeMenu from './assets/cold-drinks/coffee-frappe-menu.jpeg';
 import refreshersMenu from './assets/cold-drinks/refreshers-menu.jpeg';
 import smoothiesMenu from './assets/cold-drinks/smoothies-menu.jpeg';
 import milkshakesMenu from './assets/cold-drinks/milkshakes-menu.jpeg';
+import coldDrinksUploadedImage from '@assets/image_1786233684800.png';
+import dessertsCategoryImage from '@assets/image_1786233947691.png';
 import Navbar from './components/Navbar';
 import Menu, { type MenuCard } from './components/Menu';
 import PromoGallery from './components/PromoGallery';
@@ -20,6 +22,7 @@ import DessertsPage from './components/DessertsPage';
 import HotDrinksPage from './components/HotDrinksPage';
 import ShishaPage from './components/ShishaPage';
 import CategoryListPage, { type CategoryTheme } from './components/CategoryListPage';
+import { subcategoryData } from './data/subcategories';
 import PadelPage from './components/PadelPage';
 import { useOfflineSupport } from './hooks/useOfflineSupport';
 import { usePublishedContent } from './hooks/usePublishedContent';
@@ -125,25 +128,25 @@ const CATEGORY_DATA: Record<Category, { title: string; subtitle: string; theme: 
 
 export default function App() {
   const [route, setRoute] = useState<ParsedRoute>(parseRoute);
-  // Public content is rendered only after both API-backed content sources load.
-  const { subcategories: publishedSubcategories, status: publishedStatus } = usePublishedContent();
-  const { promoGallery, sections, settings, status: contentStatus } = useContent();
-  const menuCards: MenuCard[] = sections
-    .filter((section) => section.slug !== 'padel')
-    .map((section) => {
+  // Load published content from API; falls back to static data if unavailable
+  const { subcategories: publishedSubcategories } = usePublishedContent();
+  const { promoGallery, sections, settings } = useContent();
+  const menuCards = sections.length > 0
+    ? sections.filter((section) => section.slug !== 'padel').map((section) => {
       const key = section.slug.replace(/-drinks$/, '').replace('desserts', 'dessert')
       const fallback = ({
-         hot: { gradient: 'linear-gradient(135deg,#7a4d2a,#3f2516)', accent: '#fed7aa' },
-         cold: { gradient: 'linear-gradient(135deg,#2d617b,#163b4b)', accent: '#bae6fd' },
-         dessert: { gradient: 'linear-gradient(135deg,#6f3650,#3e1e2d)', accent: '#fbcfe8' },
-         shisha: { gradient: 'linear-gradient(135deg,#6e5718,#352b0b)', accent: '#fef08a' },
-         sandwiches: { gradient: 'linear-gradient(135deg,#7a4d2a,#3f2516)', accent: '#fed7aa' },
-         yogurt: { gradient: 'linear-gradient(135deg,#704284,#3e214a)', accent: '#f9a8d4' },
-         padel: { gradient: 'linear-gradient(135deg,#17677a,#103b48)', accent: '#06f6d4' },
-      } as Record<string, { gradient: string; accent: string }>)[key] ?? { gradient: 'linear-gradient(135deg,#596b3d,#2c3a24)', accent: '#d4a843' };
+        hot: { gradient: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#fed7aa', image: 'https://images.pexels.com/photos/15851583/pexels-photo-15851583/free-photo-of-cappuccino-in-cup-on-table.jpeg?auto=compress&cs=tinysrgb&w=400' },
+        cold: { gradient: 'linear-gradient(135deg,#0ea5e9,#2563eb)', accent: '#bae6fd', image: 'https://images.pexels.com/photos/22873679/pexels-photo-22873679.jpeg?auto=compress&cs=tinysrgb&w=400' },
+        dessert: { gradient: 'linear-gradient(135deg,#ec4899,#be185d)', accent: '#fbcfe8', image: 'https://images.pexels.com/photos/3625372/pexels-photo-3625372.jpeg?auto=compress&cs=tinysrgb&w=400' },
+        shisha: { gradient: 'linear-gradient(135deg,#eab308,#a16207)', accent: '#fef08a', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-awRUXZgCUaSRd5LnoYKBVKhnE9Z36Z.png' },
+        sandwiches: { gradient: 'linear-gradient(135deg,#f97316,#dc2626)', accent: '#fed7aa', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Sandwich%20PNG-ALWYL1Ttrugnx7fPbCpNyn3mu4AcTN.jpg' },
+        yogurt: { gradient: 'linear-gradient(135deg,#d946ef,#be185d)', accent: '#f9a8d4', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/14988611256100392-VcfSLudrmQ98JzCToSTWUmeOANUBaV.jpg' },
+        padel: { gradient: 'linear-gradient(135deg,#06b6d4,#0891b2)', accent: '#06f6d4', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-0a6RZwqQSo38UmBftouiTQtlg9C8Rc.png' },
+      } as Record<string, { gradient: string; accent: string; image: string }>)[key] ?? { gradient: 'linear-gradient(135deg,#596b3d,#2c3a24)', accent: '#d4a843', image: null };
       const theme = (section.theme || {}) as Record<string, string>;
-      return { id: section.slug, label: section.name, desc: section.subtitle, gradient: theme.gradient || fallback.gradient, accent: theme.accent || fallback.accent, image: theme.image || null };
-    });
+       return { id: section.slug, label: section.name, desc: section.subtitle, gradient: theme.gradient || fallback.gradient, accent: theme.accent || fallback.accent, image: section.slug === 'cold-drinks' ? coldDrinksUploadedImage : section.slug === 'desserts' ? dessertsCategoryImage : theme.image || fallback.image };
+    })
+    : undefined;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const offlineStatus = useOfflineSupport();
   useEffect(() => {
@@ -170,19 +173,6 @@ export default function App() {
       <Suspense fallback={<div style={{ minHeight: '100svh', background: '#0d1509' }} />}>
         <AdminApp />
       </Suspense>
-    );
-  }
-
-  if (publishedStatus !== 'api' || contentStatus !== 'api') {
-    const error = publishedStatus === 'error' || contentStatus === 'error';
-    return (
-      <div style={{ minHeight: '100svh', background: '#0d1509', color: '#f5f2e8', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, textAlign: 'center' }}>
-        <div>
-          <div style={{ width: 42, height: 42, border: '3px solid rgba(212,168,67,0.22)', borderTopColor: '#D4A843', borderRadius: '50%', margin: '0 auto 18px', animation: 'oliva-content-spin 0.9s linear infinite' }} />
-          <p style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>{error ? 'Live menu is temporarily unavailable' : 'Loading the live menu…'}</p>
-          <p style={{ margin: '8px 0 0', color: 'rgba(245,242,232,0.55)', fontSize: 13 }}>Only the latest published admin content is shown. Retrying automatically.</p>
-        </div>
-      </div>
     );
   }
 
@@ -256,7 +246,7 @@ export default function App() {
           title={data.title}
           subtitle={data.subtitle}
           theme={data.theme}
-           subcategories={publishedSubcategories[route.category] ?? []}
+          subcategories={publishedSubcategories[route.category] ?? subcategoryData[route.category]}
           navigate={() => navigateHome()}
           onBack={navigateMenu}
           heroImages={HERO_IMAGES[route.category]}
@@ -344,7 +334,7 @@ export default function App() {
            <p style={{
           margin: '0 0 14px', fontSize: 'clamp(11px,1.2vw,13px)', fontWeight: 800,
           letterSpacing: '0.32em', textTransform: 'uppercase', color: '#8aa86a',
-        }}>{settings.hero_eyebrow ?? ''}</p>
+        }}>{settings.hero_eyebrow || 'Padel · Café · Shisha'}</p>
 
         {/* Headline */}
         <h1 style={{
@@ -356,7 +346,7 @@ export default function App() {
           lineHeight: 1.05,
           maxWidth: 680,
         }}>
-          {(settings.hero_headline_line1 ?? '')}<br />{(settings.hero_headline_line2 ?? '')}
+          {(settings.hero_headline_line1 || 'From Court')}<br />{settings.hero_headline_line2 || 'to Cup'}
         </h1>
 
         {/* Subline */}
@@ -367,7 +357,7 @@ export default function App() {
           maxWidth: 460,
           lineHeight: 1.65,
         }}>
-           {settings.hero_subline ?? ''}
+           {settings.hero_subline || "A grove, two courts, and the slowest afternoon you've ever had."}
         </p>
 
         {/* CTA group */}
@@ -385,7 +375,7 @@ export default function App() {
               boxShadow: '0 4px 28px rgba(89,107,61,0.45)',
             }}
           >
-             {settings.hero_menu_button ?? ''}
+             {settings.hero_menu_button || 'View Menu'}
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>

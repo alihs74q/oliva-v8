@@ -1,6 +1,14 @@
 import OlivaLogo from './OlivaLogo'
 import { useContent } from '../contexts/ContentContext'
 
+// ── Footer contact info — edit these values ────────────────────────────────
+const FOOTER_INFO = {
+  description: 'From court to cup — your one-stop destination for padel, great coffee, and good times.',
+  hours: 'Open daily · 9am – 11pm',
+  instagram: 'https://instagram.com/oliva.padel',
+  copyright: `© ${new Date().getFullYear()} Oliva. From Court to Cup.`,
+}
+
 type Route = 'home' | 'menu'
 
 export default function SiteFooter({
@@ -12,13 +20,13 @@ export default function SiteFooter({
 }) {
   const { settings } = useContent()
   const info = {
-    description: settings.footer_description ?? '',
-    hours: settings.opening_hours ?? '',
-    instagram: settings.instagram_url ?? '',
-    address: settings.contact_address ?? '',
-    phone: settings.contact_phone ?? '',
-    email: settings.contact_email ?? '',
-    copyright: settings.footer_copyright ?? '',
+    ...FOOTER_INFO,
+    description: settings.footer_description || FOOTER_INFO.description,
+    hours: settings.opening_hours || FOOTER_INFO.hours,
+    instagram: settings.instagram_url || FOOTER_INFO.instagram,
+    address: settings.contact_address || 'Beirut, Lebanon',
+    phone: settings.contact_phone || '+961 71 234 567',
+    email: settings.contact_email || 'hello@oliva.com',
   }
   const linkBase =
     'text-stone-400 hover:text-white transition-colors duration-200 text-left'
@@ -120,7 +128,7 @@ export default function SiteFooter({
         </div>
 
         <div className="pt-8 border-t border-stone-800 text-center text-xs text-stone-500">
-          {info.copyright}
+          {FOOTER_INFO.copyright}
         </div>
       </div>
     </footer>
