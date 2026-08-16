@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { imageAssets } from './utils/imageAssets';
-import OurPlace from './components/OurPlace';
 import hotDrinksMenuBoard from './assets/hot-drinks/hot-drinks-menu-board.jpeg';
 import greenTeaPromo from './assets/hot-drinks/green-tea-promo.jpeg';
 import classicTeaPromo from './assets/hot-drinks/classic-tea-promo.jpeg';
@@ -13,20 +12,25 @@ import milkshakesMenu from './assets/cold-drinks/milkshakes-menu.jpeg';
 import coldDrinksUploadedImage from '@assets/image_1786233684800.png';
 import dessertsCategoryImage from '@assets/image_1786233947691.png';
 import Navbar from './components/Navbar';
-import Menu, { type MenuCard } from './components/Menu';
-import PromoGallery from './components/PromoGallery';
-import GalleryPage from './components/GalleryPage';
 import SiteFooter from './components/SiteFooter';
-import ColdDrinksPage from './components/ColdDrinksPage';
-import DessertsPage from './components/DessertsPage';
-import HotDrinksPage from './components/HotDrinksPage';
-import ShishaPage from './components/ShishaPage';
-import CategoryListPage, { type CategoryTheme } from './components/CategoryListPage';
-import PadelPage from './components/PadelPage';
+import type { MenuCard } from './components/Menu';
+import type { CategoryTheme } from './components/CategoryListPage';
 import { useOfflineSupport } from './hooks/useOfflineSupport';
 import { ContentProvider } from './contexts/ContentContext';
 import { useContent } from './contexts/ContentContext';
 
+// Keep the homepage in the first bundle. Menu and detail pages are loaded only
+// when a visitor opens them, which keeps the first paint fast on mobile data.
+const Menu = lazy(() => import('./components/Menu'));
+const PromoGallery = lazy(() => import('./components/PromoGallery'));
+const GalleryPage = lazy(() => import('./components/GalleryPage'));
+const OurPlace = lazy(() => import('./components/OurPlace'));
+const ColdDrinksPage = lazy(() => import('./components/ColdDrinksPage'));
+const DessertsPage = lazy(() => import('./components/DessertsPage'));
+const HotDrinksPage = lazy(() => import('./components/HotDrinksPage'));
+const ShishaPage = lazy(() => import('./components/ShishaPage'));
+const CategoryListPage = lazy(() => import('./components/CategoryListPage'));
+const PadelPage = lazy(() => import('./components/PadelPage'));
 const AdminApp = lazy(() => import('./admin/AdminApp'));
 
 
@@ -175,7 +179,7 @@ export default function App() {
   // Dedicated menu page
   if (route.name === 'menu') {
     return (
-      <>
+      <Suspense fallback={null}>
         <div style={{ background: '#faf9f4' }}>
           <main className="relative z-10">
             {promoGallery.some((slide) => slide.visible && slide.imageUrl) && (
@@ -197,7 +201,7 @@ export default function App() {
           </main>
           <SiteFooter navigate={navigateMenu} onBook={navigateMenu} />
         </div>
-      </>
+      </Suspense>
     );
   }
 
@@ -208,7 +212,7 @@ export default function App() {
     // Padel gets its own custom page
     if (route.category === 'padel') {
       return (
-        <>
+        <Suspense fallback={null}>
           <PadelPage
             theme={data.theme}
             onBack={navigateMenu}
@@ -216,7 +220,7 @@ export default function App() {
                title: drink.name, description: drink.description, price: drink.price, lbpPrice: drink.lbpPrice, image: drink.image,
              }))}
           />
-        </>
+        </Suspense>
       );
     }
 
@@ -237,7 +241,7 @@ export default function App() {
     };
 
     return (
-      <>
+      <Suspense fallback={null}>
         <CategoryListPage
           title={data.title}
           subtitle={data.subtitle}
@@ -247,7 +251,7 @@ export default function App() {
           onBack={navigateMenu}
           heroImages={HERO_IMAGES[route.category]}
         />
-      </>
+      </Suspense>
     );
   }
 
@@ -255,33 +259,33 @@ export default function App() {
   if (route.name === 'detail') {
     const back = () => navigateList(route.category);
     if (route.category === 'cold-drinks') {
-      return <ColdDrinksPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} />;
+      return <Suspense fallback={null}><ColdDrinksPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} /></Suspense>;
     }
     if (route.category === 'hot-drinks') {
-      return <HotDrinksPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} />;
+      return <Suspense fallback={null}><HotDrinksPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} /></Suspense>;
     }
     if (route.category === 'desserts') {
-      return <DessertsPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} />;
+      return <Suspense fallback={null}><DessertsPage navigate={navigateMenu} onBack={back} initialSlug={route.slug} /></Suspense>;
     }
     if (route.category === 'shisha') {
-      return <ShishaPage navigate={navigateMenu} onBack={back} />;
+      return <Suspense fallback={null}><ShishaPage navigate={navigateMenu} onBack={back} /></Suspense>;
     }
   }
 
   // Our Place cinematic page
   if (route.name === 'our-place') {
-    return <OurPlace onBack={navigateHome} />;
+    return <Suspense fallback={null}><OurPlace onBack={navigateHome} /></Suspense>;
   }
 
   // Dedicated gallery page
   if (route.name === 'gallery') {
     return (
-      <>
+      <Suspense fallback={null}>
         <div className="relative min-h-screen" style={{ background: '#0A0F06' }}>
           <Navbar navigate={(to) => { if (to === 'home') navigateHome(); else navigateMenu(); }} route={'home'} />
           <GalleryPage onViewMenu={navigateMenu} onBack={navigateHome} />
         </div>
-      </>
+      </Suspense>
     );
   }
 

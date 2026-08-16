@@ -14,10 +14,44 @@
     <meta name="twitter:description" content="Oliva Padel Café — food, drinks, shisha, and padel bookings. From court to cup." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700;800&family=Caveat+Brush&family=Permanent+Marker&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700;800&family=Caveat+Brush&family=Permanent+Marker&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700;800&family=Caveat+Brush&family=Permanent+Marker&display=swap" /></noscript>
+    <style>
+      html, body { margin: 0; min-height: 100%; background: #1a2612; }
+      #instant-shell {
+        min-height: 100svh; box-sizing: border-box; display: flex;
+        flex-direction: column; align-items: center; justify-content: center;
+        padding: 32px 20px; background: linear-gradient(160deg,#1a2612,#2c3a24 60%,#1e2e16);
+        color: #f5f2e8; font-family: Arial, sans-serif; text-align: center;
+      }
+      #instant-shell img { width: 190px; height: 190px; object-fit: contain; border-radius: 50%; opacity: .9; }
+      #instant-shell .eyebrow { margin: 34px 0 22px; color: #91aa67; font-size: 12px; font-weight: 800; letter-spacing: .32em; }
+      #instant-shell h1 { max-width: 620px; margin: 0; font-size: clamp(48px, 7vw, 86px); line-height: .98; letter-spacing: -.05em; }
+      #instant-shell p { max-width: 450px; margin: 26px 0 0; color: rgba(245,242,232,.68); font-size: 17px; line-height: 1.5; }
+      #instant-shell .buttons { display: flex; gap: 14px; margin-top: 52px; }
+      #instant-shell .button { border: 1px solid rgba(212,168,67,.45); border-radius: 999px; padding: 16px 34px; color: #f5f2e8; font-size: 14px; font-weight: 800; letter-spacing: .04em; }
+      #instant-shell .primary { background: #596b3d; border-color: transparent; }
+      @media (max-width: 560px) {
+        #instant-shell img { width: 150px; height: 150px; }
+        #instant-shell .buttons { flex-direction: column; width: min(260px, 100%); }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="instant-shell" aria-hidden="true">
+        <img src="/oliva-logo.png" alt="" width="190" height="190" fetchpriority="high" />
+        <div class="eyebrow">PADEL · CAFÉ · SHISHA</div>
+        <h1>From Court<br />to Cup</h1>
+        <p>A grove, two courts, and the slowest afternoon you've ever had.</p>
+        <div class="buttons"><span class="button primary">View Menu ↓</span><span class="button">Our Place →</span></div>
+      </div>
+    </div>
+    <script>
+      if (location.hash && location.hash !== '#/' && location.hash !== '#') {
+        document.getElementById('instant-shell')?.remove();
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
