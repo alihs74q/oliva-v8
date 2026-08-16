@@ -169,16 +169,17 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
-  // Warm the next screen after the current one paints. This keeps the first
-  // bundle small while making taps feel instant because the route chunk is
-  // already in the browser cache.
+  // Warm the next screen immediately after the current one paints. Waiting
+  // for browser idle time made a fast tap race the route download.
   useEffect(() => {
-    const schedule = window.requestIdleCallback
-      ? (callback: () => void) => window.requestIdleCallback(callback, { timeout: 700 })
-      : (callback: () => void) => window.setTimeout(callback, 120);
-    const cancel = schedule(() => {
+    const timer = window.setTimeout(() => {
       if (route.name === 'home' || route.name === 'menu') {
         void Promise.all([loadCategoryListPage(), loadPadelPage()]);
+        [hotDrinksMenuBoard, icedLatteMenu].forEach((src) => {
+          const image = new Image();
+          image.decoding = 'async';
+          image.src = src;
+        });
       } else if (route.name === 'list') {
         if (route.category === 'padel') {
           void Promise.all([loadMenu(), loadCategoryListPage()]);
@@ -192,10 +193,8 @@ export default function App() {
           void loadShishaPage();
         }
       }
-    });
-    return () => {
-      if (typeof cancel === 'number') window.clearTimeout(cancel);
-    };
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [route.name, route.name === 'list' ? route.category : '']);
 
   const navigateHome = () => { window.location.hash = '/'; };

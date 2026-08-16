@@ -5,7 +5,7 @@
 //  When hashed images change, they get new URLs
 //  and the old cache is automatically cleaned up.
 // ─────────────────────────────────────────────
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const APP_CACHE    = `oliva-app-${CACHE_VERSION}`;
 const IMAGE_CACHE  = `oliva-images-${CACHE_VERSION}`;
 const CACHE_PREFIX = 'oliva-';
@@ -187,6 +187,9 @@ self.addEventListener('fetch', (event) => {
   const isImage =
     url.hostname === 'hebbkx1anhila5yf.public.blob.vercel-storage.com' ||
     /\.(jpe?g|png|gif|webp|svg)(\?.*)?$/i.test(url.pathname);
+  const isStaticAsset =
+    url.origin === self.location.origin &&
+    /\.(js|css|woff2?|ttf|otf)(\?.*)?$/i.test(url.pathname);
 
   if (isImage) {
     // CacheFirst — serve instantly from cache; fetch & store if missing
@@ -207,6 +210,19 @@ self.addEventListener('fetch', (event) => {
         // no-cors fallback
         const response = await fetch(request, { mode: 'no-cors' });
         cache.put(request, response.clone());
+        return response;
+      })
+    );
+  } else if (isStaticAsset) {
+    // Hashed Vite bundles are immutable. Serve them from the SW cache so
+    // already-visited routes open without another network round trip.
+    event.respondWith(
+      caches.open(APP_CACHE).then(async (cache) => {
+        const cached = await cache.match(request);
+        if (cached) return cached;
+
+        const response = await fetch(request);
+        if (response.ok) cache.put(request, response.clone());
         return response;
       })
     );
