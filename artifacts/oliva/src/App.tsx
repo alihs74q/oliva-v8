@@ -21,16 +21,27 @@ import { useContent } from './contexts/ContentContext';
 
 // Keep the homepage in the first bundle. Menu and detail pages are loaded only
 // when a visitor opens them, which keeps the first paint fast on mobile data.
-const Menu = lazy(() => import('./components/Menu'));
-const PromoGallery = lazy(() => import('./components/PromoGallery'));
-const GalleryPage = lazy(() => import('./components/GalleryPage'));
-const OurPlace = lazy(() => import('./components/OurPlace'));
-const ColdDrinksPage = lazy(() => import('./components/ColdDrinksPage'));
-const DessertsPage = lazy(() => import('./components/DessertsPage'));
-const HotDrinksPage = lazy(() => import('./components/HotDrinksPage'));
-const ShishaPage = lazy(() => import('./components/ShishaPage'));
-const CategoryListPage = lazy(() => import('./components/CategoryListPage'));
-const PadelPage = lazy(() => import('./components/PadelPage'));
+const loadMenu = () => import('./components/Menu');
+const loadPromoGallery = () => import('./components/PromoGallery');
+const loadGalleryPage = () => import('./components/GalleryPage');
+const loadOurPlace = () => import('./components/OurPlace');
+const loadColdDrinksPage = () => import('./components/ColdDrinksPage');
+const loadDessertsPage = () => import('./components/DessertsPage');
+const loadHotDrinksPage = () => import('./components/HotDrinksPage');
+const loadShishaPage = () => import('./components/ShishaPage');
+const loadCategoryListPage = () => import('./components/CategoryListPage');
+const loadPadelPage = () => import('./components/PadelPage');
+
+const Menu = lazy(loadMenu);
+const PromoGallery = lazy(loadPromoGallery);
+const GalleryPage = lazy(loadGalleryPage);
+const OurPlace = lazy(loadOurPlace);
+const ColdDrinksPage = lazy(loadColdDrinksPage);
+const DessertsPage = lazy(loadDessertsPage);
+const HotDrinksPage = lazy(loadHotDrinksPage);
+const ShishaPage = lazy(loadShishaPage);
+const CategoryListPage = lazy(loadCategoryListPage);
+const PadelPage = lazy(loadPadelPage);
 const AdminApp = lazy(() => import('./admin/AdminApp'));
 
 
@@ -158,10 +169,42 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
+  // Warm the next screen after the current one paints. This keeps the first
+  // bundle small while making taps feel instant because the route chunk is
+  // already in the browser cache.
+  useEffect(() => {
+    const schedule = window.requestIdleCallback
+      ? (callback: () => void) => window.requestIdleCallback(callback, { timeout: 700 })
+      : (callback: () => void) => window.setTimeout(callback, 120);
+    const cancel = schedule(() => {
+      if (route.name === 'home' || route.name === 'menu') {
+        void Promise.all([loadCategoryListPage(), loadPadelPage()]);
+      } else if (route.name === 'list') {
+        if (route.category === 'padel') {
+          void Promise.all([loadMenu(), loadCategoryListPage()]);
+        } else if (route.category === 'cold-drinks') {
+          void loadColdDrinksPage();
+        } else if (route.category === 'hot-drinks') {
+          void loadHotDrinksPage();
+        } else if (route.category === 'desserts') {
+          void loadDessertsPage();
+        } else if (route.category === 'shisha') {
+          void loadShishaPage();
+        }
+      }
+    });
+    return () => {
+      if (typeof cancel === 'number') window.clearTimeout(cancel);
+    };
+  }, [route.name, route.name === 'list' ? route.category : '']);
+
   const navigateHome = () => { window.location.hash = '/'; };
-  const navigateMenu = () => { window.location.hash = '/menu'; };
-  const navigateOurPlace = () => { window.location.hash = '/our-place'; };
-  const navigateList = (cat: Category) => { window.location.hash = CATEGORY_DATA[cat].listHash; };
+  const navigateMenu = () => { void loadMenu(); window.location.hash = '/menu'; };
+  const navigateOurPlace = () => { void loadOurPlace(); window.location.hash = '/our-place'; };
+  const navigateList = (cat: Category) => {
+    void (cat === 'padel' ? loadPadelPage() : loadCategoryListPage());
+    window.location.hash = CATEGORY_DATA[cat].listHash;
+  };
 
   const scrollToMenu = () => {
     document.getElementById('menu-section')?.scrollIntoView({ behavior: 'smooth' });
