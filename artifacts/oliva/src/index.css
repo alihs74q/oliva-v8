@@ -91,6 +91,7 @@
 .padel-booking-sheet__close { display: grid; width: 28px; height: 28px; place-items: center; border: 0; background: transparent; color: rgba(245,242,232,.52); cursor: pointer; font-size: 25px; line-height: 1; }
 .padel-booking-sheet__close:hover { color: var(--padel-cream); }
 @keyframes padel-drift { 0%, 100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(20px,-16px,0) scale(1.08); } }
+@keyframes oliva-content-spin { to { transform: rotate(360deg); } }
 @keyframes padel-ball-float { 0%, 100% { transform: translateY(0) rotate(-8deg); } 50% { transform: translateY(-12px) rotate(8deg); } }
 @media (max-width: 760px) {
   .padel-nav { padding: 16px 18px; }
