@@ -15,6 +15,7 @@ function normalizeForMatching(text: string): string {
 
 // Build a map of available images from the public folder
 let imageManifest: Record<string, string> | null = null;
+const FALLBACK_PRODUCT_IMAGE = "/oliva-logo.png";
 
 function buildImageManifest(): Record<string, string> {
   if (imageManifest) return imageManifest;
@@ -61,12 +62,9 @@ export function getImageForProduct(
     return manifest[normalized];
   }
 
-  // Dev warning only if product has no image
-  if (!currentImage && process.env.NODE_ENV === "development") {
-    console.warn(`[v0] No image found for product: "${productName}"`);
-  }
-
-  return currentImage;
+  // Every menu card needs a stable visual even when a product does not have a
+  // dedicated source image yet (for example, water and court bookings).
+  return currentImage ?? FALLBACK_PRODUCT_IMAGE;
 }
 
 /**

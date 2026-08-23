@@ -284,6 +284,9 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const snapshot: ContentSnapshot = await res.json();
+        if (!Array.isArray(snapshot.sections) || snapshot.sections.length === 0) {
+          throw new Error('Published content response has no sections');
+        }
         if (cancelled || requestId !== latestRequest) return;
         const derived = snapshotToContextValue(snapshot);
         writeCachedSnapshot(snapshot);
