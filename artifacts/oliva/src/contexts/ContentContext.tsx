@@ -21,6 +21,7 @@ import { getDefaultProductExtras } from '../data/menuExtras';
 import { API_BASE } from '../config/api';
 import { subscribeToPublishedContentChanges } from '../utils/contentRefresh';
 import { readNutrition, visibleExtraCalories } from '../admin/nutritionStorage';
+import { getImageForProduct } from '../utils/imageMatching';
 
 // ─── Context shape ─────────────────────────────────────────────────────────────
 export interface ContentContextValue {
@@ -69,7 +70,7 @@ function apiProductToColdDrink(p: ApiProduct, themeColor: string): ColdDrink {
     description: p.description,
     price: p.priceUsd,
     lbpPrice: formatLbp(p.priceLbp),
-    image: p.imageUrl ?? null,
+    image: p.imageUrl ?? getImageForProduct(p.name) ?? null,
     themeColor: darkenHex(themeColor),
     flavors: p.flavors ?? [],
   };
@@ -82,7 +83,7 @@ function apiProductToHotDrink(p: ApiProduct, themeColor: string): HotDrink {
     description: p.description,
     price: p.priceUsd,
     lbpPrice: formatLbp(p.priceLbp),
-    image: p.imageUrl ?? null,
+    image: p.imageUrl ?? getImageForProduct(p.name) ?? null,
     themeColor: darkenHex(themeColor),
     flavors: p.flavors ?? [],
   };
@@ -95,7 +96,7 @@ function apiProductToDessert(p: ApiProduct, themeColor: string): Dessert {
     description: p.description,
     price: p.priceUsd,
     lbpPrice: formatLbp(p.priceLbp),
-    image: p.imageUrl ?? null,
+    image: p.imageUrl ?? getImageForProduct(p.name) ?? null,
     themeColor: darkenHex(themeColor),
     flavors: p.flavors ?? [],
   };
@@ -110,7 +111,7 @@ function apiProductToShishaItem(p: ApiProduct, themeColor: string): ShishaItem {
     price: p.priceUsd,
     lbpPrice: formatLbp(p.priceLbp),
     priceColor: '#D4A843',
-    image: p.imageUrl ?? null,
+    image: p.imageUrl ?? getImageForProduct(p.name) ?? null,
     themeColor: darkenHex(themeColor),
     flavors: p.flavors ?? [],
   };
@@ -137,7 +138,7 @@ function apiToSubcategoryData(sections: ApiSection[]): Record<string, Subcategor
             description: p.description,
             price: p.priceUsd,
             lbpPrice: formatLbp(p.priceLbp),
-            image: p.imageUrl ?? null,
+            image: p.imageUrl ?? getImageForProduct(p.name) ?? null,
             recipe: p.recipe || undefined,
             calories: p.calories ?? getStaticCalories(p.name),
             extraCalories: visibleExtraCalories(p.extraCalories),
@@ -209,6 +210,16 @@ function snapshotToContextValue(snapshot: ContentSnapshot): Omit<ContentContextV
 const API_URL = `${API_BASE}/public/content`;
 const CONTENT_CACHE_KEY = 'oliva:published-content:v1';
 
+const BUNDLED_SECTIONS: ApiSection[] = [
+  { id: 0, slug: 'cold-drinks', name: 'Cold Drinks', subtitle: 'Chilled & Refreshing', sortOrder: 1, hidden: false, deleted: false, theme: {}, subcategories: [] },
+  { id: 0, slug: 'hot-drinks', name: 'Hot Drinks', subtitle: 'Warm & Aromatic', sortOrder: 2, hidden: false, deleted: false, theme: {}, subcategories: [] },
+  { id: 0, slug: 'desserts', name: 'Desserts', subtitle: 'Sweet Indulgence', sortOrder: 3, hidden: false, deleted: false, theme: {}, subcategories: [] },
+  { id: 0, slug: 'shisha', name: 'Shisha', subtitle: 'Premium Flavors', sortOrder: 4, hidden: false, deleted: false, theme: {}, subcategories: [] },
+  { id: 0, slug: 'sandwiches', name: 'Sandwiches', subtitle: 'Fresh & Delicious', sortOrder: 5, hidden: false, deleted: false, theme: {}, subcategories: [] },
+  { id: 0, slug: 'yogurt', name: 'Yogurt', subtitle: 'Creamy & Refreshing', sortOrder: 6, hidden: false, deleted: false, theme: {}, subcategories: [] },
+  { id: 0, slug: 'padel', name: 'Padel', subtitle: 'Court & Coaching', sortOrder: 7, hidden: false, deleted: false, theme: {}, subcategories: [] },
+];
+
 const BUNDLED_CONTEXT_VALUE: Omit<ContentContextValue, 'status'> = {
   coldDrinks,
   hotDrinks,
@@ -216,7 +227,7 @@ const BUNDLED_CONTEXT_VALUE: Omit<ContentContextValue, 'status'> = {
   shishaItems,
   subcategories: subcategoryData,
   settings: {},
-  sections: [],
+  sections: BUNDLED_SECTIONS,
   promoGallery: [],
 };
 
@@ -245,7 +256,7 @@ function writeCachedSnapshot(snapshot: ContentSnapshot): void {
 
 function getInitialContextValue(): ContentContextValue {
   const cachedSnapshot = readCachedSnapshot();
-  if (cachedSnapshot) {
+  if (cachedSnapshot && cachedSnapshot.sections.length > 0) {
     return { ...snapshotToContextValue(cachedSnapshot), status: 'api' };
   }
   return { ...BUNDLED_CONTEXT_VALUE, status: 'api' };
