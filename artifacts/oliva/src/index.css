@@ -167,6 +167,95 @@
 html { scroll-behavior:smooth; }
 body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4; color:#292524; overflow-x:hidden; }
 
+/* Homepage footer action rail — explicit styles keep the approved glass design
+   visible even when utility generation changes between preview and production. */
+.footer-action-section {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #101b0c, #1b2a14 58%, #111c0d) !important;
+}
+.footer-action-rail {
+  position: relative;
+  width: min(100%, 960px);
+  margin: 0 auto;
+  padding: 8px !important;
+  overflow: hidden;
+  border: 1px solid rgba(224, 213, 166, .28) !important;
+  border-radius: 24px !important;
+  background: rgba(255, 255, 255, .08) !important;
+  box-shadow: 0 28px 80px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.1) !important;
+  backdrop-filter: blur(20px);
+}
+.footer-action-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+.footer-action-button,
+.footer-action-button--court {
+  min-height: 105px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 17px !important;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+.footer-action-button:not(.footer-action-button--court) {
+  color: rgba(231,229,228,.88) !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+}
+.footer-action-button:not(.footer-action-button--court):hover,
+.footer-action-button:not(.footer-action-button--court):focus-visible {
+  color: #fffdf5 !important;
+  border-color: rgba(235,218,144,.45) !important;
+  background: rgba(255,255,255,.08) !important;
+  transform: translateY(-2px);
+}
+.footer-action-button--court {
+  color: #10150c !important;
+  border: 1px solid rgba(245,231,158,.55) !important;
+  background: linear-gradient(135deg, #dccb7e, #b9a655) !important;
+  box-shadow: 0 8px 24px rgba(201,179,91,.22) !important;
+}
+.footer-action-button--court:hover,
+.footer-action-button--court:focus-visible {
+  border-color: #f5e79e !important;
+  background: linear-gradient(135deg, #f1df8c, #cbb55f) !important;
+  transform: translateY(-2px);
+}
+.footer-action-button--whatsapp {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  border: 1px solid rgba(101,216,130,.55) !important;
+  border-radius: 17px !important;
+  color: #eaffee !important;
+  background: rgba(31,122,67,.48) !important;
+  box-shadow: 0 8px 24px rgba(37,211,102,.14), inset 0 1px 0 rgba(255,255,255,.1) !important;
+  backdrop-filter: blur(20px);
+}
+.footer-action-button--whatsapp:hover,
+.footer-action-button--whatsapp:focus-visible {
+  border-color: #91f6aa !important;
+  background: rgba(34,138,76,.72) !important;
+  transform: translateY(-2px);
+}
+@media (max-width: 640px) {
+  .footer-action-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .footer-action-button,
+  .footer-action-button--court { min-height: 82px !important; }
+}
+
 
 @keyframes float-y {
   0%,100% { transform:translateY(0); }

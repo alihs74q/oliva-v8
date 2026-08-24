@@ -10,18 +10,18 @@ export default function SiteFooter({
   onBook: () => void
 }) {
   const secondaryActionClass =
-    'group flex min-h-[82px] flex-col items-center justify-center gap-2 rounded-[17px] border border-transparent text-xs font-bold tracking-[0.04em] text-stone-200/80 transition duration-200 hover:-translate-y-0.5 hover:border-[#ebda90]/45 hover:bg-white/[0.08] hover:text-[#fffdf5] focus-visible:-translate-y-0.5 focus-visible:border-[#ebda90]/45 focus-visible:bg-white/[0.08] focus-visible:text-[#fffdf5] focus-visible:outline-none sm:min-h-[105px]'
+    'footer-action-button group flex min-h-[82px] flex-col items-center justify-center gap-2 rounded-[17px] border border-transparent text-xs font-bold tracking-[0.04em] text-stone-200/80 transition duration-200 hover:-translate-y-0.5 hover:border-[#ebda90]/45 hover:bg-white/[0.08] hover:text-[#fffdf5] focus-visible:-translate-y-0.5 focus-visible:border-[#ebda90]/45 focus-visible:bg-white/[0.08] focus-visible:text-[#fffdf5] focus-visible:outline-none sm:min-h-[105px]'
 
   return (
-    <footer className="relative overflow-hidden bg-[linear-gradient(145deg,#101b0c,#1b2a14_58%,#111c0d)] px-4 py-14 sm:px-6 sm:py-20">
+    <footer className="footer-action-section relative overflow-hidden bg-[linear-gradient(145deg,#101b0c,#1b2a14_58%,#111c0d)] px-4 py-14 sm:px-6 sm:py-20">
       <div aria-hidden="true" className="pointer-events-none absolute -left-[10%] top-[-60%] h-[220%] w-[70%] bg-[radial-gradient(ellipse,rgba(121,146,73,0.18),transparent_58%)]" />
       <div aria-hidden="true" className="pointer-events-none absolute -right-[15%] bottom-[-80%] h-[220%] w-[60%] bg-[radial-gradient(ellipse,rgba(212,168,67,0.1),transparent_58%)]" />
 
       <nav
         aria-label="Footer navigation"
-        className="relative mx-auto max-w-5xl overflow-hidden rounded-[24px] border border-[#e0d5a6]/25 bg-white/[0.07] p-2 shadow-[0_28px_80px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl"
+        className="footer-action-rail relative mx-auto max-w-5xl overflow-hidden rounded-[24px] border border-[#e0d5a6]/25 bg-white/[0.07] p-2 shadow-[0_28px_80px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl"
       >
-        <div className="relative grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="footer-action-grid relative grid grid-cols-2 gap-2 sm:grid-cols-4">
           <button type="button" onClick={() => navigate('home')} className={secondaryActionClass}>
             <FooterHomeIcon />
             <span>Home</span>
@@ -33,7 +33,7 @@ export default function SiteFooter({
           <button
             type="button"
             onClick={onBook}
-            className="group flex min-h-[82px] flex-col items-center justify-center gap-2 rounded-[17px] border border-[#f5e79e]/30 bg-gradient-to-br from-[#dccb7e] to-[#b9a655] text-xs font-bold tracking-[0.04em] text-[#10150c] shadow-[0_8px_24px_rgba(201,179,91,0.18)] transition duration-200 hover:-translate-y-0.5 hover:border-[#f5e79e] hover:from-[#f1df8c] hover:to-[#cbb55f] focus-visible:-translate-y-0.5 focus-visible:border-[#f5e79e] focus-visible:outline-none sm:min-h-[105px]"
+            className="footer-action-button footer-action-button--court group flex min-h-[82px] flex-col items-center justify-center gap-2 rounded-[17px] border border-[#f5e79e]/30 bg-gradient-to-br from-[#dccb7e] to-[#b9a655] text-xs font-bold tracking-[0.04em] text-[#10150c] shadow-[0_8px_24px_rgba(201,179,91,0.18)] transition duration-200 hover:-translate-y-0.5 hover:border-[#f5e79e] hover:from-[#f1df8c] hover:to-[#cbb55f] focus-visible:-translate-y-0.5 focus-visible:border-[#f5e79e] focus-visible:outline-none sm:min-h-[105px]"
           >
             <FooterCourtIcon />
             <span>Book a Court</span>
@@ -55,7 +55,7 @@ export default function SiteFooter({
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Call Oliva on WhatsApp"
-          className="relative mt-2 flex min-h-[58px] items-center justify-center gap-2 rounded-[17px] border border-[#65d882]/40 bg-[#1f7a43]/45 px-5 text-xs font-bold uppercase tracking-[0.08em] text-[#eaffee] shadow-[0_8px_24px_rgba(37,211,102,0.14),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:border-[#91f6aa] hover:bg-[#228a4c]/70 focus-visible:-translate-y-0.5 focus-visible:border-[#91f6aa] focus-visible:bg-[#228a4c]/70 focus-visible:outline-none"
+          className="footer-action-button--whatsapp relative mt-2 flex min-h-[58px] items-center justify-center gap-2 rounded-[17px] border border-[#65d882]/40 bg-[#1f7a43]/45 px-5 text-xs font-bold uppercase tracking-[0.08em] text-[#eaffee] shadow-[0_8px_24px_rgba(37,211,102,0.14),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:border-[#91f6aa] hover:bg-[#228a4c]/70 focus-visible:-translate-y-0.5 focus-visible:border-[#91f6aa] focus-visible:bg-[#228a4c]/70 focus-visible:outline-none"
         >
           <span className="flex h-7 w-7 items-center justify-center rounded-full border border-[#91f6aa]/45 bg-[#65d882]/15 text-[#91f6aa]">
             <FooterWhatsAppIcon />
