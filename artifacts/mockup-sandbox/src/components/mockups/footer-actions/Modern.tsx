@@ -42,7 +42,6 @@ export function Modern() {
             </a>
           </div>
         </nav>
-        <p className="footer-actions-modern__hint" aria-live="polite">{feedback}</p>
       </div>
     </section>
   );
