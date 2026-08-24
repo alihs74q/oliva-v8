@@ -1,4 +1,4 @@
-import { PADEL_WHATSAPP_URL } from '../data/padelBooking'
+import { PADEL_WHATSAPP_CONTACT_URL } from '../data/padelBooking'
 
 type Route = 'home' | 'menu'
 
@@ -51,7 +51,7 @@ export default function SiteFooter({
         </div>
 
         <a
-          href={PADEL_WHATSAPP_URL}
+          href={PADEL_WHATSAPP_CONTACT_URL}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Call Oliva on WhatsApp"
