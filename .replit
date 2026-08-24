@@ -47,3 +47,6 @@ channel = "stable-25_05"
 defaultBucketID = "replit-objstore-4087897e-5e61-4c36-b386-b808f7ccdc88"
 
 [userenv]
+
+[userenv.shared]
+ALLOWED_ORIGINS = "https://www.olivacafe.fun,https://olivacafe.fun"
