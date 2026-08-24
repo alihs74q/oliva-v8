@@ -4,10 +4,9 @@ import CurrencyToggle from './CurrencyToggle'
 import { useCurrency } from '../hooks/useCurrency'
 import { imageAssets } from '../utils/imageAssets'
 import { useState } from 'react'
+import { PADEL_WHATSAPP_URL } from '../data/padelBooking'
 
 const EASE = [0.25, 0.46, 0.45, 0.94] as const
-const PADEL_WHATSAPP_NUMBER = '96170647506'
-const PADEL_WHATSAPP_MESSAGE = 'mar7aba shou hiye law2at lfine 2e7joz fiha lyom'
 
 interface PadelItem {
   title: string
@@ -73,7 +72,7 @@ export default function PadelPage({
   function openPadelWhatsApp() {
     if (!selectedItem) return
     window.open(
-      `https://wa.me/${PADEL_WHATSAPP_NUMBER}?text=${encodeURIComponent(PADEL_WHATSAPP_MESSAGE)}`,
+      PADEL_WHATSAPP_URL,
       '_blank',
       'noopener,noreferrer',
     )

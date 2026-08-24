@@ -1,5 +1,6 @@
 import OlivaLogo from './OlivaLogo'
 import { useContent } from '../contexts/ContentContext'
+import { PADEL_WHATSAPP_URL } from '../data/padelBooking'
 
 // ── Footer contact info — edit these values ────────────────────────────────
 const FOOTER_INFO = {
@@ -88,6 +89,16 @@ export default function SiteFooter({
                   <span>Instagram</span>
                 </a>
               </div>
+              <a
+                href={PADEL_WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Call Oliva on WhatsApp"
+                className="relative mt-2 flex min-h-[54px] items-center justify-center gap-2 rounded-[17px] border border-[#65d882]/35 bg-[#1f7a43] px-5 text-xs font-bold uppercase tracking-[0.08em] text-white shadow-[0_8px_22px_rgba(37,211,102,0.14)] transition duration-200 hover:-translate-y-0.5 hover:border-[#91f6aa] hover:bg-[#228a4c] focus-visible:-translate-y-0.5 focus-visible:border-[#91f6aa] focus-visible:bg-[#228a4c] focus-visible:outline-none"
+              >
+                <FooterWhatsAppIcon />
+                <span>Call on WhatsApp</span>
+              </a>
             </nav>
           </div>
 
@@ -146,6 +157,14 @@ function FooterInstagramIcon() {
       <rect x="3" y="3" width="18" height="18" rx="5" />
       <circle cx="12" cy="12" r="4" />
       <path d="M17.5 6.5h.01" />
+    </svg>
+  )
+}
+
+function FooterWhatsAppIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.52 3.48A11.86 11.86 0 0 0 12.08 0C5.55 0 .24 5.31.24 11.84c0 2.08.54 4.11 1.57 5.91L.14 23.86l6.25-1.64a11.85 11.85 0 0 0 5.68 1.45h.01c6.53 0 11.84-5.31 11.84-11.84a11.8 11.8 0 0 0-3.4-8.35Zm-8.44 18.18h-.01a9.83 9.83 0 0 1-5.01-1.38l-.36-.21-3.71.97.99-3.62-.23-.37a9.84 9.84 0 0 1-1.5-5.24c0-5.45 4.43-9.88 9.89-9.88 2.64 0 5.12 1.03 6.98 2.89a9.8 9.8 0 0 1 2.9 6.99c0 5.45-4.44 9.88-9.89 9.88Zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.39-1.47-.88-.79-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.87 1.21 3.07c.15.2 2.09 3.19 5.07 4.48.71.31 1.26.49 1.69.63.72.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z" />
     </svg>
   )
 }
