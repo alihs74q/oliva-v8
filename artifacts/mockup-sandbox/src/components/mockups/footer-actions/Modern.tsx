@@ -24,8 +24,8 @@ export function Modern() {
     <section className="footer-actions-demo">
       <div className="footer-actions-demo__panel">
         <p className="footer-actions-demo__eyebrow">Modern footer rail</p>
-        <h1 className="footer-actions-demo__title">A clearer final step</h1>
-        <p className="footer-actions-demo__copy">One cohesive navigation rail keeps Home, Menu, court booking, and Instagram easy to spot on desktop and mobile.</p>
+        <h1 className="footer-actions-demo__title">contact us </h1>
+        <p className="footer-actions-demo__copy font-bold text-center">QUICK BUTTONS</p>
         <nav className="footer-actions-modern__shell" aria-label="Footer navigation">
           <div className="footer-actions-modern__grid">
             <button className="footer-actions-modern__action" type="button" onClick={() => setFeedback('Home opens the Oliva homepage.')}>
