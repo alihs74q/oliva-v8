@@ -55,9 +55,11 @@ export default function SiteFooter({
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Call Oliva on WhatsApp"
-          className="relative mt-2 flex min-h-[54px] items-center justify-center gap-2 rounded-[17px] border border-[#65d882]/35 bg-[#1f7a43] px-5 text-xs font-bold uppercase tracking-[0.08em] text-white shadow-[0_8px_22px_rgba(37,211,102,0.14)] transition duration-200 hover:-translate-y-0.5 hover:border-[#91f6aa] hover:bg-[#228a4c] focus-visible:-translate-y-0.5 focus-visible:border-[#91f6aa] focus-visible:bg-[#228a4c] focus-visible:outline-none"
+          className="relative mt-2 flex min-h-[58px] items-center justify-center gap-2 rounded-[17px] border border-[#65d882]/40 bg-[#1f7a43]/45 px-5 text-xs font-bold uppercase tracking-[0.08em] text-[#eaffee] shadow-[0_8px_24px_rgba(37,211,102,0.14),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:border-[#91f6aa] hover:bg-[#228a4c]/70 focus-visible:-translate-y-0.5 focus-visible:border-[#91f6aa] focus-visible:bg-[#228a4c]/70 focus-visible:outline-none"
         >
-          <FooterWhatsAppIcon />
+          <span className="flex h-7 w-7 items-center justify-center rounded-full border border-[#91f6aa]/45 bg-[#65d882]/15 text-[#91f6aa]">
+            <FooterWhatsAppIcon />
+          </span>
           <span>Call on WhatsApp</span>
         </a>
       </nav>
