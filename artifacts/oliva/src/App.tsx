@@ -231,7 +231,7 @@ export default function App() {
             )}
             <Menu
               onBack={navigateHome}
-              cards={sections.length > 0 ? menuCards : undefined}
+              cards={menuCards.length > 0 ? menuCards : undefined}
               onHotDrinks={() => navigateList('hot-drinks')}
               onColdDrinks={() => navigateList('cold-drinks')}
               onDesserts={() => navigateList('desserts')}
@@ -468,7 +468,7 @@ export default function App() {
           </div>
         )}
          <Menu
-           cards={menuCards}
+          cards={menuCards.length > 0 ? menuCards : undefined}
           onHotDrinks={() => navigateList('hot-drinks')}
           onColdDrinks={() => navigateList('cold-drinks')}
           onDesserts={() => navigateList('desserts')}

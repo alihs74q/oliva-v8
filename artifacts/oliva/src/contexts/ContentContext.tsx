@@ -208,7 +208,9 @@ function snapshotToContextValue(snapshot: ContentSnapshot): Omit<ContentContextV
 
 // ─── Provider ──────────────────────────────────────────────────────────────────
 const API_URL = `${API_BASE}/public/content`;
-const CONTENT_CACHE_KEY = 'oliva:published-content:v1';
+// v2 intentionally discards snapshots cached before the menu validity check.
+// A previous incomplete release must never blank the first menu render.
+const CONTENT_CACHE_KEY = 'oliva:published-content:v2';
 
 const BUNDLED_SECTIONS: ApiSection[] = [
   { id: 0, slug: 'cold-drinks', name: 'Cold Drinks', subtitle: 'Chilled & Refreshing', sortOrder: 1, hidden: false, deleted: false, theme: {}, subcategories: [] },
@@ -231,13 +233,28 @@ const BUNDLED_CONTEXT_VALUE: Omit<ContentContextValue, 'status'> = {
   promoGallery: [],
 };
 
+function hasVisibleCafeMenuSection(snapshot: ContentSnapshot): boolean {
+  return Array.isArray(snapshot.sections) && snapshot.sections.some((section) =>
+    section &&
+    typeof section.slug === 'string' &&
+    section.slug !== 'padel' &&
+    !section.hidden &&
+    !section.deleted,
+  );
+}
+
 function readCachedSnapshot(): ContentSnapshot | null {
   if (typeof window === 'undefined') return null;
   try {
     const raw = window.localStorage.getItem(CONTENT_CACHE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as ContentSnapshot;
-    if (!Array.isArray(parsed.sections) || !parsed.settings || typeof parsed.settings !== 'object') {
+    if (
+      !Array.isArray(parsed.sections) ||
+      !parsed.settings ||
+      typeof parsed.settings !== 'object' ||
+      !hasVisibleCafeMenuSection(parsed)
+    ) {
       return null;
     }
     return parsed;
@@ -284,8 +301,8 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const snapshot: ContentSnapshot = await res.json();
-        if (!Array.isArray(snapshot.sections) || snapshot.sections.length === 0) {
-          throw new Error('Published content response has no sections');
+        if (!hasVisibleCafeMenuSection(snapshot)) {
+          throw new Error('Published content response has no visible cafe menu sections');
         }
         if (cancelled || requestId !== latestRequest) return;
         const derived = snapshotToContextValue(snapshot);

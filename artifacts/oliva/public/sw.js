@@ -1,11 +1,11 @@
 // ─────────────────────────────────────────────
-//  OLIVA SERVICE WORKER  –  v5
+//  OLIVA SERVICE WORKER  –  v7
 //  Bump this version string every deployment so
 //  users always get the latest design/code.
 //  When hashed images change, they get new URLs
 //  and the old cache is automatically cleaned up.
 // ─────────────────────────────────────────────
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 const APP_CACHE    = `oliva-app-${CACHE_VERSION}`;
 const IMAGE_CACHE  = `oliva-images-${CACHE_VERSION}`;
 const CACHE_PREFIX = 'oliva-';

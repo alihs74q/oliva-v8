@@ -4,8 +4,8 @@
  * Prevents refresh loops by tracking if we've already refreshed
  */
 
-const SW_CHECKED_FLAG = 'oliva-sw-checked-v5';
-const SW_REFRESHED_FLAG = 'oliva-sw-refreshed-v5';
+const SW_CHECKED_FLAG = 'oliva-sw-checked-v7';
+const SW_REFRESHED_FLAG = 'oliva-sw-refreshed-v7';
 
 export async function initServiceWorkerUpdater() {
   // Only run in browser
