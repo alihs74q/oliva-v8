@@ -41,20 +41,27 @@ export function readNutrition(
   fallback: NutritionValues = { proteinGrams: 0, carbsGrams: 0, fatGrams: 0 },
 ): NutritionValues {
   const extras = product.extraCalories ?? {};
+  const hasStoredMacroValues = Object.values(STORAGE_KEYS).some((key) => hasValue(extras[key]));
+  const hasLegacyAllZeroMacros = !hasStoredMacroValues
+    && finiteNonNegative(product.proteinGrams) === 0
+    && finiteNonNegative(product.carbsGrams) === 0
+    && finiteNonNegative(product.fatGrams) === 0
+    && (fallback.proteinGrams > 0 || fallback.carbsGrams > 0 || fallback.fatGrams > 0);
+
   return {
     proteinGrams: roundedMacro(
       encodedValue(extras[STORAGE_KEYS.proteinGrams])
-      ?? finiteNonNegative(product.proteinGrams)
+      ?? (hasLegacyAllZeroMacros ? undefined : finiteNonNegative(product.proteinGrams))
       ?? fallback.proteinGrams,
     ),
     carbsGrams: roundedMacro(
       encodedValue(extras[STORAGE_KEYS.carbsGrams])
-      ?? finiteNonNegative(product.carbsGrams)
+      ?? (hasLegacyAllZeroMacros ? undefined : finiteNonNegative(product.carbsGrams))
       ?? fallback.carbsGrams,
     ),
     fatGrams: roundedMacro(
       encodedValue(extras[STORAGE_KEYS.fatGrams])
-      ?? finiteNonNegative(product.fatGrams)
+      ?? (hasLegacyAllZeroMacros ? undefined : finiteNonNegative(product.fatGrams))
       ?? fallback.fatGrams,
     ),
   };
