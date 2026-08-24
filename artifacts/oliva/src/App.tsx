@@ -237,7 +237,13 @@ export default function App() {
               onPadel={() => navigateList('padel')}
             />
           </main>
-          <SiteFooter navigate={navigateMenu} onBook={navigateMenu} />
+          <SiteFooter
+            navigate={(destination) => {
+              if (destination === 'home') navigateHome();
+              else navigateMenu();
+            }}
+            onBook={() => navigateList('padel')}
+          />
         </div>
       </Suspense>
     );
