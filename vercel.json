@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://oliva1.replit.app/api/:path*"
+      "destination": "https://oliva-v-8.replit.app/api/:path*"
     }
   ]
 }
