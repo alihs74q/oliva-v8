@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react'
-import heroCafeUrl from '../../public/oliva-hero-cafe.jpeg?url'
-import heroCourtUrl from '../../public/oliva-hero-court.jpeg?url'
-import heroLogoUrl from '../../public/oliva-hero-logo.png?url'
+import heroCafeUrl from '../assets/homepage-hero/cafe-background.jpeg'
+import heroCourtUrl from '../assets/homepage-hero/padel-court.jpeg'
 import { PADEL_WHATSAPP_CONTACT_URL } from '../data/padelBooking'
 
 type HomepageHeroProps = {
@@ -31,12 +30,6 @@ export default function HomepageHero({ onMenu, onBook }: HomepageHeroProps) {
           className="oliva-home-hero__court"
           src={heroCourtUrl}
           alt="Oliva padel court"
-          draggable={false}
-        />
-        <img
-          className="oliva-home-hero__logo"
-          src={heroLogoUrl}
-          alt="Oliva"
           draggable={false}
         />
       </div>
