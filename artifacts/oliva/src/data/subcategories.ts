@@ -39,6 +39,7 @@ export const coldDrinksSubcategories: Subcategory[] = [
       { name: 'Mango', description: 'Ripe mango blended to perfection.', price: '$3.50', lbpPrice: '300,000 LBP', image: '/mango-smoothie.png', recipe: 'Mango · Fruit juice · Ice' },
       { name: 'Strawberry', description: 'Fresh strawberries, creamy and sweet.', price: '$3.50', lbpPrice: '300,000 LBP', image: '/strawberry-smoothie.png', recipe: 'Strawberries · Fruit juice · Ice' },
       { name: 'Passion Fruit', description: 'Tropical passion fruit, tangy and refreshing.', price: '$3.50', lbpPrice: '300,000 LBP', image: '/passion-fruit-smoothie.png', recipe: 'Passion fruit · Fruit juice · Ice' },
+      { name: 'Tropical Smoothies', description: 'A tropical blend of mango, pineapple, and passion fruit.', price: '$3.50', lbpPrice: '300,000 LBP', priceLbp: 300000, image: null, recipe: 'Mango · Pineapple · Passion fruit · Orange juice · Ice', calories: 220, proteinGrams: 2, carbsGrams: 52, fatGrams: 1 },
     ],
   },
   {
@@ -102,6 +103,8 @@ export const coldDrinksSubcategories: Subcategory[] = [
       { name: 'Kiwi Mojito', description: 'Kiwi and mint mocktail, crisp and cool.', price: '$3', lbpPrice: '300,000 LBP', image: '/images/products/KiwiMojito.jpg', recipe: 'Kiwi · Fresh lime · Fresh mint · Sparkling water · Ice' },
       { name: 'Passion Crush', description: 'Passion fruit crushed with ice.', price: '$3.50', lbpPrice: '300,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-hyEo5w3I433kY7LhTcXbkS1hPiqjYB.png', recipe: 'Passion fruit · Fresh lime · Sparkling water · Crushed ice' },
       { name: 'Summer Mix', description: 'A refreshing blend of summer fruits.', price: '$3.50', lbpPrice: '300,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-o91obZpOJCEwAWMd9n8anVLDsKXoqt.png', recipe: 'Mixed summer fruits · Citrus juice · Sparkling water · Ice' },
+      { name: 'Mojito (Kiwi-Watermelon)', description: 'A crisp kiwi and watermelon mojito.', price: '$3.50', lbpPrice: '300,000 LBP', priceLbp: 300000, image: null, recipe: 'Kiwi · Watermelon · Lime · Mint · Sugar · Sparkling water', calories: 130, proteinGrams: 0, carbsGrams: 33, fatGrams: 0 },
+      { name: 'Oliva Passion Crush', description: 'Oliva passion fruit crush with lemon and ice.', price: '$4.50', lbpPrice: '400,000 LBP', priceLbp: 400000, image: null, recipe: 'Passion fruit · Lemon · Sugar syrup · Water · Ice', calories: 170, proteinGrams: 0, carbsGrams: 42, fatGrams: 0 },
     ],
   },
   {
@@ -114,6 +117,7 @@ export const coldDrinksSubcategories: Subcategory[] = [
     drinks: [
       { name: 'Water 0.5 L', description: 'Still mineral water.', price: '$0.50', lbpPrice: '50,000 LBP', image: null, recipe: 'Still mineral water' },
       { name: 'Sparkling Water', description: 'Chilled sparkling water.', price: '$1', lbpPrice: '100,000 LBP', image: null, recipe: 'Carbonated mineral water' },
+      { name: 'Orange Juice', description: 'Fresh orange juice.', price: '$3', lbpPrice: '250,000 LBP', priceLbp: 250000, image: null, recipe: 'Orange', calories: 112, proteinGrams: 1.7, carbsGrams: 25.8, fatGrams: 0.5 },
     ],
   },
 ]
@@ -131,6 +135,9 @@ export const hotDrinksSubcategories: Subcategory[] = [
       { name: 'Hot Chocolate', description: 'Rich dark cocoa with steamed milk and a touch of cream.', price: '$3', lbpPrice: '300,000 LBP', image: '/images/products/HotChocolate.jpg', recipe: 'Chocolate or cocoa · Steamed whole milk · Light milk foam · Whipped cream' },
       { name: 'Cappuccino', description: 'Velvety microfoam over a double espresso shot.', price: '$3', lbpPrice: '300,000 LBP', image: '/images/products/Cappuccino.jpg', recipe: 'Double espresso · Steamed whole milk · Thick velvety microfoam · Equal parts espresso, milk and foam' },
       { name: 'Espresso', description: 'Rich single-origin shot, bold and intensely aromatic.', price: '$1.50', lbpPrice: '100,000 LBP', image: '/images/products/Espresso.jpg', recipe: 'Freshly ground coffee · Hot water under pressure · Concentrated coffee shot · Natural crema' },
+      { name: 'Americano', description: 'Espresso lengthened with hot water.', price: '$3.50', lbpPrice: '300,000 LBP', priceLbp: 300000, image: null, recipe: 'Espresso · Water', calories: 5, proteinGrams: 0.3, carbsGrams: 0.7, fatGrams: 0.1 },
+      { name: 'Turkish Coffee - Rakweh', description: 'Traditional sweet Turkish coffee prepared in a rakweh.', price: '$3.50', lbpPrice: '300,000 LBP', priceLbp: 300000, image: null, recipe: 'Turkish coffee · Sugar · Water', calories: 18, proteinGrams: 0, carbsGrams: 4, fatGrams: 0 },
+      { name: 'Turkish Coffee', description: 'Traditional unsweetened Turkish coffee.', price: '$1.50', lbpPrice: '150,000 LBP', priceLbp: 150000, image: null, recipe: 'Turkish coffee · Water', calories: 2, proteinGrams: 0.1, carbsGrams: 0.1, fatGrams: 0 },
       { name: 'Tea', description: 'Fresh garden tea leaves steeped to perfection.', price: '$1.50', lbpPrice: '100,000 LBP', image: '/images/products/GreenTea.jpg', recipe: 'Black tea leaves · Hot water · Sugar optional · Lemon optional' },
       { name: 'Ginger and Honey', description: 'Warm ginger with soothing honey.', price: '$1.50', lbpPrice: '150,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Ginger_Honey_Hot_Drinks_202608020518-XRwfUalMAU0ev7pbUXncryeSSrGzHe.jpeg', recipe: 'Fresh ginger · Hot water · Honey · Lemon optional' },
       { name: 'Chamomile', description: 'Relaxing chamomile flowers steeped to calm.', price: '$1.50', lbpPrice: '150,000 LBP', image: '/images/products/Chamomile.jpg', recipe: 'Chamomile flowers · Hot water · Honey optional' },
@@ -151,6 +158,8 @@ export const dessertsSubcategories: Subcategory[] = [
       { name: 'Lazy Cake', description: 'No-bake indulgence with layers of flavor.', price: '$3.50', lbpPrice: '300,000 LBP', image: '/images/products/LazyCake.jpg', recipe: 'Chocolate biscuits · Dark chocolate · Butter · Condensed milk · Cocoa powder · Crushed nuts · Chilled overnight' },
       { name: 'Fondant', description: 'Warm chocolate center with delicious fondant.', price: '$5', lbpPrice: '450,000 LBP', image: '/images/products/Fondant.jpg', recipe: 'Dark chocolate · Butter · Eggs · Sugar · Flour · Baked 10 min at 200°C · Served warm with ice cream' },
       { name: 'Chocolate Cake', description: 'Rich dark chocolate cake perfection.', price: '$5', lbpPrice: '450,000 LBP', image: '/images/products/ChocolateCake.jpg', recipe: 'Dark chocolate sponge · Chocolate ganache layers · Belgian dark chocolate frosting · Cocoa dusting' },
+      { name: 'Lemon Cake', description: 'Bright lemon cake with a soft buttery crumb.', price: '$4.50', lbpPrice: '400,000 LBP', priceLbp: 400000, image: null, recipe: 'Flour · Sugar · Butter · Milk · Eggs · Lemon', calories: 360, proteinGrams: 5, carbsGrams: 53, fatGrams: 15 },
+      { name: 'Honey Cake', description: 'Soft layered cake sweetened with honey.', price: '$5', lbpPrice: '450,000 LBP', priceLbp: 450000, image: null, recipe: 'Flour · Honey · Sugar · Butter · Eggs · Milk', calories: 390, proteinGrams: 5, carbsGrams: 55, fatGrams: 17 },
     ],
   },
   {
@@ -163,6 +172,8 @@ export const dessertsSubcategories: Subcategory[] = [
     drinks: [
       { name: 'Oreo Cheesecake', description: 'Creamy cheesecake with Oreo cookie crumble.', price: '$5', lbpPrice: '450,000 LBP', image: '/images/products/OreoCheesecake.jpg', recipe: 'Oreo cookie crust · Cream cheese · Heavy cream · Sugar · Vanilla · Crushed Oreo topping · Chilled 4 hours' },
       { name: 'Raspberry Cheesecake', description: 'Smooth cheesecake with fresh raspberry sauce.', price: '$5', lbpPrice: '450,000 LBP', image: '/images/products/RaspberryCheesecake.jpg', recipe: 'Graham cracker crust · Cream cheese · Heavy cream · Sugar · Fresh raspberry coulis · Raspberry garnish' },
+      { name: 'Cheese Cake (Oreo-Raspberry)', description: 'Creamy cheesecake with Oreo and raspberry.', price: '$4', lbpPrice: '350,000 LBP', priceLbp: 350000, image: null, recipe: 'Cream cheese · Oreo · Raspberry · Sugar · Eggs · Biscuit', calories: 450, proteinGrams: 7, carbsGrams: 43, fatGrams: 29 },
+      { name: 'San Sebastian Cheesecake', description: 'Caramelized Basque-style cheesecake.', price: '$5', lbpPrice: '450,000 LBP', priceLbp: 450000, image: null, recipe: 'Cream cheese · Cream · Eggs · Sugar · Flour', calories: 430, proteinGrams: 8, carbsGrams: 30, fatGrams: 31 },
     ],
   },
   {
@@ -176,6 +187,9 @@ export const dessertsSubcategories: Subcategory[] = [
       { name: 'Vanilla Mushroom Muffin', description: 'Soft vanilla muffin with mushroom top.', price: '$4', lbpPrice: '350,000 LBP', image: '/images/products/VanillaMushroomMuffin.jpg', recipe: 'Flour · Sugar · Butter · Eggs · Vanilla extract · Milk · Baking powder · Vanilla buttercream topping' },
       { name: 'Chocolate Mushroom Muffin', description: 'Rich chocolate muffin with mushroom crown.', price: '$4', lbpPrice: '350,000 LBP', image: '/images/products/ChocolateMushroomMuffin.jpg', recipe: 'Flour · Cocoa powder · Sugar · Butter · Eggs · Milk · Dark chocolate chips · Chocolate ganache crown' },
       { name: 'Croissant', description: 'Flaky French-style croissant, baked fresh daily.', price: '$3', lbpPrice: '250,000 LBP', image: '/images/products/Croissant.jpg', recipe: 'Butter dough · Layered & folded 3 times · Proofed overnight · Egg-washed · Baked fresh every morning' },
+      { name: 'Croissant Chocolate', description: 'Flaky butter croissant filled with chocolate.', price: '$3.50', lbpPrice: '300,000 LBP', priceLbp: 300000, image: null, recipe: 'Flour · Butter · Chocolate · Milk · Sugar · Eggs', calories: 358, proteinGrams: 6.3, carbsGrams: 42, fatGrams: 19.4 },
+      { name: 'Croissant Zaatar', description: 'Flaky croissant filled with zaatar and olive oil.', price: '$3', lbpPrice: '250,000 LBP', priceLbp: 250000, image: null, recipe: 'Flour · Butter · Zaatar · Olive oil · Cheese', calories: 300, proteinGrams: 7, carbsGrams: 35, fatGrams: 15 },
+      { name: 'Croissant Cheese', description: 'Flaky butter croissant filled with cheese.', price: '$3.50', lbpPrice: '300,000 LBP', priceLbp: 300000, image: null, recipe: 'Flour · Butter · Cheese · Milk · Eggs', calories: 330, proteinGrams: 10, carbsGrams: 32, fatGrams: 18 },
     ],
   },
 ]
@@ -192,6 +206,7 @@ export const shishaSubcategories: Subcategory[] = [
       { name: 'Double Apple', description: 'Classic dual apple flavor, sweet and smooth.', price: '$5.50', lbpPrice: '500,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-bg1AzOAvlolWak7jtcGIl6Qo9Cw0yt.png' },
       { name: 'Grape', description: 'Rich and sweet grape flavor.', price: '$5.50', lbpPrice: '500,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-OYNiRMMx8o2JWCECpBiReXveE9b4YZ.png' },
       { name: 'Tanbak', description: 'Strong traditional tobacco flavor.', price: '$7.50', lbpPrice: '700,000 LBP', image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-jyDHjO5Wx9Z8uD1yNioltR69Ne0J5w.png' },
+      { name: 'Love', description: 'Premium Love shisha flavor.', price: '$5.50', lbpPrice: '500,000 LBP', priceLbp: 500000, image: null, recipe: 'Shisha tobacco · Love flavor · Water', calories: 0, proteinGrams: 0, carbsGrams: 0, fatGrams: 0 },
     ],
   },
 ]
@@ -209,6 +224,16 @@ export const sandwichesSubcategories: Subcategory[] = [
       { name: 'Hallum Pesto', description: 'Grilled halloumi with fresh pesto.', price: '$6', lbpPrice: '550,000 LBP', image: '/images/products/HallumPesto.jpg', recipe: 'Grilled halloumi · Homemade basil pesto · Sun-dried tomatoes · Rocket leaves · Toasted sourdough' },
       { name: 'Chicken Cesar Salad', description: 'Grilled chicken with Caesar dressing.', price: '$6.50', lbpPrice: '600,000 LBP', image: '/images/products/ChickenCaesarSalad.jpg', recipe: 'Grilled chicken breast · Romaine lettuce · Parmesan shavings · Caesar dressing · Croutons · Ciabatta wrap' },
       { name: 'Nuts', description: 'Mixed nuts and seeds blend.', price: '$2.50', lbpPrice: '250,000 LBP', image: null, recipe: 'Roasted almonds · Cashews · Walnuts · Pistachios · Sunflower seeds · Light sea salt seasoning' },
+    ],
+  },
+  {
+    id: 'salads',
+    name: 'Salads',
+    description: 'Fresh and satisfying salads',
+    themeColor: '#15803d',
+    accentColor: '#86efac',
+    drinks: [
+      { name: 'Crab Salad', description: 'Fresh crab salad with yogurt, lemon, and herbs.', price: '$9.50', lbpPrice: '850,000 LBP', priceLbp: 850000, image: null, recipe: 'Crab · Lettuce · Celery · Onion · Yogurt · Mayonnaise · Lemon · Parsley', calories: 120, proteinGrams: 13, carbsGrams: 10, fatGrams: 3 },
     ],
   },
 ]

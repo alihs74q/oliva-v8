@@ -31,10 +31,11 @@ The admin CMS uses a two-layer content model:
 
 ## Direct content imports
 - Writing directly to the draft CMS tables is not enough for the public menu: create a new current release snapshot afterward and clear the API's in-memory published-release cache (a service restart does this during maintenance).
+- Catalog additions intended to be permanent website products must also be mirrored in the bundled menu/nutrition fallback while retaining matching editable CMS rows.
 
-**Why:** The public API deliberately reads the immutable release snapshot rather than live draft rows, so a successful database import can otherwise remain invisible to customers.
+**Why:** The public API deliberately reads the immutable release snapshot rather than live draft rows, and static deployments may render bundled fallback content when the API is unavailable. A database-only import can therefore remain invisible.
 
-**How to apply:** Use the authenticated admin API for normal edits. If a controlled bulk import writes draft tables directly, publish one complete snapshot after the import before verifying the public site.
+**How to apply:** Use the authenticated admin API for normal edits. If a controlled bulk import writes draft tables directly, mirror permanent products in bundled data, publish one complete snapshot, and test both API-backed and API-blocked rendering.
 
 ## Exchange rate
 - Stored in cms_site_settings (exchange_rate_lbp_per_usd, exchange_rate_rounding)
