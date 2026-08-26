@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { imageAssets } from './utils/imageAssets';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import hotDrinksMenuBoard from './assets/hot-drinks/hot-drinks-menu-board.jpeg';
 import greenTeaPromo from './assets/hot-drinks/green-tea-promo.jpeg';
 import classicTeaPromo from './assets/hot-drinks/classic-tea-promo.jpeg';
@@ -13,6 +12,7 @@ import coldDrinksUploadedImage from '@assets/image_1786233684800.png';
 import dessertsCategoryImage from '@assets/image_1786233947691.png';
 import Navbar from './components/Navbar';
 import SiteFooter from './components/SiteFooter';
+import HomepageHero from './components/HomepageHero';
 import Menu, { type MenuCard } from './components/Menu';
 import CategoryListPage, { type CategoryTheme } from './components/CategoryListPage';
 import { useOfflineSupport } from './hooks/useOfflineSupport';
@@ -195,14 +195,9 @@ export default function App() {
 
   const navigateHome = () => { window.location.hash = '/'; };
   const navigateMenu = () => { window.location.hash = '/menu'; };
-  const navigateOurPlace = () => { void loadOurPlace(); window.location.hash = '/our-place'; };
   const navigateList = (cat: Category) => {
     if (cat === 'padel') void loadPadelPage();
     window.location.hash = CATEGORY_DATA[cat].listHash;
-  };
-
-  const scrollToMenu = () => {
-    document.getElementById('menu-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   // Admin area — lazy-loaded, isolated from public site
@@ -333,134 +328,13 @@ export default function App() {
     );
   }
 
-  // Home: compact hero that smooth-scrolls into the menu below
+  // Home: reference-matched mobile-first hero followed by the existing homepage content
   return (
     <div style={{ background: '#faf9f4' }}>
-      {/* ── Mini Hero ── */}
-      <section style={{
-        minHeight: '100svh',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        background: 'linear-gradient(160deg,#1a2612,#2c3a24 60%,#1e2e16)',
-        textAlign: 'center',
-        padding: '60px 24px 80px',
-        position: 'relative', overflow: 'hidden',
-      }}>
-        {/* Olive branch — decorative */}
-        <img
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled%20design%20%285%29-I4zRXdmd0oQXqKRice8ElgxI5yEMtN.png"
-          alt=""
-          style={{
-            position: 'absolute', right: '-4%', top: '4%',
-            width: 'clamp(180px,28vw,380px)', height: 'auto',
-            opacity: 0.22, pointerEvents: 'none',
-          }}
-        />
-
-        {/* Logo circle */}
-        <div style={{
-          width: 'clamp(130px,16vw,190px)',
-          height: 'clamp(130px,16vw,190px)',
-          borderRadius: '50%',
-          background: '#596B3D',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          marginBottom: 36, flexShrink: 0,
-          boxShadow: '0 8px 40px rgba(89,107,61,0.45)',
-        }}>
-          <img
-            src={imageAssets.logo}
-            alt="Oliva"
-            style={{ width: '78%', height: '78%', objectFit: 'contain', display: 'block' }}
-          />
-        </div>
-
-        {/* Eyebrow */}
-           <p style={{
-          margin: '0 0 14px', fontSize: 'clamp(11px,1.2vw,13px)', fontWeight: 800,
-          letterSpacing: '0.32em', textTransform: 'uppercase', color: '#8aa86a',
-        }}>{settings.hero_eyebrow || 'Padel · Café · Shisha'}</p>
-
-        {/* Headline */}
-        <h1 style={{
-          margin: '0 0 14px',
-          fontSize: 'clamp(44px,7vw,84px)',
-          fontWeight: 900,
-          color: '#f5f2e8',
-          letterSpacing: '-0.03em',
-          lineHeight: 1.05,
-          maxWidth: 680,
-        }}>
-          {(settings.hero_headline_line1 || 'From Court')}<br />{settings.hero_headline_line2 || 'to Cup'}
-        </h1>
-
-        {/* Subline */}
-        <p style={{
-          margin: '0 0 52px',
-          fontSize: 'clamp(15px,1.5vw,18px)',
-          color: 'rgba(245,242,232,0.6)',
-          maxWidth: 460,
-          lineHeight: 1.65,
-        }}>
-           {settings.hero_subline || "A grove, two courts, and the slowest afternoon you've ever had."}
-        </p>
-
-        {/* CTA group */}
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', justifyContent: 'center' }}>
-          {/* View Menu */}
-          <button
-            onClick={scrollToMenu}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 10,
-              background: '#596B3D', color: '#f5f2e8',
-              border: 'none', borderRadius: 999,
-              padding: '16px 38px',
-              fontSize: 15, fontWeight: 800, letterSpacing: '0.06em',
-              cursor: 'pointer',
-              boxShadow: '0 4px 28px rgba(89,107,61,0.45)',
-            }}
-          >
-             {settings.hero_menu_button || 'View Menu'}
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 5v14M5 12l7 7 7-7" />
-            </svg>
-          </button>
-
-          {/* Our Place */}
-          <OurPlaceButton onClick={navigateOurPlace} />
-        </div>
-        <button
-          onClick={() => navigateList('padel')}
-          style={{
-             marginTop: 20,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 10,
-             padding: '13px 25px 13px 22px',
-            borderRadius: 999,
-             border: '1px solid rgba(212,168,67,0.72)',
-             background: 'linear-gradient(135deg, #596B3D, #71864d)',
-             boxShadow: '0 8px 26px rgba(89,107,61,0.4), 0 0 0 4px rgba(212,168,67,0.08), inset 0 1px 0 rgba(255,255,255,0.2)',
-             color: '#f5f2e8',
-            fontSize: 13,
-            fontWeight: 800,
-             letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            cursor: 'pointer',
-            backdropFilter: 'blur(12px)',
-          }}
-        >
-           <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 23, height: 23, borderRadius: '50%', background: 'rgba(245,242,232,0.16)', border: '1px solid rgba(245,242,232,0.28)' }}>
-             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f5f2e8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-               <circle cx="8" cy="16" r="4" />
-               <path d="M11 13L18 6M15 4l5 5M18 6l2 2" />
-             </svg>
-           </span>
-           Let's Play Padel
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
-        </button>
-      </section>
+      <HomepageHero
+        onMenu={navigateMenu}
+        onBook={() => navigateList('padel')}
+      />
 
       {/* ── Menu ── */}
       <div id="menu-section">
@@ -492,56 +366,3 @@ export default function App() {
   );
 }
 
-// ─── "Our Place" hero button ─────────────────────────────
-function OurPlaceButton({ onClick }: { onClick: () => void }) {
-  const ref = useRef<HTMLButtonElement>(null);
-  return (
-    <button
-      ref={ref}
-      onClick={onClick}
-      onMouseEnter={() => {
-        if (!ref.current) return;
-        ref.current.style.borderColor = 'rgba(212,168,67,0.8)';
-        ref.current.style.boxShadow = '0 0 22px rgba(212,168,67,0.28), 0 4px 20px rgba(0,0,0,0.35)';
-        ref.current.style.transform = 'translateY(-2px)';
-        const arrow = ref.current.querySelector('.op-arrow') as HTMLElement | null;
-        if (arrow) arrow.style.transform = 'translateX(4px)';
-      }}
-      onMouseLeave={() => {
-        if (!ref.current) return;
-        ref.current.style.borderColor = 'rgba(212,168,67,0.35)';
-        ref.current.style.boxShadow = '0 4px 20px rgba(0,0,0,0.25)';
-        ref.current.style.transform = 'translateY(0)';
-        const arrow = ref.current.querySelector('.op-arrow') as HTMLElement | null;
-        if (arrow) arrow.style.transform = 'translateX(0)';
-      }}
-      style={{
-        display: 'inline-flex', alignItems: 'center', gap: 10,
-        background: 'rgba(26,38,18,0.55)',
-        border: '1px solid rgba(212,168,67,0.35)',
-        borderRadius: 999,
-        padding: '15px 36px',
-        color: 'rgba(245,242,232,0.88)',
-        fontSize: 15, fontWeight: 800, letterSpacing: '0.06em',
-        cursor: 'pointer',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-        transition: 'border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease',
-      }}
-    >
-      Our Place
-      <span
-        className="op-arrow"
-        style={{
-          display: 'inline-flex',
-          transition: 'transform 0.25s ease',
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12h14M12 5l7 7-7 7" />
-        </svg>
-      </span>
-    </button>
-  );
-}
