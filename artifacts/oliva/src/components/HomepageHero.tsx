@@ -5,7 +5,6 @@ import heroCafeLowUrl from '../assets/homepage-hero/lqip/cafe-background.jpeg'
 import heroCourtUrl from '../assets/homepage-hero/padel-court-new.png'
 import heroCourtLowUrl from '../assets/homepage-hero/lqip/padel-court-new.jpeg'
 import { PADEL_WHATSAPP_CONTACT_URL } from '../data/padelBooking'
-import { imageAssets } from '../utils/imageAssets'
 import OptimizedImage from './OptimizedImage'
 
 type HomepageHeroProps = {
@@ -53,12 +52,6 @@ export default function HomepageHero({ onMenu, onBook }: HomepageHeroProps) {
           alt="Oliva padel court"
           priority
           style={{ borderRadius: '50%' }}
-        />
-        <img
-          className="oliva-home-hero__logo"
-          src={imageAssets.logo}
-          alt="Oliva"
-          draggable={false}
         />
       </div>
 
