@@ -86,9 +86,11 @@ function FooterMenuIcon() {
 
 function FooterCourtIcon() {
   return (
-    <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M7 3h10l3 4v10l-3 4H7l-3-4V7Z" />
-      <path d="M8 8h8M8 16h8M12 5v14" />
+    <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="8.25" />
+      <path d="M6.35 6.1c1.75 2.05 4.05 3.05 6.55 3.05s4.8-1 6.55-3.05" />
+      <path d="M4.05 13.45c2.2-1.35 4.7-1.55 7.1-.62 2.4.93 4.9.73 7.1-.62" />
+      <path d="M8.1 4.8c.85 1.35 1.25 2.8 1.25 4.35s-.4 3-1.25 4.35c-.85 1.35-1.25 2.8-1.25 4.35" opacity=".72" />
     </svg>
   )
 }
