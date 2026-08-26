@@ -10,6 +10,7 @@ import OlivaLogo from './OlivaLogo'
 import FlavorPicker from './FlavorPicker'
 import CurrencyToggle from './CurrencyToggle'
 import { useCurrency } from '../hooks/useCurrency'
+import OptimizedImage from './OptimizedImage'
 import type { Currency } from '../hooks/useCurrency'
 
 
@@ -183,10 +184,10 @@ function ProductPanel({ dessert, dir, reducedMotion, currency }: {
             {currency === 'USD' ? dessert.price : dessert.lbpPrice}
           </motion.div>
           {dessert.image && (
-            <img
+            <OptimizedImage
               src={dessert.image}
               alt={dessert.name}
-              draggable={false}
+              priority
               style={{
                 width: '100%', height: '100%',
                 objectFit: 'contain',

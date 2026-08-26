@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface OptimizedImageProps {
   src: string;
@@ -8,21 +8,90 @@ interface OptimizedImageProps {
   width?: number;
   height?: number;
   objectFit?: 'cover' | 'contain' | 'fill' | 'scale-down';
-  /**
-   * priority=true  → load immediately (hero / above-the-fold images)
-   * priority=false → start loading 600px before entering the viewport
-   */
   priority?: boolean;
+  /** Tiny preview for local Vite assets that cannot be resized by a CDN. */
+  lowSrc?: string;
+}
+
+type PendingImage = {
+  src: string;
+  resolve: (loaded: boolean) => void;
+};
+
+const fullImageQueue: PendingImage[] = [];
+let activeFullImages = 0;
+const fullImagePromises = new Map<string, Promise<boolean>>();
+
+function drainFullImageQueue(): void {
+  while (activeFullImages < 3 && fullImageQueue.length > 0) {
+    const next = fullImageQueue.shift();
+    if (!next) return;
+
+    activeFullImages += 1;
+    const image = new Image();
+    image.decoding = 'async';
+    image.onload = () => {
+      activeFullImages -= 1;
+      next.resolve(true);
+      drainFullImageQueue();
+    };
+    image.onerror = () => {
+      activeFullImages -= 1;
+      next.resolve(false);
+      drainFullImageQueue();
+    };
+    image.src = next.src;
+  }
+}
+
+function loadFullImage(src: string): Promise<boolean> {
+  const existing = fullImagePromises.get(src);
+  if (existing) return existing;
+
+  const promise = new Promise<boolean>((resolve) => {
+    fullImageQueue.push({ src, resolve });
+    drainFullImageQueue();
+  });
+  fullImagePromises.set(src, promise);
+  return promise;
+}
+
+function addQueryParams(src: string, params: Record<string, string>): string {
+  try {
+    const url = new URL(src, window.location.href);
+    Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
+    return url.toString();
+  } catch {
+    return src;
+  }
+}
+
+function buildLowQualitySrc(src: string, width: number): string {
+  if (src.startsWith('data:') || src.startsWith('blob:')) return src;
+
+  if (src.includes('blob.vercel-storage.com')) {
+    return addQueryParams(src, {
+      format: 'webp',
+      quality: '28',
+      width: String(Math.min(width, 120)),
+    });
+  }
+
+  if (src.includes('images.pexels.com') || src.includes('images.unsplash.com')) {
+    return addQueryParams(src, {
+      w: String(Math.min(width, 120)),
+      q: '32',
+      fm: 'webp',
+    });
+  }
+
+  return src;
 }
 
 /**
- * OptimizedImage
- * - Starts downloading 600 px before the image enters the viewport so it's
- *   ready the moment the user scrolls to it.
- * - Checks the SW image cache first via the Fetch API — if the image is
- *   already cached it resolves instantly (no network round-trip).
- * - Shows a smooth fade-in when the image is ready.
- * - Falls back to the original URL if optimisation fails.
+ * Paints a small blurred preview first, then swaps in the original image.
+ * The module-level queue keeps original downloads alive and limits them to
+ * three at a time so leaving the page does not cancel the cache warm-up.
  */
 export default function OptimizedImage({
   src,
@@ -33,37 +102,22 @@ export default function OptimizedImage({
   height,
   objectFit = 'cover',
   priority = false,
+  lowSrc,
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
-  // For priority images start loading immediately; for others wait until
-  // the element is 600 px away from the viewport.
-  const [shouldLoad, setShouldLoad] = useState(priority);
+  const [isPreviewLoaded, setIsPreviewLoaded] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const previewSrc = lowSrc || buildLowQualitySrc(src, width || 600);
 
-  // Build the optimised URL — Vercel Blob supports width + format params
-  const optimizedSrc = src.includes('blob.vercel-storage.com')
-    ? `${src}?format=webp&quality=80&width=${width || 600}`
-    : src;
-
-  // Aggressive early-load: start fetching 600 px before element is visible
   useEffect(() => {
-    if (priority || shouldLoad) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldLoad(true);
-          observer.disconnect();
-        }
-      },
-      // 600 px root margin means the image starts loading well before
-      // the user actually reaches it, so it appears instant.
-      { rootMargin: '600px' }
-    );
-
-    if (wrapperRef.current) observer.observe(wrapperRef.current);
-    return () => observer.disconnect();
-  }, [priority, shouldLoad]);
+    let mounted = true;
+    void loadFullImage(src).then((loaded) => {
+      if (mounted && loaded) setIsLoaded(true);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, [src]);
 
   return (
     <div
@@ -76,61 +130,50 @@ export default function OptimizedImage({
         backgroundColor: '#1a2e1a22',
       }}
     >
-      {/* Skeleton shimmer shown while loading */}
       {!isLoaded && (
-        <div
+        <img
+          src={previewSrc}
+          alt=""
           aria-hidden="true"
+          onLoad={() => setIsPreviewLoaded(true)}
           style={{
             position: 'absolute',
             inset: 0,
-            background:
-              'linear-gradient(90deg, #1a2e1a22 25%, #2a3e2a44 50%, #1a2e1a22 75%)',
-            backgroundSize: '200% 100%',
-            animation: 'shimmer 1.4s infinite',
-          }}
-        />
-      )}
-
-      {shouldLoad && (
-        <img
-          src={optimizedSrc}
-          alt={alt}
-          onLoad={() => setIsLoaded(true)}
-          onError={(e) => {
-            // If the optimised URL fails, fall back to the original
-            const img = e.currentTarget;
-            if (img.src !== src) {
-              img.src = src;
-            } else {
-              setIsLoaded(true); // still mark loaded to remove shimmer
-            }
-          }}
-          style={{
-            position: 'relative',
             zIndex: 1,
             width: '100%',
             height: '100%',
             objectFit,
-            opacity: isLoaded ? 1 : 0,
-            transition: 'opacity 0.35s ease',
+            opacity: isPreviewLoaded ? 0.92 : 0,
+            filter: 'blur(5px)',
+            transform: 'scale(1.04)',
+            transition: 'opacity 0.2s ease',
             ...style,
           }}
-          className={className}
-          // Let the browser also handle lazy loading as a safety net,
-          // but our IntersectionObserver fires much earlier.
-          loading={priority ? 'eager' : 'lazy'}
+          loading="eager"
           decoding="async"
           fetchPriority={priority ? 'high' : 'low'}
         />
       )}
-
-      {/* Global shimmer keyframe — injected once */}
-      <style>{`
-        @keyframes shimmer {
-          0%   { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-      `}</style>
+      {isLoaded && (
+        <img
+          src={src}
+          alt={alt}
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            width: '100%',
+            height: '100%',
+            objectFit,
+            opacity: 1,
+            transition: 'opacity 0.35s ease',
+            ...style,
+          }}
+          className={className}
+          loading="eager"
+          decoding="async"
+          fetchPriority={priority ? 'high' : 'auto'}
+        />
+      )}
     </div>
   );
 }

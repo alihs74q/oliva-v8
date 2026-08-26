@@ -17,27 +17,56 @@ export function notifyPublishedContentChanged(): void {
 export function subscribeToPublishedContentChanges(onChange: () => void): () => void {
   if (typeof window === 'undefined') return () => {};
 
-  const handleStorage = (event: StorageEvent) => {
-    if (event.key === CONTENT_PUBLISHED_STORAGE_KEY) onChange();
+  let refreshTimer: number | undefined;
+  let events: EventSource | null = null;
+  const requestRefresh = () => {
+    if (refreshTimer !== undefined) return;
+    refreshTimer = window.setTimeout(() => {
+      refreshTimer = undefined;
+      onChange();
+    }, 150);
   };
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === CONTENT_PUBLISHED_STORAGE_KEY) requestRefresh();
+  };
+  const connectEvents = () => {
+    if (events || !navigator.onLine) return;
+    events = new EventSource(`${API_BASE}/public/content/events`);
+    events.addEventListener('published', requestRefresh);
+  };
+  const disconnectEvents = () => {
+    events?.close();
+    events = null;
+  };
+  const handleOnline = () => {
+    connectEvents();
+    requestRefresh();
+  };
+  const handleOffline = () => disconnectEvents();
 
-  window.addEventListener(CONTENT_PUBLISHED_EVENT, onChange);
+  window.addEventListener(CONTENT_PUBLISHED_EVENT, requestRefresh);
   window.addEventListener('storage', handleStorage);
-  const handleFocus = () => onChange();
+  window.addEventListener('online', handleOnline);
+  window.addEventListener('offline', handleOffline);
+  const handleFocus = () => requestRefresh();
   const handleVisibility = () => {
-    if (document.visibilityState === 'visible') onChange();
+    if (document.visibilityState === 'visible') requestRefresh();
   };
   window.addEventListener('focus', handleFocus);
   document.addEventListener('visibilitychange', handleVisibility);
-  const events = new EventSource(`${API_BASE}/public/content/events`);
-  events.addEventListener('published', onChange);
-  const poll = window.setInterval(onChange, 5000);
+  connectEvents();
+  const poll = window.setInterval(() => {
+    if (navigator.onLine) requestRefresh();
+  }, 60_000);
 
   return () => {
+    if (refreshTimer !== undefined) window.clearTimeout(refreshTimer);
     window.clearInterval(poll);
-    events.close();
-    window.removeEventListener(CONTENT_PUBLISHED_EVENT, onChange);
+    disconnectEvents();
+    window.removeEventListener(CONTENT_PUBLISHED_EVENT, requestRefresh);
     window.removeEventListener('storage', handleStorage);
+    window.removeEventListener('online', handleOnline);
+    window.removeEventListener('offline', handleOffline);
     window.removeEventListener('focus', handleFocus);
     document.removeEventListener('visibilitychange', handleVisibility);
   };

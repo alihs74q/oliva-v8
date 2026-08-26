@@ -16,12 +16,18 @@ router.get("/public/content", async (req, res): Promise<void> => {
     return;
   }
 
+  const etag = `"oliva-content-${current.version}"`;
   res.set({
-    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-    Pragma: "no-cache",
-    Expires: "0",
+    "Cache-Control": "private, no-cache, must-revalidate",
+    ETag: etag,
+    "Last-Modified": current.publishedAt.toUTCString(),
     "X-Oliva-Content-Version": String(current.version),
+    "Access-Control-Expose-Headers": "ETag, Last-Modified, X-Oliva-Content-Version",
   });
+  if (req.get("If-None-Match") === etag) {
+    res.status(304).end();
+    return;
+  }
   res.json(current.snapshot);
 });
 

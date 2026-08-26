@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import type { CategoryTheme } from './CategoryListPage'
 import CurrencyToggle from './CurrencyToggle'
 import { useCurrency } from '../hooks/useCurrency'
+import OptimizedImage from './OptimizedImage'
 import { imageAssets } from '../utils/imageAssets'
 import { useState } from 'react'
 import { PADEL_WHATSAPP_URL } from '../data/padelBooking'
@@ -124,9 +125,10 @@ export default function PadelPage({
             >
               <div className="padel-hero__visual-backdrop" />
               <div className="padel-hero__visual">
-                <img
+                <OptimizedImage
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-ICoaEDFS2acvkeYqAp1z1uT2HyEtlp.png"
                   alt="Oliva Padel Court"
+                  priority
                 />
                 <div className="padel-hero__visual-shade" />
                 <div className="padel-hero__visual-caption">
@@ -175,7 +177,11 @@ export default function PadelPage({
                     } : {})}
                   >
                     <div className="padel-card__image">
-                      <img src={item.image || PADEL_ITEMS[index % PADEL_ITEMS.length].image || undefined} alt={item.title} />
+                      <OptimizedImage
+                        src={item.image || PADEL_ITEMS[index % PADEL_ITEMS.length].image || '/oliva-logo.png'}
+                        alt={item.title}
+                        priority={index < 2}
+                      />
                       <span className="padel-card__tag">
                         {index === 0 ? 'Most popular' : index === 1 ? 'Go longer' : index === 2 ? 'Level up' : index === 3 ? 'Fresh gear' : 'Game on'}
                       </span>

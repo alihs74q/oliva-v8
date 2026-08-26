@@ -18,8 +18,8 @@ import type { ContentSnapshot, ApiSection, ApiProduct } from '../hooks/usePublis
 import type { PromoGallerySlide } from '../components/PromoGallery';
 import { getStaticCalories, getStaticNutrition } from '../data/nutrition';
 import { getDefaultProductExtras } from '../data/menuExtras';
-import { API_BASE } from '../config/api';
 import { subscribeToPublishedContentChanges } from '../utils/contentRefresh';
+import { fetchPublishedContent, readPublishedContentCache } from '../utils/publishedContentClient';
 import { readNutrition, visibleExtraCalories } from '../admin/nutritionStorage';
 import { getImageForProduct } from '../utils/imageMatching';
 
@@ -207,11 +207,6 @@ function snapshotToContextValue(snapshot: ContentSnapshot): Omit<ContentContextV
 }
 
 // ─── Provider ──────────────────────────────────────────────────────────────────
-const API_URL = `${API_BASE}/public/content`;
-// v2 intentionally discards snapshots cached before the menu validity check.
-// A previous incomplete release must never blank the first menu render.
-const CONTENT_CACHE_KEY = 'oliva:published-content:v2';
-
 const BUNDLED_SECTIONS: ApiSection[] = [
   { id: 0, slug: 'cold-drinks', name: 'Cold Drinks', subtitle: 'Chilled & Refreshing', sortOrder: 1, hidden: false, deleted: false, theme: {}, subcategories: [] },
   { id: 0, slug: 'hot-drinks', name: 'Hot Drinks', subtitle: 'Warm & Aromatic', sortOrder: 2, hidden: false, deleted: false, theme: {}, subcategories: [] },
@@ -244,31 +239,8 @@ function hasVisibleCafeMenuSection(snapshot: ContentSnapshot): boolean {
 }
 
 function readCachedSnapshot(): ContentSnapshot | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = window.localStorage.getItem(CONTENT_CACHE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as ContentSnapshot;
-    if (
-      !Array.isArray(parsed.sections) ||
-      !parsed.settings ||
-      typeof parsed.settings !== 'object' ||
-      !hasVisibleCafeMenuSection(parsed)
-    ) {
-      return null;
-    }
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-function writeCachedSnapshot(snapshot: ContentSnapshot): void {
-  try {
-    window.localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(snapshot));
-  } catch {
-    // The public site still works with bundled content when storage is unavailable.
-  }
+  const cached = readPublishedContentCache<ContentSnapshot>();
+  return cached && hasVisibleCafeMenuSection(cached.snapshot) ? cached.snapshot : null;
 }
 
 function getInitialContextValue(): ContentContextValue {
@@ -295,18 +267,12 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       requestInFlight = true;
       const requestId = ++latestRequest;
       try {
-        const res = await fetch(`${API_URL}?v=${Date.now()}`, {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' },
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const snapshot: ContentSnapshot = await res.json();
-        if (!hasVisibleCafeMenuSection(snapshot)) {
-          throw new Error('Published content response has no visible cafe menu sections');
-        }
+        const { snapshot, changed } = await fetchPublishedContent<ContentSnapshot>(
+          hasVisibleCafeMenuSection,
+        );
         if (cancelled || requestId !== latestRequest) return;
+        if (!changed) return;
         const derived = snapshotToContextValue(snapshot);
-        writeCachedSnapshot(snapshot);
         setValue({ ...derived, status: 'api' });
       } catch {
         // Never replace visible content with a loading or error screen.

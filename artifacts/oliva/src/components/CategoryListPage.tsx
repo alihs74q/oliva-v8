@@ -9,6 +9,7 @@ import { imageAssets } from '../utils/imageAssets'
 import { ViewRecipeButton } from './ViewRecipeButton'
 import { DEFAULT_EXTRA_CALORIES, getStaticCalories } from '../data/nutrition'
 import { getDefaultProductExtras, getMenuExtra, formatLbp, formatUsdFromLbp, type MenuExtraName } from '../data/menuExtras'
+import OptimizedImage from './OptimizedImage'
 
 export interface CategoryTheme {
   bgGradient: string
@@ -279,10 +280,14 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
         }}>
           {displayImage ? (
-           <img src={displayImage} alt={drink.name} draggable={false}
-              loading={index < 2 ? 'eager' : 'lazy'}
-              decoding="async"
-               style={{ width: '100%', height: '100%', objectFit: 'cover', filter: soldOut ? 'grayscale(0.75)' : undefined, opacity: soldOut ? 0.62 : 1 }} />
+           <OptimizedImage
+             src={displayImage}
+             alt={drink.name}
+             width={96}
+             height={96}
+             priority={index < 2}
+             style={{ filter: soldOut ? 'grayscale(0.75)' : undefined, opacity: soldOut ? 0.62 : 1 }}
+           />
           ) : (
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.3)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -550,10 +555,11 @@ export default function CategoryListPage({
                 justifyContent: 'center',
                 flexShrink: 0,
               }}>
-                <img
+                <OptimizedImage
                   src={imageAssets.logo}
                   alt="Oliva"
                   className="logo-3d"
+                  priority
                   style={{
                     width: '78%',
                     height: '78%',

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import coldDrinksCategoryImage from '@assets/image_1786233684800.png'
 import dessertsCategoryImage from '@assets/image_1786233947691.png'
+import OptimizedImage from './OptimizedImage'
 
 const EASE = [0.25, 0.46, 0.45, 0.94] as const
 
@@ -87,6 +88,8 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
       <img
         src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled%20design%20%285%29-I4zRXdmd0oQXqKRice8ElgxI5yEMtN.png"
         alt="Olive branch decoration"
+        loading="lazy"
+        decoding="async"
         style={{
           position: 'absolute',
           right: 'clamp(-20px, -5vw, 60px)',
@@ -170,7 +173,7 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
                 boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
               }}>
                 {card.image ? (
-                  <img src={card.image} alt={card.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <OptimizedImage src={card.image} alt={card.label} width={72} height={72} />
                 ) : (
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />

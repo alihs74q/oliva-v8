@@ -19,6 +19,7 @@ export const useOfflineSupport = () => {
   });
 
   useEffect(() => {
+    let stopUpdateChecks: (() => void) | undefined;
     const registerServiceWorker = async () => {
       if (!('serviceWorker' in navigator)) return;
 
@@ -76,8 +77,10 @@ export const useOfflineSupport = () => {
 
         // Check for updates immediately and every 60 s while the tab is open
         reg.update();
-        const interval = setInterval(() => reg.update(), 60_000);
-        return () => clearInterval(interval);
+        const interval = window.setInterval(() => {
+          if (navigator.onLine) void reg.update();
+        }, 60_000);
+        return () => window.clearInterval(interval);
       } catch (error) {
         console.error('Service Worker registration failed:', error);
         return undefined;
@@ -90,9 +93,12 @@ export const useOfflineSupport = () => {
     window.addEventListener('online',  handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    registerServiceWorker();
+    void registerServiceWorker().then((cleanup) => {
+      stopUpdateChecks = cleanup;
+    });
 
     return () => {
+      stopUpdateChecks?.();
       window.removeEventListener('online',  handleOnline);
       window.removeEventListener('offline', handleOffline);
     };

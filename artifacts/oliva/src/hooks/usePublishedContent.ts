@@ -11,8 +11,8 @@ import { subcategoryData, type Subcategory } from '../data/subcategories';
 import type { PromoGallerySlide } from '../components/PromoGallery';
 import { getStaticCalories, getStaticNutrition } from '../data/nutrition';
 import { getDefaultProductExtras } from '../data/menuExtras';
-import { API_BASE } from '../config/api';
 import { subscribeToPublishedContentChanges } from '../utils/contentRefresh';
+import { fetchPublishedContent, readPublishedContentCache } from '../utils/publishedContentClient';
 import { readNutrition, visibleExtraCalories } from '../admin/nutritionStorage';
 
 // ─── API content shapes (mirrors server output) ────────────────────────────────
@@ -138,15 +138,15 @@ function apiToSubcategoryData(sections: ApiSection[]): Record<string, Subcategor
   return result;
 }
 
-// ─── Base API URL ──────────────────────────────────────────────────────────────
-const API_URL = `${API_BASE}/public/content`;
-
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 export type ContentStatus = 'loading' | 'api' | 'fallback';
 
 export function usePublishedContent() {
-  const [subcategories, setSubcategories] = useState<Record<string, Subcategory[]>>(subcategoryData);
-  const [snapshot, setSnapshot] = useState<ContentSnapshot | null>(null);
+  const cached = readPublishedContentCache<ContentSnapshot>()?.snapshot ?? null;
+  const [subcategories, setSubcategories] = useState<Record<string, Subcategory[]>>(
+    cached ? apiToSubcategoryData(cached.sections) : subcategoryData,
+  );
+  const [snapshot, setSnapshot] = useState<ContentSnapshot | null>(cached);
   const [status, setStatus] = useState<ContentStatus>('loading');
 
   useEffect(() => {
@@ -155,15 +155,14 @@ export function usePublishedContent() {
     const load = async () => {
       const requestId = ++latestRequest;
       try {
-        const res = await fetch(`${API_URL}?v=${Date.now()}`, {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' },
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data: ContentSnapshot = await res.json();
+        const { snapshot: data, changed } = await fetchPublishedContent<ContentSnapshot>(
+          (candidate) => Array.isArray(candidate.sections) && Boolean(candidate.settings),
+        );
         if (cancelled || requestId !== latestRequest) return;
-        setSnapshot(data);
-        setSubcategories(apiToSubcategoryData(data.sections));
+        if (changed || !snapshot) {
+          setSnapshot(data);
+          setSubcategories(apiToSubcategoryData(data.sections));
+        }
         setStatus('api');
       } catch {
         if (!cancelled && requestId === latestRequest) setStatus('fallback');
