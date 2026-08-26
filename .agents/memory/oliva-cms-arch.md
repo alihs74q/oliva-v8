@@ -29,6 +29,13 @@ The admin CMS uses a two-layer content model:
 - `GET /api/public/content` — serves the `isCurrent` release snapshot, no auth, 30s cache
 - Falls back to bundled static data in `artifacts/oliva/src/data/` if API unreachable
 
+## Direct content imports
+- Writing directly to the draft CMS tables is not enough for the public menu: create a new current release snapshot afterward and clear the API's in-memory published-release cache (a service restart does this during maintenance).
+
+**Why:** The public API deliberately reads the immutable release snapshot rather than live draft rows, so a successful database import can otherwise remain invisible to customers.
+
+**How to apply:** Use the authenticated admin API for normal edits. If a controlled bulk import writes draft tables directly, publish one complete snapshot after the import before verifying the public site.
+
 ## Exchange rate
 - Stored in cms_site_settings (exchange_rate_lbp_per_usd, exchange_rate_rounding)
 - On rate change, all product priceUsd fields are recalculated atomically in the DB
