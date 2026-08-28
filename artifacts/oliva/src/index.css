@@ -261,11 +261,15 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
 }
 .oliva-home-hero__logo {
   position: absolute;
+  z-index: 4;
   top: 50%;
   left: 50%;
   width: clamp(84px, 28%, 168px);
   height: auto;
   transform: translate(-50%, -50%);
+  display: block;
+  pointer-events: none;
+  user-select: none;
   filter: drop-shadow(0 4px 7px rgba(0, 0, 0, .08));
 }
 .oliva-home-hero__actions {
