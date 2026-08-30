@@ -278,7 +278,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   aspect-ratio: 176 / 247;
   transform-style: preserve-3d;
   transform: translate(-50%, -50%);
-  animation: oliva-logo-3d 8s ease-in-out infinite;
+  animation: none;
 }
 .oliva-luxury-hero__logo-depth,
 .oliva-luxury-hero__logo-depth img,
@@ -422,7 +422,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   animation: oliva-menu-portal-shade 1.16s cubic-bezier(.65, 0, .2, 1) both;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__background {
-  animation: oliva-menu-background-dim 1.45s cubic-bezier(.65, 0, .2, 1) both;
+  animation: oliva-menu-background-dim 1.1s cubic-bezier(.65, 0, .2, 1) both;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__atmosphere,
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__grain {
@@ -431,10 +431,10 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__visual {
   z-index: 24;
   opacity: 1;
-  animation: oliva-menu-stage-hold 1.45s ease both;
+  animation: oliva-menu-stage-hold 1.1s ease both;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__logo-3d {
-  animation: oliva-original-logo-to-circle .58s cubic-bezier(.16, .82, .24, 1) both;
+  animation: oliva-original-logo-exit .48s cubic-bezier(.16, .82, .24, 1) both;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__logo,
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__logo-depth img {
@@ -459,7 +459,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   pointer-events: none;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal {
-  animation: oliva-menu-portal-hold 1.45s ease both;
+  animation: oliva-menu-portal-hold 1.1s ease both;
 }
 .oliva-menu-portal__olive {
   position: absolute;
@@ -469,23 +469,6 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
     radial-gradient(circle at 50% 45%, rgba(195, 169, 91, .18), transparent 25%),
     radial-gradient(circle at 50% 44%, #315a35 0, #1a3e2c 44%, #0d241b 100%);
   opacity: 0;
-}
-.oliva-menu-portal__circle {
-  position: absolute;
-  z-index: 4;
-  top: 50%;
-  left: 50%;
-  width: clamp(18px, 7vw, 34px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #fffdf1;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, .8),
-    0 0 28px rgba(255, 249, 215, .8),
-    0 0 100px rgba(255, 249, 215, .3);
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(.05);
-  transform-origin: center;
 }
 .oliva-menu-portal__scene {
   position: relative;
@@ -518,16 +501,13 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   backface-visibility: hidden;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__olive {
-  animation: oliva-menu-olive-reveal 1.45s cubic-bezier(.65, .02, .18, 1) both;
-}
-.oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__circle {
-  animation: oliva-menu-circle-enter 1.45s cubic-bezier(.16, .72, .22, 1) both;
+  animation: oliva-menu-olive-reveal 1.1s cubic-bezier(.65, .02, .18, 1) both;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__halo {
-  animation: oliva-portal-halo 1.45s cubic-bezier(.16, .72, .22, 1) both;
+  animation: oliva-portal-halo 1.1s cubic-bezier(.16, .72, .22, 1) both;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__logo {
-  animation: oliva-simple-logo-pop 1.45s cubic-bezier(.16, .82, .24, 1) both;
+  animation: oliva-simple-logo-pop 1.1s cubic-bezier(.16, .82, .24, 1) both;
 }
 .oliva-glass-action.is-booking .oliva-glass-action__label {
   opacity: 0;
@@ -624,7 +604,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
 @keyframes oliva-menu-stage-hold {
   0%, 100% { transform: translateY(0) scale(1); }
 }
-@keyframes oliva-original-logo-to-circle {
+@keyframes oliva-original-logo-exit {
   0% {
     opacity: 1;
     transform: translate(-50%, -50%) perspective(900px) rotateY(-10deg) rotateZ(-1deg) scale(1);
@@ -687,15 +667,9 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   0%, 100% { opacity: 1; }
 }
 @keyframes oliva-menu-olive-reveal {
-  0%, 36% { opacity: 0; }
-  52%, 100% { opacity: 1; }
-}
-@keyframes oliva-menu-circle-enter {
-  0%, 4% { opacity: 0; transform: translate(-50%, -50%) scale(.05); }
-  10% { opacity: 1; transform: translate(-50%, -50%) scale(.32); }
-  32% { opacity: 1; transform: translate(-50%, -50%) scale(4.2); }
-  51% { opacity: 1; transform: translate(-50%, -50%) scale(72); }
-  62%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(72); }
+  0% { opacity: 0; }
+  24% { opacity: 1; }
+  100% { opacity: 1; }
 }
 @keyframes oliva-portal-halo {
   0%, 22% { opacity: 0; transform: scale(.55); }
@@ -722,47 +696,17 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   }
 }
 @keyframes oliva-simple-logo-pop {
-  0%, 38% {
+  0% {
     opacity: 0;
-    transform: perspective(900px) rotateY(-82deg) rotateZ(-6deg) scale(.42);
+    transform: perspective(900px) rotateY(-28deg) rotateZ(-4deg) scale(.76);
   }
-  49% {
+  18% {
     opacity: 1;
-    transform: perspective(900px) rotateY(-18deg) rotateZ(-2deg) scale(.92);
+    transform: perspective(900px) rotateY(-7deg) rotateZ(-1deg) scale(1.04);
   }
-  61%, 79% {
+  34%, 100% {
     opacity: 1;
     transform: perspective(900px) rotateY(0deg) rotateZ(0deg) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: perspective(900px) rotateY(7deg) rotateZ(2deg) scale(.88);
-  }
-}
-@keyframes oliva-portal-white-circle {
-  0%, 52% {
-    opacity: 0;
-    transform: scale(.05);
-  }
-  58% {
-    opacity: 1;
-    transform: scale(.72);
-  }
-  64% {
-    opacity: 1;
-    transform: scale(1.14);
-  }
-  70% {
-    opacity: 1;
-    transform: scale(.98);
-  }
-  84% {
-    opacity: 1;
-    transform: scale(12);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(18);
   }
 }
 @keyframes oliva-portal-cup {
@@ -917,7 +861,6 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   }
   .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal,
   .oliva-menu-portal__olive,
-  .oliva-menu-portal__circle,
   .oliva-menu-portal__halo,
   .oliva-menu-portal__logo {
     animation: none;
@@ -928,7 +871,6 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__olive {
     opacity: 1;
   }
-  .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__circle,
   .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__halo {
     opacity: 0;
   }
