@@ -173,7 +173,7 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
                 boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
               }}>
                 {card.image ? (
-                  <OptimizedImage src={card.image} alt={card.label} width={72} height={72} />
+                   <OptimizedImage src={card.image} alt={card.label} width={72} height={72} objectFit="contain" />
                 ) : (
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />

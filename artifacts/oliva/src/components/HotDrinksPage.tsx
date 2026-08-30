@@ -221,7 +221,8 @@ function DrinkGridCard({ drink, isActive, onClick }: {
             alt={drink.name}
             width={72}
             height={72}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', userSelect: 'none' }}
+            objectFit="contain"
+            style={{ width: '100%', height: '100%', objectFit: 'contain', userSelect: 'none' }}
           />
         ) : (
           <HotDrinkPlaceholder size={44} />

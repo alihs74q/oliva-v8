@@ -286,7 +286,8 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
              width={96}
              height={96}
              priority={index === 0}
-             style={{ filter: soldOut ? 'grayscale(0.75)' : undefined, opacity: soldOut ? 0.62 : 1 }}
+               objectFit="contain"
+               style={{ filter: soldOut ? 'grayscale(0.75)' : undefined, opacity: soldOut ? 0.62 : 1 }}
            />
           ) : (
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.3)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
