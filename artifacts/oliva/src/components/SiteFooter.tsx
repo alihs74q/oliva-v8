@@ -5,9 +5,11 @@ type Route = 'home' | 'menu'
 export default function SiteFooter({
   navigate,
   onBook,
+  showMenu = true,
 }: {
   navigate: (to: Route) => void
   onBook: () => void
+  showMenu?: boolean
 }) {
   const secondaryActionClass =
     'footer-action-button group flex min-h-[82px] flex-col items-center justify-center gap-2 rounded-[17px] border border-transparent text-xs font-bold tracking-[0.04em] text-stone-200/80 transition duration-200 hover:-translate-y-0.5 hover:border-[#ebda90]/45 hover:bg-white/[0.08] hover:text-[#fffdf5] focus-visible:-translate-y-0.5 focus-visible:border-[#ebda90]/45 focus-visible:bg-white/[0.08] focus-visible:text-[#fffdf5] focus-visible:outline-none sm:min-h-[105px]'
@@ -21,15 +23,17 @@ export default function SiteFooter({
         aria-label="Footer navigation"
         className="footer-action-rail relative mx-auto max-w-5xl overflow-hidden rounded-[24px] border border-[#e0d5a6]/25 bg-white/[0.07] p-2 shadow-[0_28px_80px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl"
       >
-        <div className="footer-action-grid relative grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className={`footer-action-grid relative grid grid-cols-2 gap-2 ${showMenu ? 'sm:grid-cols-4' : 'sm:grid-cols-3'}`}>
           <button type="button" onClick={() => navigate('home')} className={secondaryActionClass}>
             <FooterHomeIcon />
             <span>Home</span>
           </button>
-          <button type="button" onClick={() => navigate('menu')} className={secondaryActionClass}>
-            <FooterMenuIcon />
-            <span>Menu</span>
-          </button>
+          {showMenu && (
+            <button type="button" onClick={() => navigate('menu')} className={secondaryActionClass}>
+              <FooterMenuIcon />
+              <span>Menu</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={onBook}

@@ -10,14 +10,12 @@ type HomepageHeroProps = {
 
 export default function HomepageHero({ onMenu, onBook }: HomepageHeroProps) {
   const [backgroundLoaded, setBackgroundLoaded] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
   const [isBooking, setIsBooking] = useState(false)
   const [isMenuTransitioning, setIsMenuTransitioning] = useState(false)
   const bookingTimer = useRef<number | null>(null)
   const menuTimer = useRef<number | null>(null)
 
   useEffect(() => {
-    setIsMounted(true)
     return () => {
       if (bookingTimer.current !== null) window.clearTimeout(bookingTimer.current)
       if (menuTimer.current !== null) window.clearTimeout(menuTimer.current)
@@ -40,7 +38,7 @@ export default function HomepageHero({ onMenu, onBook }: HomepageHeroProps) {
 
   return (
     <section
-      className={`oliva-luxury-hero${isMounted ? ' is-ready' : ''}${isMenuTransitioning ? ' is-menu-transitioning' : ''}`}
+      className={`oliva-luxury-hero is-ready${isMenuTransitioning ? ' is-menu-transitioning' : ''}`}
       aria-label="Oliva Café and Padel"
       aria-busy={isMenuTransitioning}
     >

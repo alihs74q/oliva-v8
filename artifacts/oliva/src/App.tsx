@@ -329,7 +329,7 @@ export default function App() {
     );
   }
 
-  // Home: reference-matched mobile-first hero followed by the existing homepage content
+  // Home: the hero is the homepage's only menu entry point.
   return (
     <div style={{ background: '#faf9f4' }}>
       <HomepageHero
@@ -337,30 +337,13 @@ export default function App() {
         onBook={() => navigateList('padel')}
       />
 
-      {/* ── Menu ── */}
-      <div id="menu-section">
-        {promoGallery.some((slide) => slide.visible && slide.imageUrl) && (
-          <div style={{ background: '#faf9f4', padding: 'clamp(56px,8vh,88px) clamp(16px,4vw,40px) 0' }}>
-            <PromoGallery slides={promoGallery} />
-          </div>
-        )}
-         <Menu
-          cards={menuCards.length > 0 ? menuCards : undefined}
-          onHotDrinks={() => navigateList('hot-drinks')}
-          onColdDrinks={() => navigateList('cold-drinks')}
-          onDesserts={() => navigateList('desserts')}
-          onShisha={() => navigateList('shisha')}
-          onSandwiches={() => navigateList('sandwiches')}
-          onYogurt={() => navigateList('yogurt')}
-          onPadel={() => navigateList('padel')}
-        />
-      </div>
       <SiteFooter
         navigate={(destination) => {
           if (destination === 'home') navigateHome();
           else navigateMenu();
         }}
         onBook={() => navigateList('padel')}
+        showMenu={false}
       />
 
     </div>
