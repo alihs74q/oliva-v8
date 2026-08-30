@@ -60,15 +60,24 @@ export default function HomepageHero({ onMenu, onBook }: HomepageHeroProps) {
       <div className="oliva-luxury-hero__content">
         <div className="oliva-luxury-hero__visual" aria-label="Oliva">
           <div className="oliva-luxury-hero__glow" aria-hidden="true" />
-          <img
-            className="oliva-luxury-hero__logo"
-            src={olivaLogoUrl}
-            alt="Oliva"
-            draggable={false}
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
-          />
+          <div className="oliva-luxury-hero__logo-3d" aria-hidden="true">
+            <span className="oliva-luxury-hero__logo-depth oliva-luxury-hero__logo-depth--one">
+              <img src={olivaLogoUrl} alt="" draggable={false} />
+            </span>
+            <span className="oliva-luxury-hero__logo-depth oliva-luxury-hero__logo-depth--two">
+              <img src={olivaLogoUrl} alt="" draggable={false} />
+            </span>
+            <img
+              className="oliva-luxury-hero__logo"
+              src={olivaLogoUrl}
+              alt=""
+              draggable={false}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+            />
+            <span className="oliva-luxury-hero__logo-shine" />
+          </div>
         </div>
 
         <div className="oliva-luxury-hero__actions" aria-label="Primary actions">
