@@ -49,7 +49,7 @@ const IMG_BG: Record<string, string> = {
   padel:       '#1a3a2a',   // dark green    — padel
 }
 
-export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, onShisha, onSandwiches, onYogurt, onPadel, cards = CARDS }: {
+export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, onShisha, onSandwiches, onYogurt, onPadel, cards = CARDS, cinematicEntrance = false }: {
   onBack?: () => void
   onHotDrinks?: () => void
   onColdDrinks?: () => void
@@ -59,6 +59,7 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
   onYogurt?: () => void
   onPadel?: () => void
   cards?: MenuCard[]
+  cinematicEntrance?: boolean
 }) {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
 
@@ -78,7 +79,7 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
   }
 
   return (
-    <section style={{
+    <section className={`oliva-menu-page${cinematicEntrance ? ' oliva-menu-page--cinematic' : ''}`} style={{
       minHeight: '100svh', padding: 'clamp(80px,12vh,120px) clamp(16px,4vw,40px) clamp(40px,6vh,80px)',
       background: '#faf9f4',
       display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -86,6 +87,7 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
     }}>
       {/* Olive branch decoration — right side, subtle & non-intrusive */}
       <img
+        className="oliva-menu-page__branch"
         src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled%20design%20%285%29-I4zRXdmd0oQXqKRice8ElgxI5yEMtN.png"
         alt="Olive branch decoration"
         loading="lazy"
@@ -105,7 +107,7 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
       />
       {/* Back */}
       {onBack && (
-        <button onClick={onBack} style={{
+        <button className="oliva-menu-page__back" onClick={onBack} style={{
           alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'rgba(74,103,65,0.08)', border: '1px solid rgba(74,103,65,0.2)',
           borderRadius: 999, padding: '10px 20px', cursor: 'pointer',
@@ -119,7 +121,7 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
       )}
 
       {/* Title */}
-      <div style={{ textAlign: 'center', marginBottom: 'clamp(32px,5vh,56px)' }}>
+      <div className="oliva-menu-page__heading" style={{ textAlign: 'center', marginBottom: 'clamp(32px,5vh,56px)' }}>
         <p style={{
           margin: 0, fontSize: 'clamp(11px,1.4vw,14px)', fontWeight: 800, letterSpacing: '0.3em',
           textTransform: 'uppercase', color: '#7a9055',
@@ -131,7 +133,7 @@ export default function Menu({ onBack, onHotDrinks, onColdDrinks, onDesserts, on
       </div>
 
       {/* Big category cards */}
-      <div style={{
+      <div className="oliva-menu-page__grid" style={{
         width: '100%', maxWidth: 960,
         display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
         gap: 'clamp(16px,2.5vw,24px)',

@@ -222,6 +222,7 @@ export default function App() {
             )}
             <Menu
               onBack={navigateHome}
+              cinematicEntrance
               cards={menuCards.length > 0 ? menuCards : undefined}
               onHotDrinks={() => navigateList('hot-drinks')}
               onColdDrinks={() => navigateList('cold-drinks')}
