@@ -461,12 +461,12 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   pointer-events: none;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal {
-  animation: oliva-menu-portal-scene 2.45s cubic-bezier(.52, .02, .18, 1) both;
+  animation: oliva-menu-portal-scene 1.52s cubic-bezier(.52, .02, .18, 1) both;
 }
 .oliva-menu-portal__scene {
   position: relative;
   width: min(78vw, 370px);
-  height: min(67svh, 330px);
+  height: min(54svh, 270px);
   display: grid;
   place-items: center;
   transform: translateY(4vh);
@@ -480,7 +480,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   box-shadow: 0 0 0 18px rgba(224, 203, 127, .035), 0 0 90px rgba(213, 188, 101, .2);
   opacity: 0;
   transform: scale(.55);
-  animation: oliva-portal-halo 2.45s ease both;
+  animation: oliva-portal-halo 1.52s ease both;
 }
 .oliva-menu-portal__logo {
   position: absolute;
@@ -492,7 +492,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   transform: translateY(-3vh) perspective(900px) rotateY(-92deg) rotateZ(-7deg) scale(.72);
   transform-origin: 50% 50%;
   backface-visibility: hidden;
-  animation: oliva-portal-logo-turn 2.45s cubic-bezier(.18, .75, .24, 1) both;
+  animation: oliva-portal-logo-turn 1.52s cubic-bezier(.18, .75, .24, 1) both;
 }
 .oliva-menu-portal__circle {
   position: absolute;
@@ -507,83 +507,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
     0 0 90px rgba(255, 249, 215, .46);
   opacity: 0;
   transform: scale(.05);
-  animation: oliva-portal-white-circle 2.45s cubic-bezier(.16, .72, .22, 1) both;
-}
-.oliva-menu-portal__cup {
-  position: absolute;
-  z-index: 2;
-  width: min(70vw, 300px);
-  overflow: visible;
-  filter: drop-shadow(0 20px 18px rgba(4, 18, 11, .4));
-  opacity: 0;
-  transform: translateY(32px) scale(.72);
-  animation: oliva-portal-cup 2.45s cubic-bezier(.16, .72, .22, 1) both;
-}
-.oliva-menu-portal__body {
-  fill: #f6f0d9;
-  stroke: #fff9e9;
-  stroke-width: 3;
-}
-.oliva-menu-portal__handle {
-  fill: none;
-  stroke: #f6f0d9;
-  stroke-width: 17;
-  stroke-linecap: round;
-}
-.oliva-menu-portal__saucer {
-  fill: #ded3ad;
-  stroke: #fff6dd;
-  stroke-width: 3;
-}
-.oliva-menu-portal__coffee {
-  fill: #38251a;
-  stroke: #fff4d3;
-  stroke-width: 5;
-}
-.oliva-menu-portal__coffee-ripple {
-  fill: none;
-  stroke: rgba(255, 244, 211, .5);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-dasharray: 140;
-  stroke-dashoffset: 140;
-  animation: oliva-portal-ripple 2.45s ease both;
-}
-.oliva-menu-portal__milk-stream {
-  fill: none;
-  stroke: #fff9e9;
-  stroke-width: 8;
-  stroke-linecap: round;
-  stroke-dasharray: 110;
-  stroke-dashoffset: 110;
-  animation: oliva-portal-milk-stream 2.45s cubic-bezier(.2, .75, .3, 1) both;
-}
-.oliva-menu-portal__word {
-  position: absolute;
-  z-index: 4;
-  top: 8%;
-  color: #fff9e9;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(38px, 10vw, 58px);
-  font-style: italic;
-  font-weight: 600;
-  letter-spacing: .18em;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, .22);
-  opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  transform: translateX(-15px) rotate(-7deg);
-  animation: oliva-portal-milk-word 2.45s cubic-bezier(.2, .76, .25, 1) both;
-}
-.oliva-menu-portal__caption {
-  position: absolute;
-  bottom: 3%;
-  color: rgba(255, 249, 233, .68);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: .34em;
-  text-transform: uppercase;
-  opacity: 0;
-  animation: oliva-portal-caption 2.45s ease both;
+  animation: oliva-portal-white-circle 1.52s cubic-bezier(.16, .72, .22, 1) both;
 }
 .oliva-glass-action.is-booking .oliva-glass-action__label {
   opacity: 0;

@@ -28,7 +28,7 @@ export default function HomepageHero({ onMenu, onBook }: HomepageHeroProps) {
     if (isMenuTransitioning || isBooking) return
     setIsMenuTransitioning(true)
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    menuTimer.current = window.setTimeout(onMenu, reduceMotion ? 260 : 2450)
+    menuTimer.current = window.setTimeout(onMenu, reduceMotion ? 220 : 1520)
   }
 
   const handleBook = () => {
@@ -73,16 +73,6 @@ export default function HomepageHero({ onMenu, onBook }: HomepageHeroProps) {
           <div className="oliva-menu-portal__halo" />
           <img className="oliva-menu-portal__logo" src={olivaLogoUrl} alt="" draggable={false} />
           <div className="oliva-menu-portal__circle" />
-          <div className="oliva-menu-portal__word">OLIVA</div>
-          <svg className="oliva-menu-portal__cup" viewBox="0 0 360 280" role="presentation">
-            <ellipse className="oliva-menu-portal__saucer" cx="180" cy="235" rx="123" ry="17" />
-            <path className="oliva-menu-portal__handle" d="M278 130c58-6 67 69 13 86-15 5-29 2-39-6" />
-            <path className="oliva-menu-portal__body" d="M74 112h211l-12 87c-4 28-29 45-58 45h-71c-29 0-54-17-58-45l-12-87Z" />
-            <ellipse className="oliva-menu-portal__coffee" cx="180" cy="113" rx="106" ry="22" />
-            <path className="oliva-menu-portal__milk-stream" d="M180 33c-4 22-8 40 0 67" />
-            <path className="oliva-menu-portal__coffee-ripple" d="M133 116c18 11 77 13 96-1" />
-          </svg>
-          <div className="oliva-menu-portal__caption">Café & kitchen</div>
         </div>
       </div>
 
