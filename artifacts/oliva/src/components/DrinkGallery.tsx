@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
+import OptimizedImage from './OptimizedImage'
 
 interface DrinkGalleryProps {
   images: string[]
@@ -72,9 +73,12 @@ export default function DrinkGallery({ images, alt, autoPlayMs = 3500 }: DrinkGa
   if (total === 1) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-        <img
-          src={images[0]} alt={alt} draggable={false}
+        <OptimizedImage
+          src={images[0]}
+          alt={alt}
           style={{
+            width: '100%',
+            height: '100%',
             maxHeight: 'clamp(140px,34vh,380px)',
             maxWidth: '100%',
             objectFit: 'contain',
@@ -116,26 +120,34 @@ export default function DrinkGallery({ images, alt, autoPlayMs = 3500 }: DrinkGa
         borderRadius: 20,
       }}>
         <AnimatePresence custom={dir} mode="popLayout">
-          <motion.img
+          <motion.div
             key={index}
-            src={images[index]}
-            alt={`${alt} ${index + 1}`}
-            draggable={false}
             custom={dir}
             variants={slideVariants}
             initial="enter"
             animate="center"
             exit="exit"
             style={{
+              width: 'min(100%, 380px)',
+              height: 'clamp(130px,30vh,360px)',
               maxHeight: 'clamp(130px,30vh,360px)',
               maxWidth: '100%',
-              objectFit: 'contain',
-              filter: 'drop-shadow(0 20px 56px rgba(0,0,0,0.5))',
-              userSelect: 'none',
-              borderRadius: 14,
               willChange: 'transform, opacity',
             }}
-          />
+          >
+            <OptimizedImage
+              src={images[index]}
+              alt={`${alt} ${index + 1}`}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 20px 56px rgba(0,0,0,0.5))',
+                userSelect: 'none',
+                borderRadius: 14,
+              }}
+            />
+          </motion.div>
         </AnimatePresence>
 
         {/* Left arrow */}

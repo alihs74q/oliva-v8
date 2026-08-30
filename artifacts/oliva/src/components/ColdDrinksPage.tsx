@@ -5,6 +5,7 @@ import { useContent } from '../contexts/ContentContext'
 import OlivaLogo from './OlivaLogo'
 import FlavorPicker from './FlavorPicker'
 import DrinkGallery from './DrinkGallery'
+import OptimizedImage from './OptimizedImage'
 
 type View = 'hero' | 'all'
 type NavRoute = 'home' | 'menu' | 'cold-drinks' | 'desserts' | 'hot-drinks'
@@ -129,8 +130,11 @@ function ProductPanel({ drink, dir, reducedMotion }: {
           {(drink.images && drink.images.length > 0) ? (
             <DrinkGallery images={drink.images} alt={drink.name} />
           ) : drink.image ? (
-            <img src={drink.image} alt={drink.name} draggable={false}
-              style={{ maxHeight: 'clamp(140px,34vh,380px)', objectFit: 'contain', filter: 'drop-shadow(0 24px 64px rgba(0,0,0,0.55))', userSelect: 'none' }} />
+            <OptimizedImage
+              src={drink.image}
+              alt={drink.name}
+              style={{ width: '100%', height: '100%', maxHeight: 'clamp(140px,34vh,380px)', objectFit: 'contain', filter: 'drop-shadow(0 24px 64px rgba(0,0,0,0.55))', userSelect: 'none' }}
+            />
           ) : (
             <ColdDrinkPlaceholder size={placeholderSize} />
           )}
@@ -215,8 +219,13 @@ function DrinkGridCard({ drink, isActive, onClick }: {
         boxShadow: '0 4px 12px rgba(0,0,0,0.28)',
       }}>
         {drink.image ? (
-          <img src={drink.image} alt={drink.name} draggable={false}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', userSelect: 'none' }} />
+          <OptimizedImage
+            src={drink.image}
+            alt={drink.name}
+            width={72}
+            height={72}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', userSelect: 'none' }}
+          />
         ) : (
           <ColdDrinkPlaceholder size={44} />
         )}

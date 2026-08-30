@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import heroCafeUrl from '../assets/homepage-hero/cafe-background.jpeg'
-import heroCafeLowUrl from '../assets/homepage-hero/lqip/cafe-background.jpeg'
+import heroCafeUrl from '../assets/homepage-hero/cafe-background.webp'
+import heroCafeLowUrl from '../assets/homepage-hero/lqip/cafe-background.webp'
 import olivaLogoUrl from '../assets/homepage-hero/oliva-logo-transparent.png'
 
 type HomepageHeroProps = {

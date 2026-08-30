@@ -30,6 +30,14 @@ function buildImageManifest(): Record<string, string> {
   });
 
   for (const path in imageGlob) {
+    if (
+      path.includes("/public/images/products-optimized/") ||
+      path.includes("/public/images/products-lqip/") ||
+      path.includes("/public/menu-optimized/") ||
+      path.includes("/public/menu-lqip/")
+    ) {
+      continue;
+    }
     // Extract filename without extension
     const filename = path.split("/").pop() || "";
     const normalized = normalizeForMatching(filename.split(".")[0]);

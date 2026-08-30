@@ -5,6 +5,7 @@ import { useContent } from '../contexts/ContentContext'
 import CurrencyToggle from './CurrencyToggle'
 import { useCurrency } from '../hooks/useCurrency'
 import type { Currency } from '../hooks/useCurrency'
+import OptimizedImage from './OptimizedImage'
 
 type NavRoute = 'home' | 'menu' | 'cold-drinks' | 'desserts' | 'hot-drinks' | 'shisha' | 'shisha-list'
 
@@ -55,7 +56,7 @@ function ShishaCard({ item, index, currency }: { item: typeof staticShishaItems[
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         {item.image
-          ? <img src={item.image} alt={item.name} draggable={false} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ? <OptimizedImage src={item.image} alt={item.name} width={70} height={70} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           : <ImagePlaceholder />}
       </div>
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>

@@ -177,13 +177,14 @@ export default function OptimizedImage({
   priority = false,
   lowSrc,
 }: OptimizedImageProps) {
+  const previewSrc = lowSrc || buildLowQualitySrc(src, width || 600);
+  const deliverySrc = buildDeliverySrc(src, width || 600);
   const [shouldLoadFull, setShouldLoadFull] = useState(priority);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPreviewLoaded, setIsPreviewLoaded] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(previewSrc);
   const [resolvedSrc, setResolvedSrc] = useState(src);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const previewSrc = lowSrc || buildLowQualitySrc(src, width || 600);
-  const deliverySrc = buildDeliverySrc(src, width || 600);
 
   useEffect(() => {
     setShouldLoadFull(priority);
@@ -213,6 +214,7 @@ export default function OptimizedImage({
     let mounted = true;
     setIsLoaded(false);
     setIsPreviewLoaded(false);
+    setPreviewUrl(previewSrc);
     setResolvedSrc(deliverySrc);
     if (!shouldLoadFull) return () => { mounted = false; };
 
@@ -234,7 +236,7 @@ export default function OptimizedImage({
       }
     });
     return () => { mounted = false; };
-  }, [deliverySrc, priority, shouldLoadFull, src]);
+  }, [deliverySrc, previewSrc, priority, shouldLoadFull, src]);
 
   return (
     <div
@@ -249,10 +251,14 @@ export default function OptimizedImage({
     >
       {!isLoaded && (
         <img
-          src={previewSrc}
+          src={previewUrl}
           alt=""
           aria-hidden="true"
           onLoad={() => setIsPreviewLoaded(true)}
+          onError={() => {
+            setPreviewUrl(TINY_PREVIEW);
+            setIsPreviewLoaded(true);
+          }}
           style={{
             position: 'absolute',
             inset: 0,
