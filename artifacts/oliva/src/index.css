@@ -461,12 +461,12 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   pointer-events: none;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal {
-  animation: oliva-menu-portal-scene 1.52s cubic-bezier(.52, .02, .18, 1) both;
+  animation: oliva-menu-olive-in .22s ease-out both;
 }
 .oliva-menu-portal__scene {
   position: relative;
   width: min(78vw, 370px);
-  height: min(54svh, 270px);
+  height: min(44svh, 220px);
   display: grid;
   place-items: center;
   transform: translateY(4vh);
@@ -480,7 +480,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   box-shadow: 0 0 0 18px rgba(224, 203, 127, .035), 0 0 90px rgba(213, 188, 101, .2);
   opacity: 0;
   transform: scale(.55);
-  animation: oliva-portal-halo 1.52s ease both;
+  animation: oliva-portal-halo .8s cubic-bezier(.16, .72, .22, 1) both;
 }
 .oliva-menu-portal__logo {
   position: absolute;
@@ -489,25 +489,10 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   height: auto;
   filter: drop-shadow(0 12px 18px rgba(5, 24, 14, .34));
   opacity: 0;
-  transform: translateY(-3vh) perspective(900px) rotateY(-92deg) rotateZ(-7deg) scale(.72);
+  transform: translateY(0) perspective(900px) rotateY(-82deg) rotateZ(-6deg) scale(.42);
   transform-origin: 50% 50%;
   backface-visibility: hidden;
-  animation: oliva-portal-logo-turn 1.52s cubic-bezier(.18, .75, .24, 1) both;
-}
-.oliva-menu-portal__circle {
-  position: absolute;
-  z-index: 8;
-  width: min(18vw, 92px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #fffdf1;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, .75),
-    0 0 36px rgba(255, 249, 215, .85),
-    0 0 90px rgba(255, 249, 215, .46);
-  opacity: 0;
-  transform: scale(.05);
-  animation: oliva-portal-white-circle 1.52s cubic-bezier(.16, .72, .22, 1) both;
+  animation: oliva-simple-logo-pop .78s cubic-bezier(.16, .82, .24, 1) both;
 }
 .oliva-glass-action.is-booking .oliva-glass-action__label {
   opacity: 0;
@@ -728,8 +713,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
    homepage logo portal finishes. The embedded homepage menu stays unchanged. */
 .oliva-menu-page--cinematic {
   transform-origin: 50% 12%;
-  clip-path: circle(0% at 50% 48%);
-  animation: oliva-menu-circle-pop 1.05s cubic-bezier(.16, .72, .22, 1) both;
+  animation: oliva-menu-simple-enter .58s cubic-bezier(.16, .72, .22, 1) both;
 }
 .oliva-menu-page--cinematic::after {
   content: "";
@@ -742,17 +726,17 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   animation: oliva-menu-entry-light .92s ease-out both;
 }
 .oliva-menu-page--cinematic .oliva-menu-page__heading {
-  animation: oliva-menu-heading-enter .78s cubic-bezier(.16, .72, .22, 1) .14s both;
+  animation: oliva-menu-heading-enter .58s cubic-bezier(.16, .72, .22, 1) both;
 }
 .oliva-menu-page--cinematic .oliva-menu-page__grid {
   transform-origin: 50% 0;
-  animation: oliva-menu-grid-enter .86s cubic-bezier(.16, .72, .22, 1) .2s both;
+  animation: oliva-menu-grid-enter .62s cubic-bezier(.16, .72, .22, 1) .04s both;
 }
 .oliva-menu-page--cinematic .oliva-menu-page__back {
-  animation: oliva-menu-detail-enter .62s ease-out .32s both;
+  animation: oliva-menu-detail-enter .5s ease-out both;
 }
 .oliva-menu-page--cinematic .oliva-menu-page__branch {
-  animation: oliva-menu-branch-enter .62s ease-out .32s both;
+  animation: oliva-menu-branch-enter .5s ease-out both;
 }
 @keyframes oliva-menu-surface-enter {
   0% { opacity: 0; transform: perspective(1300px) translateZ(310px) scale(1.2) rotateX(-7deg); filter: blur(8px); }
@@ -763,6 +747,10 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   0% { opacity: 0; clip-path: circle(0% at 50% 48%); transform: scale(.92); filter: brightness(.6); }
   42% { opacity: 1; clip-path: circle(66% at 50% 48%); transform: scale(.98); filter: brightness(1.06); }
   100% { opacity: 1; clip-path: circle(150% at 50% 48%); transform: scale(1); filter: brightness(1); }
+}
+@keyframes oliva-menu-simple-enter {
+  0% { opacity: 0; transform: translateY(18px) scale(.985); filter: brightness(.94); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: brightness(1); }
 }
 @keyframes oliva-menu-entry-light {
   0% { opacity: .78; }
