@@ -73,6 +73,7 @@ export default function HomepageHero({ onMenu, onBook }: HomepageHeroProps) {
         <div className="oliva-menu-portal__scene">
           <div className="oliva-menu-portal__halo" />
           <img className="oliva-menu-portal__logo" src={olivaLogoUrl} alt="" draggable={false} />
+          <div className="oliva-menu-portal__finish-ring" />
         </div>
       </div>
 
