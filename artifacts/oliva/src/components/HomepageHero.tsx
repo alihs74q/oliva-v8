@@ -28,7 +28,7 @@ export default function HomepageHero({ onMenu, onBook }: HomepageHeroProps) {
     if (isMenuTransitioning || isBooking) return
     setIsMenuTransitioning(true)
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    menuTimer.current = window.setTimeout(onMenu, reduceMotion ? 120 : 860)
+    menuTimer.current = window.setTimeout(onMenu, reduceMotion ? 120 : 1450)
   }
 
   const handleBook = () => {
@@ -69,6 +69,8 @@ export default function HomepageHero({ onMenu, onBook }: HomepageHeroProps) {
       <div className="oliva-luxury-hero__grain" aria-hidden="true" />
 
       <div className="oliva-menu-portal" aria-hidden="true">
+        <div className="oliva-menu-portal__olive" />
+        <div className="oliva-menu-portal__circle" />
         <div className="oliva-menu-portal__scene">
           <div className="oliva-menu-portal__halo" />
           <img className="oliva-menu-portal__logo" src={olivaLogoUrl} alt="" draggable={false} />

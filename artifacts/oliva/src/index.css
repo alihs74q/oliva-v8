@@ -422,7 +422,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   animation: oliva-menu-portal-shade 1.16s cubic-bezier(.65, 0, .2, 1) both;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__background {
-  animation: oliva-menu-background-dive 1.16s cubic-bezier(.65, 0, .2, 1) both;
+  animation: oliva-menu-background-dim 1.45s cubic-bezier(.65, 0, .2, 1) both;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__atmosphere,
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__grain {
@@ -431,10 +431,10 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__visual {
   z-index: 24;
   opacity: 1;
-  animation: oliva-menu-stage-hold 2.45s ease both;
+  animation: oliva-menu-stage-hold 1.45s ease both;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__logo-3d {
-  animation: oliva-logo-menu-exit 1.02s cubic-bezier(.16, .82, .24, 1) both;
+  animation: oliva-original-logo-to-circle .58s cubic-bezier(.16, .82, .24, 1) both;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__logo,
 .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__logo-depth img {
@@ -454,22 +454,47 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   display: grid;
   place-items: center;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 48%, rgba(195, 169, 91, .2), transparent 25%),
-    radial-gradient(circle at 50% 44%, #315a35 0, #1a3e2c 44%, #0d241b 100%);
+  background: transparent;
   opacity: 0;
   pointer-events: none;
 }
 .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal {
-  animation: oliva-menu-olive-in .22s ease-out both;
+  animation: oliva-menu-portal-hold 1.45s ease both;
+}
+.oliva-menu-portal__olive {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(195, 169, 91, .18), transparent 25%),
+    radial-gradient(circle at 50% 44%, #315a35 0, #1a3e2c 44%, #0d241b 100%);
+  opacity: 0;
+}
+.oliva-menu-portal__circle {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  width: clamp(18px, 7vw, 34px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fffdf1;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, .8),
+    0 0 28px rgba(255, 249, 215, .8),
+    0 0 100px rgba(255, 249, 215, .3);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.05);
+  transform-origin: center;
 }
 .oliva-menu-portal__scene {
   position: relative;
+  z-index: 3;
   width: min(78vw, 370px);
   height: min(44svh, 220px);
   display: grid;
   place-items: center;
-  transform: translateY(4vh);
+  transform: translateY(0);
 }
 .oliva-menu-portal__halo {
   position: absolute;
@@ -480,7 +505,6 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   box-shadow: 0 0 0 18px rgba(224, 203, 127, .035), 0 0 90px rgba(213, 188, 101, .2);
   opacity: 0;
   transform: scale(.55);
-  animation: oliva-portal-halo .8s cubic-bezier(.16, .72, .22, 1) both;
 }
 .oliva-menu-portal__logo {
   position: absolute;
@@ -489,10 +513,21 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   height: auto;
   filter: drop-shadow(0 12px 18px rgba(5, 24, 14, .34));
   opacity: 0;
-  transform: translateY(0) perspective(900px) rotateY(-82deg) rotateZ(-6deg) scale(.42);
+  transform: perspective(900px) rotateY(-82deg) rotateZ(-6deg) scale(.42);
   transform-origin: 50% 50%;
   backface-visibility: hidden;
-  animation: oliva-simple-logo-pop .78s cubic-bezier(.16, .82, .24, 1) both;
+}
+.oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__olive {
+  animation: oliva-menu-olive-reveal 1.45s cubic-bezier(.65, .02, .18, 1) both;
+}
+.oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__circle {
+  animation: oliva-menu-circle-enter 1.45s cubic-bezier(.16, .72, .22, 1) both;
+}
+.oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__halo {
+  animation: oliva-portal-halo 1.45s cubic-bezier(.16, .72, .22, 1) both;
+}
+.oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__logo {
+  animation: oliva-simple-logo-pop 1.45s cubic-bezier(.16, .82, .24, 1) both;
 }
 .oliva-glass-action.is-booking .oliva-glass-action__label {
   opacity: 0;
@@ -571,6 +606,10 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   58% { transform: scale(1.09); filter: brightness(.67) blur(1px); }
   100% { transform: scale(1.24); filter: brightness(.22) blur(5px); }
 }
+@keyframes oliva-menu-background-dim {
+  0%, 28% { transform: scale(1); filter: brightness(1); }
+  100% { transform: scale(1.035); filter: brightness(.48); }
+}
 @keyframes oliva-menu-atmosphere-close {
   0% { opacity: 1; }
   58% { opacity: .85; }
@@ -584,6 +623,20 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
 }
 @keyframes oliva-menu-stage-hold {
   0%, 100% { transform: translateY(0) scale(1); }
+}
+@keyframes oliva-original-logo-to-circle {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) perspective(900px) rotateY(-10deg) rotateZ(-1deg) scale(1);
+  }
+  48% {
+    opacity: 1;
+    transform: translate(-50%, -50%) perspective(900px) rotateY(180deg) rotateZ(3deg) scale(1.06);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) perspective(900px) rotateY(360deg) rotateZ(0) scale(.24);
+  }
 }
 @keyframes oliva-logo-menu-exit {
   0% {
@@ -630,6 +683,20 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   90% { opacity: 1; }
   100% { opacity: 0; }
 }
+@keyframes oliva-menu-portal-hold {
+  0%, 100% { opacity: 1; }
+}
+@keyframes oliva-menu-olive-reveal {
+  0%, 36% { opacity: 0; }
+  52%, 100% { opacity: 1; }
+}
+@keyframes oliva-menu-circle-enter {
+  0%, 4% { opacity: 0; transform: translate(-50%, -50%) scale(.05); }
+  10% { opacity: 1; transform: translate(-50%, -50%) scale(.32); }
+  32% { opacity: 1; transform: translate(-50%, -50%) scale(4.2); }
+  51% { opacity: 1; transform: translate(-50%, -50%) scale(72); }
+  62%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(72); }
+}
 @keyframes oliva-portal-halo {
   0%, 22% { opacity: 0; transform: scale(.55); }
   34% { opacity: .7; transform: scale(.9); }
@@ -652,6 +719,24 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   72%, 100% {
     opacity: 0;
     transform: translateY(-3vh) perspective(900px) rotateY(8deg) rotateZ(2deg) scale(.86);
+  }
+}
+@keyframes oliva-simple-logo-pop {
+  0%, 38% {
+    opacity: 0;
+    transform: perspective(900px) rotateY(-82deg) rotateZ(-6deg) scale(.42);
+  }
+  49% {
+    opacity: 1;
+    transform: perspective(900px) rotateY(-18deg) rotateZ(-2deg) scale(.92);
+  }
+  61%, 79% {
+    opacity: 1;
+    transform: perspective(900px) rotateY(0deg) rotateZ(0deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(900px) rotateY(7deg) rotateZ(2deg) scale(.88);
   }
 }
 @keyframes oliva-portal-white-circle {
@@ -723,7 +808,7 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   background: radial-gradient(circle at 50% 15%, rgba(219, 201, 133, .42), rgba(33, 48, 26, .2) 28%, transparent 67%);
   opacity: 0;
   pointer-events: none;
-  animation: oliva-menu-entry-light .92s ease-out both;
+  animation: oliva-menu-entry-light .58s ease-out both;
 }
 .oliva-menu-page--cinematic .oliva-menu-page__heading {
   animation: oliva-menu-heading-enter .58s cubic-bezier(.16, .72, .22, 1) both;
@@ -829,6 +914,27 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   }
   .oliva-luxury-hero.is-menu-transitioning .oliva-luxury-hero__actions {
     animation: oliva-menu-actions-away .2s ease both;
+  }
+  .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal,
+  .oliva-menu-portal__olive,
+  .oliva-menu-portal__circle,
+  .oliva-menu-portal__halo,
+  .oliva-menu-portal__logo {
+    animation: none;
+  }
+  .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal {
+    opacity: 1;
+  }
+  .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__olive {
+    opacity: 1;
+  }
+  .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__circle,
+  .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__halo {
+    opacity: 0;
+  }
+  .oliva-luxury-hero.is-menu-transitioning .oliva-menu-portal__logo {
+    opacity: 1;
+    transform: none;
   }
   .oliva-menu-page--cinematic,
   .oliva-menu-page--cinematic .oliva-menu-page__heading,
