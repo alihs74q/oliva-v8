@@ -285,7 +285,7 @@ function DrinkCard({ drink, sub, index, currency, isMobile }: { drink: Subcatego
              alt={drink.name}
              width={96}
              height={96}
-             priority={index < 2}
+             priority={index === 0}
              style={{ filter: soldOut ? 'grayscale(0.75)' : undefined, opacity: soldOut ? 0.62 : 1 }}
            />
           ) : (

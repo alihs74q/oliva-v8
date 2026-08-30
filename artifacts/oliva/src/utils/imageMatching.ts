@@ -6,6 +6,8 @@
 // Normalize a string for matching: lowercase, remove special chars, handle "and" ≈ "&"
 function normalizeForMatching(text: string): string {
   return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/&/g, "and") // Convert & to and for matching
     .replace(/[^\w\s]/g, "") // Remove special characters except spaces and word chars

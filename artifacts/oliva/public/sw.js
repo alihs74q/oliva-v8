@@ -1,7 +1,9 @@
-// Oliva service worker v8
-const CACHE_VERSION = 'v8';
+// Oliva service worker v9
+const CACHE_VERSION = 'v9';
 const APP_CACHE = `oliva-app-${CACHE_VERSION}`;
-const IMAGE_CACHE = `oliva-images-${CACHE_VERSION}`;
+// Keep product images across app-shell updates so returning visitors can use
+// their previously downloaded full images immediately for the long term.
+const IMAGE_CACHE = 'oliva-images-long-lived-v1';
 const CONTENT_CACHE = `oliva-content-${CACHE_VERSION}`;
 const CACHE_PREFIX = 'oliva-';
 const SHELL_URLS = ['/', '/index.html'];
@@ -112,6 +114,13 @@ self.addEventListener('fetch', (event) => {
     url.hostname === 'hebbkx1anhila5yf.public.blob.vercel-storage.com';
   const isImage = request.destination === 'image' ||
     /\.(jpe?g|png|gif|webp|avif|svg)(\?.*)?$/i.test(url.pathname);
+  const isLongLivedMenuImage =
+    url.origin === self.location.origin &&
+    (url.pathname.startsWith('/images/products/') ||
+      url.pathname.startsWith('/images/products-optimized/') ||
+      url.pathname.startsWith('/images/products-lqip/') ||
+      url.pathname.startsWith('/menu-optimized/') ||
+      url.pathname.startsWith('/menu-lqip/'));
   const isImmutableStatic =
     url.origin === self.location.origin &&
     url.pathname.startsWith('/assets/') &&
@@ -128,7 +137,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(networkFirstContent(request, url));
   } else if (request.mode === 'navigate') {
     event.respondWith(networkFirstNavigation(request));
-  } else if (isImage && isImmutableMedia) {
+  } else if (isImage && (isImmutableMedia || isLongLivedMenuImage)) {
     event.respondWith(cacheFirst(request, IMAGE_CACHE));
   } else if (isImage) {
     event.respondWith(staleWhileRevalidate(event, request));
