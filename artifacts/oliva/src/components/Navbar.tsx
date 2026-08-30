@@ -60,18 +60,6 @@ export default function Navbar({ navigate, route }: { navigate: (to: Route) => v
             zIndex: 1,
           }}
           aria-label="Oliva — From Court to Cup"
-          onMouseEnter={(e) => {
-            const img = e.currentTarget.querySelector('img') as HTMLImageElement;
-            if (img) {
-              img.style.transform = 'rotateY(15deg) rotateX(5deg) scale(1.08)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            const img = e.currentTarget.querySelector('img') as HTMLImageElement;
-            if (img) {
-              img.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
-            }
-          }}
         >
           <img
             src={imageAssets.logo}
