@@ -482,9 +482,36 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   transform: scale(.55);
   animation: oliva-portal-halo 2.45s ease both;
 }
+.oliva-menu-portal__logo {
+  position: absolute;
+  z-index: 6;
+  width: clamp(106px, 28vw, 142px);
+  height: auto;
+  filter: drop-shadow(0 12px 18px rgba(5, 24, 14, .34));
+  opacity: 0;
+  transform: translateY(-3vh) perspective(900px) rotateY(-92deg) rotateZ(-7deg) scale(.72);
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  animation: oliva-portal-logo-turn 2.45s cubic-bezier(.18, .75, .24, 1) both;
+}
+.oliva-menu-portal__circle {
+  position: absolute;
+  z-index: 8;
+  width: min(18vw, 92px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fffdf1;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, .75),
+    0 0 36px rgba(255, 249, 215, .85),
+    0 0 90px rgba(255, 249, 215, .46);
+  opacity: 0;
+  transform: scale(.05);
+  animation: oliva-portal-white-circle 2.45s cubic-bezier(.16, .72, .22, 1) both;
+}
 .oliva-menu-portal__cup {
   position: absolute;
-  z-index: 3;
+  z-index: 2;
   width: min(70vw, 300px);
   overflow: visible;
   filter: drop-shadow(0 20px 18px rgba(4, 18, 11, .4));
@@ -699,6 +726,50 @@ body { font-family:system-ui,-apple-system,sans-serif; background-color:#f5f5f4;
   34% { opacity: .7; transform: scale(.9); }
   88% { opacity: .35; transform: scale(1); }
   100% { opacity: 0; transform: scale(1.05); }
+}
+@keyframes oliva-portal-logo-turn {
+  0%, 26% {
+    opacity: 0;
+    transform: translateY(-3vh) perspective(900px) rotateY(-92deg) rotateZ(-7deg) scale(.72);
+  }
+  36% {
+    opacity: 1;
+    transform: translateY(-3vh) perspective(900px) rotateY(-18deg) rotateZ(-2deg) scale(.94);
+  }
+  48%, 64% {
+    opacity: 1;
+    transform: translateY(-3vh) perspective(900px) rotateY(0deg) rotateZ(0deg) scale(1);
+  }
+  72%, 100% {
+    opacity: 0;
+    transform: translateY(-3vh) perspective(900px) rotateY(8deg) rotateZ(2deg) scale(.86);
+  }
+}
+@keyframes oliva-portal-white-circle {
+  0%, 52% {
+    opacity: 0;
+    transform: scale(.05);
+  }
+  58% {
+    opacity: 1;
+    transform: scale(.72);
+  }
+  64% {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(.98);
+  }
+  84% {
+    opacity: 1;
+    transform: scale(12);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(18);
+  }
 }
 @keyframes oliva-portal-cup {
   0%, 22% { opacity: 0; transform: translateY(32px) scale(.72); }

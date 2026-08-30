@@ -71,6 +71,8 @@ export default function HomepageHero({ onMenu, onBook }: HomepageHeroProps) {
       <div className="oliva-menu-portal" aria-hidden="true">
         <div className="oliva-menu-portal__scene">
           <div className="oliva-menu-portal__halo" />
+          <img className="oliva-menu-portal__logo" src={olivaLogoUrl} alt="" draggable={false} />
+          <div className="oliva-menu-portal__circle" />
           <div className="oliva-menu-portal__word">OLIVA</div>
           <svg className="oliva-menu-portal__cup" viewBox="0 0 360 280" role="presentation">
             <ellipse className="oliva-menu-portal__saucer" cx="180" cy="235" rx="123" ry="17" />
